@@ -1,0 +1,107 @@
+[
+  {
+    "id": 1,
+    "client": {
+      "nom": "Martin",
+      "prenom": "Sophie",
+      "telephone": "0612345678"
+    },
+    "adresse": {
+      "rue": "12 rue des Lilas",
+      "codePostal": "47300",
+      "ville": "Villeneuve-sur-Lot"
+    },
+    "dateLivraison": "2026-06-20",
+    "creneau": "08:00-12:00",
+    "statut": "planifiee",
+    "livreurId": 2,
+    "vehiculeId": 1,
+    "agenceId": 1,
+    "commentaire": "Appeler le client 30 minutes avant",
+    "dateCreation": "2026-06-16T18:30:00.000Z"
+  },
+  {
+    "id": 2,
+    "client": {
+      "nom": "Dubois",
+      "prenom": "Thomas",
+      "telephone": "0678451236"
+    },
+    "adresse": {
+      "rue": "8 avenue de Bordeaux",
+      "codePostal": "47200",
+      "ville": "Marmande"
+    },
+    "dateLivraison": "2026-06-20",
+    "creneau": "14:00-18:00",
+    "statut": "en_cours",
+    "livreurId": 3,
+    "vehiculeId": 2,
+    "agenceId": 1,
+    "commentaire": "Maison avec portail gris",
+    "dateCreation": "2026-06-15T09:10:00.000Z"
+  },
+  {
+    "id": 3,
+    "client": {
+      "nom": "Bernard",
+      "prenom": "Claire",
+      "telephone": "0655987412"
+    },
+    "adresse": {
+      "rue": "4 chemin du Lac",
+      "codePostal": "47110",
+      "ville": "Sainte-Livrade-sur-Lot"
+    },
+    "dateLivraison": "2026-06-21",
+    "creneau": "09:00-13:00",
+    "statut": "a_planifier",
+    "livreurId": null,
+    "vehiculeId": null,
+    "agenceId": 1,
+    "commentaire": "Livraison au rez-de-chaussée",
+    "dateCreation": "2026-06-16T11:45:00.000Z"
+  },
+  {
+    "id": 4,
+    "client": {
+      "nom": "Leroy",
+      "prenom": "Julien",
+      "telephone": "0622334455"
+    },
+    "adresse": {
+      "rue": "25 boulevard de la République",
+      "codePostal": "47000",
+      "ville": "Agen"
+    },
+    "dateLivraison": "2026-06-18",
+    "creneau": "08:00-12:00",
+    "statut": "livree",
+    "livreurId": 2,
+    "vehiculeId": 1,
+    "agenceId": 2,
+    "commentaire": "Livraison terminée sans incident",
+    "dateCreation": "2026-06-14T16:20:00.000Z"
+  },
+  {
+    "id": 5,
+    "client": {
+      "nom": "Petit",
+      "prenom": "Laura",
+      "telephone": "0699887766"
+    },
+    "adresse": {
+      "rue": "3 impasse des Chênes",
+      "codePostal": "47500",
+      "ville": "Fumel"
+    },
+    "dateLivraison": "2026-06-19",
+    "creneau": "13:00-17:00",
+    "statut": "probleme",
+    "livreurId": 4,
+    "vehiculeId": 3,
+    "agenceId": 2,
+    "commentaire": "Client absent lors du passage",
+    "dateCreation": "2026-06-13T14:05:00.000Z"
+  }
+]
