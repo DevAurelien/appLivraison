@@ -1,4 +1,6 @@
 import { recupererLivraisons } from "../services/gestion.deliveries.js"
+import pkg from 'jsonwebtoken';
+const {sign, verify, decode} = pkg;
 
 export const controlRecupDeliveries = async (req, res)=>{
     let jsonPret;
