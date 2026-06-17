@@ -1,0 +1,22 @@
+[
+    {
+        "id": 1,
+        "email": "bgDu47@moi2.fr",
+        "password": "$2b$10$K0YWfWmrHBSS7Z7.q36fOeE81SXWBrSxmApTFhp7OOikwV.8QYY82"
+    },
+    {
+        "id": 2,
+        "email": "bgDu471@moi34.fr",
+        "password": "$2b$10$9MH.AA2fnaDDKKZqtXa1UuW3tKHSzuz3k2M4wIOlEdo5hIBpVq0h2"
+    },
+    {
+        "id": 3,
+        "email": "bgDu471@mo.fr",
+        "password": "$2b$10$J2.AR8QMfNPkp56K.s4R9.gRVlhu8SrZokIICqGpUdvjsIegW0ZKW"
+    },
+    {
+        "id": 4,
+        "email": "bgDu4@mo.fr",
+        "password": "$2b$10$Smy01iaLqE6jmm.4YBW66um0MloqP9wuXVxCsGntItFCsLtu4PZCq"
+    }
+]

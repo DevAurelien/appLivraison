@@ -1,9 +1,11 @@
 import express from "express";
-// import {controlUsers} from "../controllers/control.users.js"
+import {controlUsers} from "../controllers/control.users.js"
 
 const router = express.Router();
 
 // router.get("/users", controlUsers)
+
+router.post("/users", controlUsers);
 
 export default router;
 // GET    /users
