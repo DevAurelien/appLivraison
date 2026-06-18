@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import { MenuContext } from "../contexte/menuContext";
 
-export default function Inscription({ route }) {
+export default function Inscription() {
   const [formulaire, setFormulaire] = useState({
     email: "",
     password: "",
