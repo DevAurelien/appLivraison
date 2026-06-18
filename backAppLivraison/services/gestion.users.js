@@ -39,9 +39,13 @@ export const verifierUser = async (email, password) => {
   else return false;
 };
 
-export const signerJwt = async (email, password) => {
-  let fichierParse = JSON.parse(await fs.readFile("./users.json", "utf-8"));
-  let userTrouver = fichierParse.find((el) => el.email === email);
-  const signer = await sign(userTrouver, process.env.SECRET);
-  console.log(signer);
+export const signerJwt = async (email) => {
+  try{
+    let fichierParse = JSON.parse(await fs.readFile("./users.json", "utf-8"));
+    let userTrouver = fichierParse.find((el) => el.email === email);
+    const signer = await sign(userTrouver, process.env.SECRET);
+    return signer;
+  }catch(e){
+    throw new error(e, "Une erreur s'est produite")
+  }
 };

@@ -1,7 +1,17 @@
+import { useContext, useState } from "react"
+import SeConnecter from "./Page/SeConnecter.jsx"
+import { MenuContext } from "./contexte/menuContext.jsx"
+import Inscription from "./Page/Inscription.jsx";
 
-function App() {
-  <div className="flex bg-black text-white w-full h-full">
-    bonjour
-  </div>
+export default function App() {
+
+  const {page} = useContext(MenuContext);
+ 
+  return (
+    <div className="flex bg-green-500 text-white w-full h-full">
+      {page === "connection" && <SeConnecter />}
+      {page === "inscription" && <Inscription />}
+    </div>
+  )
 }
-export default App;
+ 

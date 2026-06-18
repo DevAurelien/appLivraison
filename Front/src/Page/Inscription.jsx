@@ -1,0 +1,80 @@
+import React, { useContext, useState } from "react";
+import { MenuContext } from "../contexte/menuContext";
+
+export default function Inscription({ route }) {
+  const [formulaire, setFormulaire] = useState({
+    email: "",
+    password: "",
+  });
+
+  const adresse = import.meta.env.VITE_API_URL;
+  const { setPage } = useContext(MenuContext);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const donnees = Object.fromEntries(new FormData(e.currentTarget));
+    const reponse = await fetch(`${adresse}/users`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(donnees),
+    });
+    const res = await reponse.json();
+    console.log(res)
+    // setFormulaire({ email: "", password: "" });
+  };
+
+  return (
+    <div className="flex bg-black w-full h-full text-white justify-center items-center">
+      <div className="p-4 flex w-4/5 md:w-2/3 justify-center items-center border border-white rounded-xl">
+        <form
+          className="p-4 w-full flex flex-col gap-4 justify-center items-center"
+          onSubmit={handleSubmit}
+        >
+          <h1 className="text-2xl md:text-4xl">S'inscrire</h1>
+          <p onClick={() => setPage("connection")} className="text-red-200">
+            Deja inscrit ?
+          </p>
+          <input
+            name="email"
+            type="email"
+            placeholder="Email"
+            className="outline outline-white w-full p-4 rounded-xl text-white/40"
+            value={formulaire.email}
+            onChange={(e) => {
+                const valeur = e.target.value;
+
+              setFormulaire((ancienneValeur) => ({
+                ...ancienneValeur,
+                email: valeur,
+              }));
+            }}
+          />
+          <input
+            name="password"
+            type="password"
+            placeholder="Mot de passe"
+            className="outline outline-white w-full rounded-xl text-white/40 p-4"
+            value={formulaire.password}
+            onChange={(e) =>{
+                const valeur = e.target.value;
+              setFormulaire((ancienneVal) => ({
+                
+
+                ...ancienneVal,
+                password: valeur,
+              }))
+            }}
+          />
+          <button
+            type="submit"
+            className="flex justify-center items-center outline outline-white w-1/3 rounded-xl text-white/40 p-4"
+          >
+            S'inscrire
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
