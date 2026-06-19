@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import { MenuContext } from "../contexte/menuContext";
 
 export default function SeConnecter() {
@@ -22,7 +22,7 @@ export default function SeConnecter() {
           onSubmit={handleSubmit}
         >
           <h1 className="text-2xl md:text-4xl">Se connecter</h1>
-          <p onClick={()=>setPage("inscription")} className="text-red-200">
+          <p onClick={()=>setPage("inscription")} className="cursor-pointer text-red-200">
             Pas encore inscrit ?
           </p>
           <input
