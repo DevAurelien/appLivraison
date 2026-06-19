@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import { MenuContext } from "../contexte/menuContext";
 
 export default function Inscription() {
@@ -12,13 +12,13 @@ export default function Inscription() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const donnees = Object.fromEntries(new FormData(e.currentTarget));
+    // const donnees = Object.fromEntries(new FormData(e.currentTarget));
     const reponse = await fetch(`${adresse}/users`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(donnees),
+      body: JSON.stringify(formulaire),
     });
     const res = await reponse.json();
     console.log(res)
