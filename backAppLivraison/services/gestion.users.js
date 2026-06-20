@@ -4,48 +4,54 @@ import pkg from "jsonwebtoken";
 const { sign } = pkg;
 import "dotenv/config";
 
+const USERS_FILE = "./users.json";
+
 export const creerUser = async (email, password) => {
-  let fichierParse;
+  let fichierParse = [];
   try {
-    fichierParse = JSON.parse(await fs.readFile("./users.json", "utf-8"));
-    let pass = await hash(password, 10);
-    let chiffreId = 0;
-    for (const el of fichierParse) {
-      if (el.id > chiffreId) {
-        chiffreId = el.id;
-      }
-    }
-    fichierParse = [
-      ...fichierParse,
-      { id: chiffreId + 1, email: email, password: pass },
-    ];
-    const fichierParseJSon = JSON.stringify(fichierParse, null, 4);
-    await fs.writeFile("./users.json", fichierParseJSon);
+    fichierParse = JSON.parse(await fs.readFile(USERS_FILE, "utf-8"));
   } catch (e) {
-    if (e.code === "ENOENT") {
-      fichierParse = [];
+    if (e.code !== "ENOENT") {
+      throw e;
     }
   }
+
+  const pass = await hash(password, 10);
+  const chiffreId = fichierParse.reduce((max, el) => (el.id > max ? el.id : max), 0);
+  fichierParse.push({ id: chiffreId + 1, email, password: pass });
+  await fs.writeFile(USERS_FILE, JSON.stringify(fichierParse, null, 4), "utf-8");
 };
 
-export const verifierUser = async (email, password) => {
-  let fichierParse = JSON.parse(await fs.readFile("./users.json", "utf-8"));
-  let userTrouver = fichierParse.find((el) => el.email === email);
+export const verifierUserExistant = async (email, password) => {
+  let fichierParse = [];
+  try {
+    fichierParse = JSON.parse(await fs.readFile(USERS_FILE, "utf-8"));
+  } catch (e) {
+    if (e.code === "ENOENT") {
+      return false;
+    }
+    throw e;
+  }
+
+  const userTrouver = fichierParse.find((el) => el.email === email);
   if (!userTrouver) {
     return false;
   }
-  let userVerifier = await compare(password, userTrouver.password);
-  if (userVerifier) return true;
-  else return false;
+
+  return compare(password, userTrouver.password);
 };
 
 export const signerJwt = async (email) => {
-  try{
-    let fichierParse = JSON.parse(await fs.readFile("./users.json", "utf-8"));
-    let userTrouver = fichierParse.find((el) => el.email === email);
-    const signer = await sign(userTrouver, process.env.SECRET);
-    return signer;
-  }catch(e){
-    throw new error(e, "Une erreur s'est produite")
+  const secret = process.env.SECRET;
+  if (!secret) {
+    throw new Error("La variable env secrete est manquante");
   }
+
+  const fichierParse = JSON.parse(await fs.readFile(USERS_FILE, "utf-8"));
+  const userTrouver = fichierParse.find((el) => el.email === email);
+  if (!userTrouver) {
+    throw new Error("Utilisateur introuvable");
+  }
+
+  return sign({ id: userTrouver.id, email: userTrouver.email }, secret);
 };

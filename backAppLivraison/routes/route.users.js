@@ -1,11 +1,13 @@
 import express from "express";
-import {ControlPostUsers, ControlGetUsers} from "../controllers/control.users.js"
+import {ControlPostUsers, ControlGetUsers, ControlLoginUsers, ControlRegisterUsers} from "../controllers/control.users.js"
 
 const router = express.Router();
 
 // router.get("/users", controlUsers)
 
 router.post("/users", ControlPostUsers);
+router.post("/auth/register", ControlRegisterUsers);
+router.post("/auth/login", ControlLoginUsers)
 
 router.get("/users", ControlGetUsers)
 
