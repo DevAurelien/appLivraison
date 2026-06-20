@@ -5,6 +5,7 @@ export default function Inscription() {
   const [formulaire, setFormulaire] = useState({
     email: "",
     password: "",
+    reponse:""
   });
 
   const adresse = import.meta.env.VITE_API_URL;
@@ -12,8 +13,8 @@ export default function Inscription() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // const donnees = Object.fromEntries(new FormData(e.currentTarget));
-    const reponse = await fetch(`${adresse}/users`, {
+    //const donnees = Object.fromEntries(new FormData(e.currentTarget));
+    const reponse = await fetch(`${adresse}/auth/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -21,7 +22,8 @@ export default function Inscription() {
       body: JSON.stringify(formulaire),
     });
     const res = await reponse.json();
-    console.log(res)
+    // console.log(res.message)
+    setFormulaire({email:"", password:"",reponse : res.message})
     // setFormulaire({ email: "", password: "" });
   };
 
@@ -67,6 +69,7 @@ export default function Inscription() {
               }))
             }}
           />
+          <p className="text-red text-2xl">{formulaire.reponse && formulaire.reponse}</p>
           <button
             type="submit"
             className="flex cursor-pointer justify-center items-center outline outline-white w-1/3 rounded-xl text-white/40 p-4"
