@@ -21,7 +21,7 @@ export default function SeConnecter() {
           className="p-4 w-full flex flex-col gap-4 justify-center items-center"
           onSubmit={handleSubmit}
         >
-          <h1 className="text-2xl md:text-4xl">Se connecter</h1>
+          <h1 className="text-2xl md:text-4xl cursor-default">Se connecter</h1>
           <p onClick={()=>setPage("inscription")} className="cursor-pointer text-red-200">
             Pas encore inscrit ?
           </p>
@@ -51,7 +51,7 @@ export default function SeConnecter() {
           />
           <button
             type="submit"
-            className="flex justify-center items-center outline outline-white w-1/3 rounded-xl text-white/40 p-4"
+            className="flex cursor-pointer justify-center items-center outline outline-white w-1/3 rounded-xl text-white/40 p-4"
           >
             Valider
           </button>
