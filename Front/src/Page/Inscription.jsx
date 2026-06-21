@@ -5,7 +5,9 @@ export default function Inscription() {
   const [formulaire, setFormulaire] = useState({
     email: "",
     password: "",
-    reponse:""
+    role:"Client",
+    reponse:"",
+    couleur:"rouge",
   });
 
   const adresse = import.meta.env.VITE_API_URL;
@@ -13,7 +15,6 @@ export default function Inscription() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    //const donnees = Object.fromEntries(new FormData(e.currentTarget));
     const reponse = await fetch(`${adresse}/auth/register`, {
       method: "POST",
       headers: {
@@ -22,9 +23,9 @@ export default function Inscription() {
       body: JSON.stringify(formulaire),
     });
     const res = await reponse.json();
-    // console.log(res.message)
-    setFormulaire({email:"", password:"",reponse : res.message})
-    // setFormulaire({ email: "", password: "" });
+    let couleurReponse ;
+    res.couleur ? (couleurReponse = res.couleur):(couleurReponse = "rouge")
+    setFormulaire({email:"", password:"",reponse : res.message, couleur : couleurReponse})
   };
 
   return (
@@ -42,7 +43,7 @@ export default function Inscription() {
             name="email"
             type="email"
             placeholder="Email"
-            className="outline outline-white w-full p-4 rounded-xl text-white/40"
+            className="outline outline-white w-full p-4 rounded-xl placeholder:text-white/40"
             value={formulaire.email}
             onChange={(e) => {
                 const valeur = e.target.value;
@@ -57,7 +58,7 @@ export default function Inscription() {
             name="password"
             type="password"
             placeholder="Mot de passe"
-            className="outline outline-white w-full rounded-xl text-white/40 p-4"
+            className="outline outline-white w-full rounded-xl placeholder:text-white/40 p-4"
             value={formulaire.password}
             onChange={(e) =>{
                 const valeur = e.target.value;
@@ -69,7 +70,7 @@ export default function Inscription() {
               }))
             }}
           />
-          <p className="text-red text-2xl">{formulaire.reponse && formulaire.reponse}</p>
+          <p className={`${formulaire.couleur === "rouge" ? "text-red-600" : "text-green-600"}  text-xl`}>{formulaire.reponse}</p>
           <button
             type="submit"
             className="flex cursor-pointer justify-center items-center outline outline-white w-1/3 rounded-xl text-white/40 p-4"

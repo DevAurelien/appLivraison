@@ -5,13 +5,50 @@ export default function SeConnecter() {
   const [formulaire, setFormulaire] = useState({
     email: "",
     password: "",
+    reponse: null,
   });
 
-  const {setPage} = useContext(MenuContext);
+  const adresse = import.meta.env.VITE_API_URL;
+  const { setPage } = useContext(MenuContext);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setFormulaire({ email: "", password: "" });
+    fetch(`${adresse}/auth/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formulaire),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.jwt) {
+          localStorage.setItem(
+            "token",
+            JSON.stringify({
+              email: formulaire.email,
+              jwt: data.jwt,
+            })
+          );
+        }
+
+        setFormulaire((ancienneVal) => ({
+          ...ancienneVal,
+          email: "",
+          password: "",
+          reponse: data.message || JSON.stringify(data),
+          couleur: data.couleur || (data.jwt ? "vert" : "rouge"),
+        }));
+        setPage("Accueil");
+      })
+      .catch((error) => {
+        console.error(error.message)
+        setFormulaire((ancienneVal) => ({
+          ...ancienneVal,
+          reponse: "Connection Echoué",
+          couleur: "rouge",
+        }));
+      });
   };
 
   return (
@@ -22,13 +59,16 @@ export default function SeConnecter() {
           onSubmit={handleSubmit}
         >
           <h1 className="text-2xl md:text-4xl cursor-default">Se connecter</h1>
-          <p onClick={()=>setPage("inscription")} className="cursor-pointer text-red-200">
+          <p
+            onClick={() => setPage("inscription")}
+            className="cursor-pointer text-red-200"
+          >
             Pas encore inscrit ?
           </p>
           <input
             type="email"
             placeholder="Email"
-            className="outline outline-white w-full p-4 rounded-xl text-white/40"
+            className="outline outline-white w-full p-4 rounded-xl placeholder:text-white/40"
             value={formulaire.email}
             onChange={(e) =>
               setFormulaire((ancienneVal) => ({
@@ -40,7 +80,7 @@ export default function SeConnecter() {
           <input
             type="password"
             placeholder="Mot de passe"
-            className="outline outline-white w-full rounded-xl text-white/40 p-4"
+            className="outline outline-white w-full rounded-xl placeholder:text-white/40 p-4"
             value={formulaire.password}
             onChange={(e) =>
               setFormulaire((ancienneVal) => ({
@@ -49,9 +89,14 @@ export default function SeConnecter() {
               }))
             }
           />
+          <p
+            className={`${formulaire.couleur === "rouge" ? "text-red-600" : "text-green-600"}  md:text-xl`}
+          >
+            {formulaire.reponse}
+          </p>
           <button
             type="submit"
-            className="flex cursor-pointer justify-center items-center outline outline-white w-1/3 rounded-xl text-white/40 p-4"
+            className="flex cursor-pointer justify-center items-center outline outline-white w-1/3 rounded-xl text-white p-4"
           >
             Valider
           </button>
