@@ -1,32 +1,14 @@
 [
     {
         "id": 1,
-        "email": "aurelien@moi",
-        "password": "$2b$10$AiysgFYh4KW/VT.7zOXZcu2CufKwZ1QM7aO6SY7WcGqAz1xQMS0/O"
+        "email": "aurelien@moi.fr",
+        "password": "$2b$10$QCUz6H9GRZdR5ziAKlqJB.Y/pmtYs7Ybd/WxPgbd.xs9BfHhZzooC",
+        "role": "client"
     },
     {
         "id": 2,
-        "email": "aurelien@moiz",
-        "password": "$2b$10$kFWMZ70spOuXsQ.kMozy0Ou40q4KI9G/S.A42qNWUut4WroFbatge"
-    },
-    {
-        "id": 3,
-        "email": "qzdqfzq@dgs",
-        "password": "$2b$10$YDo7EcZ3K7RGY4LOrUWsWOOlXV5/e1K2HB98rkRKw0mGzNejgmdbu"
-    },
-    {
-        "id": 4,
-        "email": "qzdqzdq@dsdf",
-        "password": "$2b$10$s4Pa/0K4uJneAaZqNNI.9.a33astgOpngQyzWQAaocevrSznFewUO"
-    },
-    {
-        "id": 5,
-        "email": "zqzdqzdq@dsdf",
-        "password": "$2b$10$XW/Ol392NZBlYJcfwxeDe.ZgHj4WkfF3g7bVEpnzevBcCvTruNQzy"
-    },
-    {
-        "id": 6,
-        "email": "zqzdqzdq@dsdfz",
-        "password": "$2b$10$Tlu1bPHSMbhpipy9.zBjNOzDL0gdowUy9s124FmNV1vEPIDz4zHem"
+        "email": "eetztztzr@dsdfsdf",
+        "password": "$2b$10$KHiPg2CKm64YeuIjOM5f7u7EAG51jc95CfzFoSh.kcwH3aZgvbUxO",
+        "role": "client"
     }
 ]

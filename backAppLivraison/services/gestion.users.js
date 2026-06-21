@@ -3,6 +3,7 @@ import { hash, compare } from "bcrypt";
 import pkg from "jsonwebtoken";
 const { sign } = pkg;
 import "dotenv/config";
+import {roles} from "../models/role.js"
 
 const USERS_FILE = "./users.json";
 
@@ -18,7 +19,7 @@ export const creerUser = async (email, password) => {
 
   const pass = await hash(password, 10);
   const chiffreId = fichierParse.reduce((max, el) => (el.id > max ? el.id : max), 0);
-  fichierParse.push({ id: chiffreId + 1, email, password: pass });
+  fichierParse.push({ id: chiffreId + 1, email, password: pass, role:"client" });
   await fs.writeFile(USERS_FILE, JSON.stringify(fichierParse, null, 4), "utf-8");
 };
 
