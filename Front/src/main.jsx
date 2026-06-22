@@ -3,17 +3,20 @@ import App from "./App.jsx";
 import "./style.css";
 import { Routes, Route, BrowserRouter } from "react-router-dom";
 import { MenuContextProvider } from "./contexte/menuContext.jsx";
-
-
+import { NavContextProvider } from "./contexte/navContext.jsx";
 
 createRoot(document.getElementById("root")).render(
   <BrowserRouter>
     <MenuContextProvider>
-      <Routes>
-        <Route path="/" element={<App />} />
-      </Routes>
+      <NavContextProvider>
+        <Routes>
+          <Route path="/" element={<App />} />
+        </Routes>
+      </NavContextProvider>
     </MenuContextProvider>
   </BrowserRouter>,
 );
-   {/* <Route path="/seConnecter" element={<SeConnecter />} />
-        <Route path="/inscription" element={<Inscription />} /> */}
+{
+  /* <Route path="/seConnecter" element={<SeConnecter />} />
+        <Route path="/inscription" element={<Inscription />} /> */
+}

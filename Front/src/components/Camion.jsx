@@ -1,12 +1,14 @@
 export default function Camion({
-  color1 = "#000",
-  color2 = "#fff",
+  color1 = "#fff",
+  color2 = "#000",
   color3 = "none",
   width = 801,
   height = 801,
   className,
+  titre,tailleTexte
 }) {
   return (
+    <div className={`${className} ${titre ? "flex-col":""}`}>
     <svg
       id="camion"
       xmlns="http://www.w3.org/2000/svg"
@@ -92,5 +94,7 @@ export default function Camion({
         strokeMiterlimit={10}
       />
     </svg>
+    <h1 className={tailleTexte}>{titre}</h1>
+    </div>
   );
 }
