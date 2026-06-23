@@ -1,14 +1,14 @@
 [
     {
         "id": 1,
-        "email": "aurelien@moi.fr",
-        "password": "$2b$10$QCUz6H9GRZdR5ziAKlqJB.Y/pmtYs7Ybd/WxPgbd.xs9BfHhZzooC",
+        "email": "bgDu4@mo.fr",
+        "password": "$2b$10$so2cQIsS7e8Vg/2lqUtRi.kWc1szmuM9Tq5h5/0cUMW96tT2ZNvJu",
         "role": "client"
     },
     {
         "id": 2,
-        "email": "eetztztzr@dsdfsdf",
-        "password": "$2b$10$KHiPg2CKm64YeuIjOM5f7u7EAG51jc95CfzFoSh.kcwH3aZgvbUxO",
+        "email": "bgDu4@moi.fr",
+        "password": "$2b$10$FmNc/FNpm9iJF/yC3327xOTLSRkQFO8QgcbYWE9cOGVgMRkh42dv6",
         "role": "client"
     }
 ]

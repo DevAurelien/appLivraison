@@ -1,5 +1,5 @@
 import express from "express";
-import {ControlLoginUsers, ControlRegisterUsers} from "../controllers/control.users.js"
+import {ControlLoginUsers, ControlRegisterUsers, ControlRefreshUsers} from "../controllers/control.users.js"
 
 const router = express.Router();
 
@@ -7,7 +7,9 @@ const router = express.Router();
 
 // router.post("/users", ControlPostUsers);
 router.post("/auth/register", ControlRegisterUsers);
-router.post("/auth/login", ControlLoginUsers)
+router.post("/auth/login", ControlLoginUsers);
+
+router.post("/auth/refresh", ControlRefreshUsers);
 
 // router.get("/users", ControlGetUsers)
 
