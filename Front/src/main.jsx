@@ -4,16 +4,19 @@ import "./style.css";
 import { Routes, Route, BrowserRouter } from "react-router-dom";
 import { MenuContextProvider } from "./contexte/menuContext.jsx";
 import { NavContextProvider } from "./contexte/navContext.jsx";
+import { UserContextProvider } from "./contexte/userContext.jsx";
 
 createRoot(document.getElementById("root")).render(
   <BrowserRouter>
-    <MenuContextProvider>
-      <NavContextProvider>
-        <Routes>
-          <Route path="/" element={<App />} />
-        </Routes>
-      </NavContextProvider>
-    </MenuContextProvider>
+    <UserContextProvider>
+      <MenuContextProvider>
+        <NavContextProvider>
+          <Routes>
+            <Route path="/" element={<App />} />
+          </Routes>
+        </NavContextProvider>
+      </MenuContextProvider>
+    </UserContextProvider>
   </BrowserRouter>,
 );
 {
