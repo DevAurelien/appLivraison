@@ -39,7 +39,7 @@ export default function SeConnecter() {
           reponse: data.message || JSON.stringify(data),
           couleur: data.couleur || (data.accessToken ? "vert" : "rouge"),
         }));
-        data.ok ?? setPage("accueil");
+        data.ok && setPage("Accueil");
       })
       .catch((error) => {
         console.error(error.message)
