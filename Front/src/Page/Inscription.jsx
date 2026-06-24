@@ -5,9 +5,9 @@ export default function Inscription() {
   const [formulaire, setFormulaire] = useState({
     email: "",
     password: "",
-    role:"Client",
-    reponse:"",
-    couleur:"rouge",
+    role: "Client",
+    reponse: "",
+    couleur: "rouge",
   });
 
   const adresse = import.meta.env.VITE_API_URL;
@@ -23,9 +23,16 @@ export default function Inscription() {
       body: JSON.stringify(formulaire),
     });
     const res = await reponse.json();
-    let couleurReponse ;
-    res.couleur ? (couleurReponse = res.couleur):(couleurReponse = "rouge")
-    setFormulaire({email:"", password:"",reponse : res.message, couleur : couleurReponse})
+    let couleurReponse;
+    console.log(res)
+    res.couleur ? (couleurReponse = res.couleur) : (couleurReponse = "rouge");
+    setFormulaire({
+      email: "",
+      password: "",
+      reponse: res.message,
+      couleur: couleurReponse,
+    });
+    res.ok && setPage("Accueil");
   };
 
   return (
@@ -36,7 +43,10 @@ export default function Inscription() {
           onSubmit={handleSubmit}
         >
           <h1 className="text-2xl md:text-4xl cursor-default">S'inscrire</h1>
-          <p onClick={() => setPage("connection")} className="cursor-pointer text-red-200">
+          <p
+            onClick={() => setPage("connection")}
+            className="cursor-pointer text-red-200"
+          >
             Deja inscrit ?
           </p>
           <input
@@ -46,7 +56,7 @@ export default function Inscription() {
             className="outline outline-white w-full p-4 rounded-xl placeholder:text-white/40"
             value={formulaire.email}
             onChange={(e) => {
-                const valeur = e.target.value;
+              const valeur = e.target.value;
 
               setFormulaire((ancienneValeur) => ({
                 ...ancienneValeur,
@@ -60,17 +70,19 @@ export default function Inscription() {
             placeholder="Mot de passe"
             className="outline outline-white w-full rounded-xl placeholder:text-white/40 p-4"
             value={formulaire.password}
-            onChange={(e) =>{
-                const valeur = e.target.value;
+            onChange={(e) => {
+              const valeur = e.target.value;
               setFormulaire((ancienneVal) => ({
-                
-
                 ...ancienneVal,
                 password: valeur,
-              }))
+              }));
             }}
           />
-          <p className={`${formulaire.couleur === "rouge" ? "text-red-600" : "text-green-600"}  text-xl`}>{formulaire.reponse}</p>
+          <p
+            className={`${formulaire.couleur === "rouge" ? "text-red-600" : "text-green-600"}  text-xl`}
+          >
+            {formulaire.reponse}
+          </p>
           <button
             type="submit"
             className="flex cursor-pointer justify-center items-center outline outline-white w-1/3 rounded-xl text-white/40 p-4"

@@ -22,12 +22,12 @@ export default function SeConnecter() {
     })
       .then((res) => res.json())
       .then((data) => {
-        if (data.jwt) {
+        if (data.accessToken) {
           localStorage.setItem(
             "token",
             JSON.stringify({
               email: formulaire.email,
-              jwt: data.jwt,
+              accessToken: data.accessToken,
             })
           );
         }
@@ -37,9 +37,9 @@ export default function SeConnecter() {
           email: "",
           password: "",
           reponse: data.message || JSON.stringify(data),
-          couleur: data.couleur || (data.jwt ? "vert" : "rouge"),
+          couleur: data.couleur || (data.accessToken ? "vert" : "rouge"),
         }));
-        setPage("Accueil");
+        data.ok ?? setPage("accueil");
       })
       .catch((error) => {
         console.error(error.message)

@@ -1,8 +1,9 @@
-// import { useContext } from "react"
+import { useContext } from "react"
 // import { MenuContext } from "../contexte/menuContext"
 import BarreNavigation from "./Navigation.jsx";
 import HeaderLogo from "./HeaderLogo.jsx";
 import { UserContext } from "../../contexte/userContext.jsx";
+
 
 export default function Accueil() {
 
