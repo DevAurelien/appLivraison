@@ -12,7 +12,11 @@ export const ControlLoginUsers = async (req, res) => {
   if (email === "" || password === "") {
     return res
       .status(400)
-      .json({ message: "Le mot de passe ou le mail sont incorrects" });
+      .json({
+        couleur: "rouge",
+        message: "Le mot de passe ou le mail sont incorrects",
+        ok: false,
+      });
   }
   password = password.toLowerCase();
 
@@ -35,9 +39,13 @@ export const ControlLoginUsers = async (req, res) => {
         couleur: "vert",
         message: "Connection Réussie",
         accessToken,
+        ok: true,
       });
     } catch (e) {
-      return res.status(500).json({ message: `${e}, une erreur s'est produite` });
+      return res
+        .status(500)
+        .json({
+        couleur: "rouge", message: `${e}, une erreur s'est produite`, ok: false });
     }
   }
 };
@@ -48,13 +56,23 @@ export const ControlRegisterUsers = async (req, res) => {
   if (email === "" || password === "") {
     return res
       .status(400)
-      .json({ message: "Le mot de passe ou le mail sont incorrects" });
+      .json({
+        couleur: "rouge",
+        message: "Le mot de passe ou le mail sont incorrects",
+        ok: false,
+      });
   }
   password = password.toLowerCase();
 
   let verifierUtilisateur = await verifierUserExistant(email, password);
   if (verifierUtilisateur) {
-    return res.status(400).json({ message: "Ce mail est déjà utilisé" });
+    return res
+      .status(400)
+      .json({
+        couleur: "rouge",
+        message: "Ce mail est déjà utilisé",
+        ok: false,
+      });
   }
 
   await creerUser(email, password);
@@ -73,9 +91,16 @@ export const ControlRegisterUsers = async (req, res) => {
       couleur: "vert",
       message: "Utilisateur Crée",
       accessToken,
+      ok: true,
     });
   } catch (e) {
-    return res.status(500).json({ message: `${e}, une erreur s'est produite` });
+    return res
+      .status(500)
+      .json({
+        couleur: "rouge",
+        message: `${e}, une erreur s'est produite`,
+        ok: false,
+      });
   }
 };
 

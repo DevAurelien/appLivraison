@@ -83,15 +83,16 @@ export const signRefreshToken = async (email) => {
   return sign(data, process.env.SECRETREFRESH, { expiresIn: "1h" });
 };
 
-export const verifierAccessToken = async(accessToken)=>{
-  
-  try{
-  const tokenValide = verify(accessToken);
-  }catch(e){
-    throw new Error("Token access invalide");
+export const verifierAccessToken = async (accessToken) => {
+  try {
+     console.log(accessToken)
+    const tokenValide = verify(accessToken, process.env.SECRET);
+   
+    return tokenValide;
+  } catch (e) {
+    throw e;
   }
-  return tokenValide;
-}
+};
 
 
 export const verifierRefreshToken = async (refreshToken) => {

@@ -1,14 +1,26 @@
 [
     {
         "id": 1,
-        "email": "bgDu4@mo.fr",
-        "password": "$2b$10$so2cQIsS7e8Vg/2lqUtRi.kWc1szmuM9Tq5h5/0cUMW96tT2ZNvJu",
+        "email": "devaurelien@moi.fr",
+        "password": "$2b$10$nye8fmOSJi1CWr5e0yYAi.YFB.jwOVcA5yD2Ki/FXbV/aagzhWUUG",
         "role": "client"
     },
     {
         "id": 2,
-        "email": "bgDu4@moi.fr",
-        "password": "$2b$10$FmNc/FNpm9iJF/yC3327xOTLSRkQFO8QgcbYWE9cOGVgMRkh42dv6",
+        "email": "devo@sdf",
+        "password": "$2b$10$70fW2yaMylg/7os1XK6N7eRg3.OcU5OUE4lHjG3Qs40tx5lBWhU6O",
+        "role": "client"
+    },
+    {
+        "id": 3,
+        "email": "qfqf@dgd",
+        "password": "$2b$10$Uw74EPY8DibDA4.9QRYg5uTZ1Oci/BrylFb7AmO3NfrUfB8idL0Ni",
+        "role": "client"
+    },
+    {
+        "id": 4,
+        "email": "fgdfgd@fgdfh",
+        "password": "$2b$10$3eOrq6R9ZG/v67QTlMVujeMw2OstYq92IwT67EMZ3q/vMYNS3KL66",
         "role": "client"
     }
 ]
