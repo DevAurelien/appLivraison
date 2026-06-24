@@ -85,9 +85,7 @@ export const signRefreshToken = async (email) => {
 
 export const verifierAccessToken = async (accessToken) => {
   try {
-     console.log(accessToken)
     const tokenValide = verify(accessToken, process.env.SECRET);
-   
     return tokenValide;
   } catch (e) {
     throw e;
