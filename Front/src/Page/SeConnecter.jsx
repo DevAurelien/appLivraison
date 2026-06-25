@@ -15,10 +15,12 @@ export default function SeConnecter() {
     e.preventDefault();
     fetch(`${adresse}/auth/login`, {
       method: "POST",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(formulaire),
+      
     })
       .then((res) => res.json())
       .then((data) => {

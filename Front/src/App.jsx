@@ -10,10 +10,10 @@ export default function App() {
  
   return (
     <div className="flex text-white w-full h-full">
-      {/* {page === "connection" && <SeConnecter />}
+      {page === "connection" && <SeConnecter />}
       {page === "inscription" && <Inscription />}
-      {page === "Accueil" && <Accueil/>} */}
-      <Accueil></Accueil>
+      {page === "Accueil" && <Accueil/>}
+      {/* <Accueil></Accueil> */}
     </div>
   )
 }
