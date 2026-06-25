@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import Jauge from "./Jauge.jsx";
-import Boite from "./Boite.jsx";
 import { ArrivedLocation, Location } from "./IconeStartEnd.jsx";
 import BoxLivraison from "./BoxLivraison.jsx";
+import Boite from "./Boite.jsx"
 
 export default function CardLivraisons({
   className,
