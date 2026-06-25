@@ -13,6 +13,7 @@ export default function SeConnecter() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    console.log(adresse)
     fetch(`${adresse}/auth/login`, {
       method: "POST",
       credentials: "include",
