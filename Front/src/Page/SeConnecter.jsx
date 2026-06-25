@@ -8,7 +8,7 @@ export default function SeConnecter() {
     reponse: null,
   });
 
-  const adresse = import.meta.env.VITE_API_URL;
+  const adresse = import.meta.env.VITE_BACKEND_URL;
   const { setPage } = useContext(MenuContext);
 
   const handleSubmit = (e) => {
