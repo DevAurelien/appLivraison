@@ -2,16 +2,14 @@ import express from "express"
 import cors from "cors"
 import cookieParser from "cookie-parser"
 
-import routeDeliveries from "./routes/route.deliveries.js"
-import routeUsers from "./routes/route.users.js"
+import routeDeliveries from "../routes/route.deliveries.js"
+import routeUsers from "../routes/route.users.js"
 
-
-const PORT = process.env.PORT || 3000;
 
 const app = express();
 app.use(cors({
-    origin:"http://localhost:5173",
-    credentials:true,
+  origin: process.env.FRONTEND_URL,
+  credentials: true,
 }));
 app.use(cookieParser())
 app.use(express.json())
@@ -19,4 +17,11 @@ app.use("/", routeDeliveries );
 app.use("/", routeUsers);
 
 
-app.listen(PORT,()=> console.log(`Serveur sur le ${PORT}`))
+if (process.env.NODE_ENV !== "production") {
+  app.listen(process.env.PORT || 3001, () => {
+    console.log("API lancée");
+  });
+}
+
+
+export default app;
