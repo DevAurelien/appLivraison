@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Jauge from "./Jauge.jsx";
 import { ArrivedLocation, Location } from "./IconeStartEnd.jsx";
 import BoxLivraison from "./BoxLivraison.jsx";
-import Boite from "./Boite.jsx"
+import Boites from "./Boites.jsx"
 
 export default function CardLivraisons({
   className,
@@ -32,7 +32,7 @@ export default function CardLivraisons({
   </div>
 
   <div className="w-full aspect-square">
-    <Boite className="w-full h-full" />
+    <Boites className="w-full h-full" />
   </div>
 </div>
 
