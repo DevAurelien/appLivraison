@@ -2,8 +2,8 @@ import express from "express"
 import cors from "cors"
 import cookieParser from "cookie-parser"
 
-import routeDeliveries from "../routes/route.deliveries.js"
-import routeUsers from "../routes/route.users.js"
+import routeDeliveries from "./routes/route.deliveries.js"
+import routeUsers from "./routes/route.users.js"
 
 
 const app = express();
