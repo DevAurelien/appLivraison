@@ -1,55 +1,43 @@
 import { useContext, useState } from "react";
 import { MenuContext } from "../contexte/menuContext";
+import apiFetch from "../utils/apiFetch";
 
 export default function SeConnecter() {
   const [formulaire, setFormulaire] = useState({
     email: "",
     password: "",
     reponse: null,
+    loading:false
   });
 
-  const adresse = import.meta.env.VITE_BACKEND_URL;
   const { setPage } = useContext(MenuContext);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(adresse)
-    fetch(`${adresse}/auth/login`, {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formulaire),
-      
-    })
-      .then((res) => res.json())
+    setFormulaire((prev)=>({...prev, loading:true}))
+    apiFetch(`/auth/login`, "POST", {
+      body: JSON.stringify({email:formulaire.email, password:formulaire.password}),
+    }).then((res) => res.json())
       .then((data) => {
-        if (data.accessToken) {
-          localStorage.setItem(
-            "token",
-            JSON.stringify({
-              email: formulaire.email,
-              accessToken: data.accessToken,
-            })
-          );
-        }
-
         setFormulaire((ancienneVal) => ({
           ...ancienneVal,
           email: "",
           password: "",
           reponse: data.message || JSON.stringify(data),
           couleur: data.couleur || (data.accessToken ? "vert" : "rouge"),
+          loading:false
         }));
-        data.ok && setPage("Accueil");
+        if(data.accessToken){
+        localStorage.setItem("accessToken", data.accessToken)
+        setPage("Accueil");}
       })
       .catch((error) => {
-        console.error(error.message)
+        console.error(error.message);
         setFormulaire((ancienneVal) => ({
           ...ancienneVal,
           reponse: "Connection Echoué",
           couleur: "rouge",
+          loading:false,
         }));
       });
   };

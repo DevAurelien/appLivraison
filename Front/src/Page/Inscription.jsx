@@ -8,31 +8,51 @@ export default function Inscription() {
     role: "Client",
     reponse: "",
     couleur: "rouge",
+    loading: false,
   });
 
-  const adresse = import.meta.env.VITE_BACKEND_URL;
   const { setPage } = useContext(MenuContext);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    const reponse = await fetch(`${adresse}/auth/register`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formulaire),
-    });
-    const res = await reponse.json();
-    let couleurReponse;
-    console.log(res)
-    res.couleur ? (couleurReponse = res.couleur) : (couleurReponse = "rouge");
-    setFormulaire({
-      email: "",
-      password: "",
-      reponse: res.message,
-      couleur: couleurReponse,
-    });
-    res.ok && setPage("Accueil");
+    setFormulaire((prev) => ({ ...prev, loading: true }));
+    apiFetch(`/auth/register`, "POST", {
+      body: JSON.stringify({
+        email: formulaire.email,
+        password: formulaire.password,
+        role: formulaire.role,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.accessToken) {
+          localStorage.setItem("accessToken", data.accessToken);
+          setFormulaire((prev) => ({
+            ...prev,
+            email: "",
+            password: "",
+            reponse: data.message || "Inscription réussie",
+            couleur: "vert",
+            loading: false,
+          }));
+
+          setPage("Accueil");
+        } else {
+          setFormulaire((prev) => ({
+            ...prev,
+            reponse: data.message || "Inscription échouée",
+            couleur: "rouge",
+            loading: false,
+          }));
+        }
+      })
+      .catch((e) => {
+        setFormulaire((prev) => ({
+          ...prev,
+          loading: false,
+          reponse: e || "Une erreur s'est produite pendant l'inscription",
+        }));
+      });
   };
 
   return (
@@ -85,9 +105,10 @@ export default function Inscription() {
           </p>
           <button
             type="submit"
+            disabled={formulaire.loading}
             className="flex cursor-pointer justify-center items-center outline outline-white w-1/3 rounded-xl text-white/40 p-4"
           >
-            S'inscrire
+            {formulaire.loading ?  :"S'inscrire"}
           </button>
         </form>
       </div>
