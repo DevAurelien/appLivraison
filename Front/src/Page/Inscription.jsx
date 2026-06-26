@@ -1,5 +1,6 @@
 import { useContext, useState } from "react";
 import { MenuContext } from "../contexte/menuContext";
+import apiFetch from "../utils/apiFetch";
 
 export default function Inscription() {
   const [formulaire, setFormulaire] = useState({
@@ -15,7 +16,9 @@ export default function Inscription() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     setFormulaire((prev) => ({ ...prev, loading: true }));
+
     apiFetch(`/auth/register`, "POST", {
       body: JSON.stringify({
         email: formulaire.email,
@@ -27,6 +30,7 @@ export default function Inscription() {
       .then((data) => {
         if (data.accessToken) {
           localStorage.setItem("accessToken", data.accessToken);
+
           setFormulaire((prev) => ({
             ...prev,
             email: "",
@@ -50,7 +54,9 @@ export default function Inscription() {
         setFormulaire((prev) => ({
           ...prev,
           loading: false,
-          reponse: e || "Une erreur s'est produite pendant l'inscription",
+          reponse:
+            e.message || "Une erreur s'est produite pendant l'inscription",
+          couleur: "rouge",
         }));
       });
   };
@@ -103,13 +109,24 @@ export default function Inscription() {
           >
             {formulaire.reponse}
           </p>
-          <button
-            type="submit"
-            disabled={formulaire.loading}
-            className="flex cursor-pointer justify-center items-center outline outline-white w-1/3 rounded-xl text-white/40 p-4"
-          >
-            {formulaire.loading ?  :"S'inscrire"}
-          </button>
+          <div className="relative w-1/3 rounded-xl">
+  {formulaire.loading && (
+    <>
+      <span className="light-border light-top"></span>
+      <span className="light-border light-right"></span>
+      <span className="light-border light-bottom"></span>
+      <span className="light-border light-left"></span>
+    </>
+  )}
+
+  <button
+    type="submit"
+    disabled={formulaire.loading}
+    className="relative z-10 flex cursor-pointer justify-center items-center border border-white w-full rounded-xl text-white/40 p-4 disabled:cursor-not-allowed"
+  >
+    {formulaire.loading ? "Inscription..." : "S'inscrire"}
+  </button>
+</div>
         </form>
       </div>
     </div>

@@ -86,6 +86,7 @@ export default function SeConnecter() {
             {formulaire.reponse}
           </p>
           <button
+          onClick={()=>setPage("Accueil")}
             type="submit"
             className="flex cursor-pointer justify-center items-center outline outline-white w-1/3 rounded-xl text-white p-4"
           >

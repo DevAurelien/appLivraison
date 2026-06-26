@@ -28,5 +28,11 @@
         "email": "bgDu4@moi.fr",
         "password": "$2b$10$NRNMODiHSUkD2DWflMUh3el1UWyIX6YpyuRAPHhHUHGsBd3YVHAOa",
         "role": "client"
+    },
+    {
+        "id": 6,
+        "email": "dqfqqf@dfgd",
+        "password": "$2b$10$TU/GVsVTuQh2vaiqI6s7DOcqS0cVpR6GHhEjDfGvjUxq8o6a/QY3W",
+        "role": "client"
     }
 ]
