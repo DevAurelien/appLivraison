@@ -1,6 +1,6 @@
 import {
   creerUser,
-  verifierUserExistant,
+  loginUser,
   signAccessToken,
   signRefreshToken,
   verifierRefreshToken,
@@ -10,25 +10,20 @@ export const ControlLoginUsers = async (req, res) => {
   let { email, password } = req.body;
   email = email.trim();
   if (email === "" || password === "") {
-    return res
-      .status(400)
-      .json({
-        couleur: "rouge",
-        message: "Le mot de passe ou le mail sont incorrects",
-        ok: false,
-      });
+    return res.status(400).json({
+      couleur: "rouge",
+      message: "Le mot de passe ou le mail sont incorrects",
+      ok: false,
+    });
   }
-  password = password.toLowerCase();
+  email = email.trim().toLowerCase();
+  password = password.trim();
 
-  const verifierUtilisateur = await verifierUserExistant(email, password);
-  if (!verifierUtilisateur) {
-    await creerUser(email, password);
-  }
-
-  if (verifierUtilisateur) {
+  const user = await loginUser(email, password);
+  if (user) {
     try {
-      const accessToken = await signAccessToken(email);
-      const refreshToken = await signRefreshToken(email);
+      const accessToken = await signAccessToken(user);
+      const refreshToken = await signRefreshToken(user);
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
         secure: false,
@@ -42,10 +37,11 @@ export const ControlLoginUsers = async (req, res) => {
         ok: true,
       });
     } catch (e) {
-      return res
-        .status(500)
-        .json({
-        couleur: "rouge", message: `${e}, une erreur s'est produite`, ok: false });
+      return res.status(500).json({
+        couleur: "rouge",
+        message: `${e}, une erreur s'est produite`,
+        ok: false,
+      });
     }
   }
 };
@@ -54,31 +50,20 @@ export const ControlRegisterUsers = async (req, res) => {
   let { email, password } = req.body;
   email = email.trim();
   if (email === "" || password === "") {
-    return res
-      .status(400)
-      .json({
-        couleur: "rouge",
-        message: "Le mot de passe ou le mail sont incorrects",
-        ok: false,
-      });
+    return res.status(400).json({
+      couleur: "rouge",
+      message: "Le mot de passe ou le mail sont incorrects",
+      ok: false,
+    });
   }
-  password = password.toLowerCase();
+   email = email.trim().toLowerCase();
+  password = password.trim();
 
-  let verifierUtilisateur = await verifierUserExistant(email, password);
-  if (verifierUtilisateur) {
-    return res
-      .status(400)
-      .json({
-        couleur: "rouge",
-        message: "Ce mail est déjà utilisé",
-        ok: false,
-      });
-  }
-
-  await creerUser(email, password);
   try {
-    const accessToken = await signAccessToken(email);
-    const refreshToken = await signRefreshToken(email);
+    const user = await creerUser(email, password);
+
+    const accessToken = await signAccessToken(user);
+    const refreshToken = await signRefreshToken(user);
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
@@ -90,17 +75,16 @@ export const ControlRegisterUsers = async (req, res) => {
     return res.status(200).json({
       couleur: "vert",
       message: "Utilisateur Crée",
+      data: user,
       accessToken,
       ok: true,
     });
   } catch (e) {
-    return res
-      .status(500)
-      .json({
-        couleur: "rouge",
-        message: `${e}, une erreur s'est produite`,
-        ok: false,
-      });
+    return res.status(500).json({
+      couleur: "rouge",
+      message: `${e}, une erreur s'est produite`,
+      ok: false,
+    });
   }
 };
 

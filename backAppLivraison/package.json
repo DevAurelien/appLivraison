@@ -11,6 +11,7 @@
   "author": "Dev_Aurelien",
   "license": "ISC",
   "dependencies": {
+    "@neondatabase/serverless": "^1.1.0",
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",

@@ -4,10 +4,137 @@ import pkg from "jsonwebtoken";
 const { sign, decode, verify } = pkg;
 import "dotenv/config";
 import { roles } from "../models/role.js";
+import { sql } from "../database/db.js";
 
 const USERS_FILE = "./users.json";
 
 export const creerUser = async (email, password) => {
+  const userExiste = await verifierUserExistantRegister(email);
+
+  if (userExiste) {
+    throw new Error("Utilisateur déjà existant");
+  }
+
+  const pass = await hash(password, 10);
+  const role = "Client";
+
+  const userCree = await sql.query(
+    `INSERT INTO utilisateurs (email, password, role)
+     VALUES ($1, $2, $3)
+     RETURNING id, email, role, created_at`,
+    [email, pass, role]
+  );
+
+  return userCree[0];
+};
+
+export const loginUser = async (email, password) => {
+  const resultat = await sql.query(
+    `SELECT id, email, password, role FROM utilisateurs WHERE email = $1`,
+    [email]
+  );
+
+  if (resultat.length === 0) {
+    throw new Error("Identifiants incorrects");
+  }
+
+  const user = resultat[0];
+
+  const passwordOk = await compare(password, user.password);
+
+  if (!passwordOk) {
+    throw new Error("Identifiants incorrects");
+  }
+
+  return {
+    id: user.id,
+    email: user.email,
+    role: user.role,
+  };
+};
+
+export const verifierUserExistantRegister = async (email) => {
+  const resultat = await sql.query(
+    `SELECT id FROM utilisateurs WHERE email = $1`,
+    [email]
+  );
+
+  return resultat.length > 0;
+};
+
+export const verifierUserExistantLogin = async (email, password) => {
+  const resultat = await sql.query(
+    `SELECT * FROM utilisateurs WHERE email = $1`,
+    [email],
+  );
+  if (resultat.length === 0) {
+    throw new Error("Utilisateur non trouvé");
+  }
+  const passBdd = resultat[0].password;
+
+  return await compare(password, passBdd);
+};
+
+
+
+export const signAccessToken = async (userTrouver) => {
+  const data = {
+    id: userTrouver.id,
+    email: userTrouver.email,
+    role: userTrouver.role ?? "Client",
+  };
+
+  return sign(data, process.env.SECRET, { expiresIn: "15m" });
+};
+
+export const signRefreshToken = async (userTrouver) => {
+  const data = {
+    id: userTrouver.id,
+    email: userTrouver.email,
+    role:userTrouver.role
+  };
+
+  return sign(data, process.env.SECRETREFRESH, { expiresIn: "1h" });
+};
+
+export const verifierAccessToken = async (accessToken) => {
+  try {
+    const tokenValide = verify(accessToken, process.env.SECRET);
+    return tokenValide;
+  } catch (e) {
+    throw e;
+  }
+};
+
+export const verifierRefreshToken = async (refreshToken) => {
+  try {
+    const tokenVerifier = verify(refreshToken, process.env.SECRETREFRESH);
+
+    const accessToken = await signAccessToken({
+      id: tokenVerifier.id,
+      email: tokenVerifier.email,
+      role: tokenVerifier.role,
+    });
+
+    return { accessToken, email: tokenVerifier.email };
+  } catch (e) {
+    if (e.name === "TokenExpiredError") {
+      const err = new Error("Refresh token expiré");
+      err.status = 401;
+      throw err;
+    }
+
+    if (e.name === "JsonWebTokenError") {
+      const err = new Error("Refresh token invalide");
+      err.status = 401;
+      throw err;
+    }
+
+    throw e;
+  }
+};
+
+export const creerUser2 = async (email, password) => {
   let fichierParse = [];
   try {
     fichierParse = JSON.parse(await fs.readFile(USERS_FILE, "utf-8"));
@@ -35,7 +162,7 @@ export const creerUser = async (email, password) => {
   );
 };
 
-export const verifierUserExistant = async (email, password) => {
+export const verifierUserExistant2 = async (email, password) => {
   let fichierParse = [];
   try {
     fichierParse = JSON.parse(await fs.readFile(USERS_FILE, "utf-8"));
@@ -52,63 +179,4 @@ export const verifierUserExistant = async (email, password) => {
   }
 
   return compare(password, userTrouver.password);
-};
-
-export const signAccessToken = async (email) => {
-  const fichierParse = JSON.parse(await fs.readFile(USERS_FILE, "utf-8"));
-  const userTrouver = fichierParse.find((el) => el.email === email);
-  if (!userTrouver) {
-    throw new Error("Utilisateur introuvable");
-  }
-  const data = {
-    id: userTrouver.id,
-    email: userTrouver.email,
-    role: userTrouver.role ?? "Client",
-  };
-
-  return sign(data, process.env.SECRET, { expiresIn: "15m" });
-};
-
-export const signRefreshToken = async (email) => {
-  const fichierParse = JSON.parse(await fs.readFile(USERS_FILE, "utf-8"));
-  const userTrouver = fichierParse.find((el) => el.email === email);
-  if (!userTrouver) {
-    throw new Error("Utilisateur introuvable");
-  }
-  const data = {
-    id: userTrouver.id,
-    email: userTrouver.email,
-  };
-
-  return sign(data, process.env.SECRETREFRESH, { expiresIn: "1h" });
-};
-
-export const verifierAccessToken = async (accessToken) => {
-  try {
-    const tokenValide = verify(accessToken, process.env.SECRET);
-    return tokenValide;
-  } catch (e) {
-    throw e;
-  }
-};
-
-
-export const verifierRefreshToken = async (refreshToken) => {
-  try {
-    const tokenVerifier = verify(refreshToken, process.env.SECRETREFRESH);
-    const accessToken = await signAccessToken(tokenVerifier.email);
-    return { accessToken, email: tokenVerifier.email };
-  } catch (e) {
-    if (e.name === "TokenExpiredError") {
-      const err = new Error("Refresh token expiré");
-      err.status = 401;
-      throw err;
-    }
-    if (e.name === "JsonWebTokenError") {
-      const err = new Error("Refresh token invalide");
-      err.status = 401;
-      throw err;
-    }
-    throw e;
-  }
 };
