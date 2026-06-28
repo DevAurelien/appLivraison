@@ -1,23 +1,29 @@
 import { useContext, useState } from "react";
 import { MenuContext } from "../contexte/menuContext";
 import apiFetch from "../utils/apiFetch";
+import { UserContext } from "../contexte/userContext";
 
 export default function SeConnecter() {
   const [formulaire, setFormulaire] = useState({
     email: "",
     password: "",
     reponse: null,
-    loading:false
+    loading: false,
   });
 
   const { setPage } = useContext(MenuContext);
+  const { setUser } = useContext(UserContext);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setFormulaire((prev)=>({...prev, loading:true}))
+    setFormulaire((prev) => ({ ...prev, loading: true }));
     apiFetch(`/auth/login`, "POST", {
-      body: JSON.stringify({email:formulaire.email, password:formulaire.password}),
-    }).then((res) => res.json())
+      body: JSON.stringify({
+        email: formulaire.email,
+        password: formulaire.password,
+      }),
+    })
+      .then((res) => res.json())
       .then((data) => {
         setFormulaire((ancienneVal) => ({
           ...ancienneVal,
@@ -25,11 +31,23 @@ export default function SeConnecter() {
           password: "",
           reponse: data.message || JSON.stringify(data),
           couleur: data.couleur || (data.accessToken ? "vert" : "rouge"),
-          loading:false
+          loading: false,
         }));
-        if(data.accessToken){
-        localStorage.setItem("accessToken", data.accessToken)
-        setPage("Accueil");}
+        if (data.accessToken) {
+          const dateLisible = new Date(data.data.created_at).toLocaleDateString(
+            "fr-FR",
+          );
+          localStorage.setItem("accessToken", data.accessToken);
+          setUser((prev) => ({
+            ...prev,
+            email: data.data.email,
+            accessToken: data.accessToken,
+            role: data.data.role,
+            creeLe: dateLisible,
+          }));
+
+          setPage("Accueil");
+        }
       })
       .catch((error) => {
         console.error(error.message);
@@ -37,7 +55,7 @@ export default function SeConnecter() {
           ...ancienneVal,
           reponse: "Connection Echoué",
           couleur: "rouge",
-          loading:false,
+          loading: false,
         }));
       });
   };
@@ -86,7 +104,7 @@ export default function SeConnecter() {
             {formulaire.reponse}
           </p>
           <button
-          onClick={()=>setPage("Accueil")}
+            // onClick={()=>setPage("Accueil")}
             type="submit"
             className="flex cursor-pointer justify-center items-center outline outline-white w-1/3 rounded-xl text-white p-4"
           >

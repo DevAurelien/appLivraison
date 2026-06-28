@@ -1,6 +1,7 @@
 import { useContext, useState } from "react";
 import { MenuContext } from "../contexte/menuContext";
 import apiFetch from "../utils/apiFetch";
+import { UserContext } from "../contexte/userContext";
 
 export default function Inscription() {
   const [formulaire, setFormulaire] = useState({
@@ -13,6 +14,7 @@ export default function Inscription() {
   });
 
   const { setPage } = useContext(MenuContext);
+  const { setUser } = useContext(UserContext);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -29,7 +31,9 @@ export default function Inscription() {
       .then((res) => res.json())
       .then((data) => {
         if (data.accessToken) {
+          const dateLisible = new Date(data.data.created_at).toLocaleDateString("fr-FR");
           localStorage.setItem("accessToken", data.accessToken);
+          setUser((prev) => ({ ...prev,email:data.data.email, accessToken: data.accessToken, role:data.data.role, creeLe:dateLisible }));
 
           setFormulaire((prev) => ({
             ...prev,
@@ -110,23 +114,23 @@ export default function Inscription() {
             {formulaire.reponse}
           </p>
           <div className="relative w-1/3 rounded-xl">
-  {formulaire.loading && (
-    <>
-      <span className="light-border light-top"></span>
-      <span className="light-border light-right"></span>
-      <span className="light-border light-bottom"></span>
-      <span className="light-border light-left"></span>
-    </>
-  )}
+            {formulaire.loading && (
+              <>
+                <span className="light-border light-top"></span>
+                <span className="light-border light-right"></span>
+                <span className="light-border light-bottom"></span>
+                <span className="light-border light-left"></span>
+              </>
+            )}
 
-  <button
-    type="submit"
-    disabled={formulaire.loading}
-    className="relative z-10 flex cursor-pointer justify-center items-center border border-white w-full rounded-xl text-white/40 p-4 disabled:cursor-not-allowed"
-  >
-    {formulaire.loading ? "Inscription..." : "S'inscrire"}
-  </button>
-</div>
+            <button
+              type="submit"
+              disabled={formulaire.loading}
+              className="relative z-10 flex cursor-pointer justify-center items-center border border-white w-full rounded-xl text-white/40 p-4 disabled:cursor-not-allowed"
+            >
+              {formulaire.loading ? "Inscription..." : "S'inscrire"}
+            </button>
+          </div>
         </form>
       </div>
     </div>

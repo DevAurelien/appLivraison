@@ -5,10 +5,11 @@ export default function Home({
   width = 384,
   height = 384,
   className,
-  titre,tailleTexte
+  titre,tailleTexte,
+  onClick,
 }) {
   return (
-    <div className={`${titre ? "flex-col" : ""} ${className}`}>
+    <div onClick={onClick} className={`${titre ? "flex-col" : ""} ${className}`}>
     <svg
       id="home"
       xmlns="http://www.w3.org/2000/svg"

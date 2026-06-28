@@ -5,10 +5,10 @@ export default function Camion({
   width = 801,
   height = 801,
   className,
-  titre,tailleTexte
+  titre,tailleTexte,onClick,
 }) {
   return (
-    <div className={`${className} ${titre ? "flex-col":""}`}>
+    <div onClick={onClick} className={`${className} ${titre ? "flex-col":""}`}>
     <svg
       id="camion"
       xmlns="http://www.w3.org/2000/svg"

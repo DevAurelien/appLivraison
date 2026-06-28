@@ -30,7 +30,7 @@ export const creerUser = async (email, password) => {
 
 export const loginUser = async (email, password) => {
   const resultat = await sql.query(
-    `SELECT id, email, password, role FROM utilisateurs WHERE email = $1`,
+    `SELECT id, email, password, role, created_at FROM utilisateurs WHERE email = $1`,
     [email]
   );
 
@@ -50,6 +50,7 @@ export const loginUser = async (email, password) => {
     id: user.id,
     email: user.email,
     role: user.role,
+    created_at:user.created_at,
   };
 };
 

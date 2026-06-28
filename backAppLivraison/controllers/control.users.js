@@ -33,6 +33,7 @@ export const ControlLoginUsers = async (req, res) => {
       return res.json({
         couleur: "vert",
         message: "Connection Réussie",
+        data:user,
         accessToken,
         ok: true,
       });

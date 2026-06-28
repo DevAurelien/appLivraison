@@ -5,10 +5,10 @@ export default function FactureIcone({
   width = 512,
   height = 512,
   className,
-  titre,tailleTexte
+  titre,tailleTexte,onClick,
 }) {
   return (
-    <div className={`${className} ${titre ? "flex-col": ""}`}>
+    <div onClick={onClick} className={`${className} ${titre ? "flex-col": ""}`}>
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 512 512"
