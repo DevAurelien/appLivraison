@@ -7,15 +7,16 @@ import CardMessage from "../../components/CardMessage.jsx";
 import CardLivraisons from "../../components/CardLivraisons.jsx";
 
 export default function Accueil() {
-  const { token } = useContext(UserContext);
+  const { user } = useContext(UserContext);
+  const { accessToken } = user;
   const { setPage } = useContext(MenuContext);
   const [livraison, setLivraison] = useState([]);
   const adresse = import.meta.env.VITE_BACKEND_URL;
 
-  const handleLivraison = async (token) => {
+  const handleLivraison = async (accessToken) => {
     fetch(`${adresse}/deliveries`, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${accessToken}`,
       },
     })
       .then((res) => res.json())
@@ -25,7 +26,7 @@ export default function Accueil() {
         setLivraison(data);
       });
   };
-
+  
 
   return (
     <div className="relative w-full h-full">
@@ -37,7 +38,7 @@ export default function Accueil() {
             <CardMessage
               className=""
               titre={"Mot du Directeur"}
-              signature={"Olivier"}
+              signature={"- Jean-Louis"}
             >
               Lorem ipsum dolor sit amet consectetur adipisicing elit. Optio
               tempore ratione expedita maiores, vero dicta reprehenderit
@@ -58,12 +59,13 @@ export default function Accueil() {
                   : ""
               }
             ></CardLivraisons>
-            <button
+            {/* <button
               className="h-[20%] w-[50%]"
               onClick={() => handleLivraison(token)}
             >
               Recup Livraison
-            </button>
+            </button> */}
+
           </div>
         </div>
       </div>

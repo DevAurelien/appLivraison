@@ -126,7 +126,7 @@ export default function Inscription() {
             <button
               type="submit"
               disabled={formulaire.loading}
-              className="relative z-10 flex cursor-pointer justify-center items-center border border-white w-full rounded-xl text-white/40 p-4 disabled:cursor-not-allowed"
+              className="relative z-10 flex cursor-pointer justify-center items-center border border-white w-full rounded-xl text-white p-4 disabled:cursor-not-allowed"
             >
               {formulaire.loading ? "Inscription..." : "S'inscrire"}
             </button>
