@@ -22,13 +22,13 @@ export default function CardLivraisons({
         <div className="flex flex-col w-full">
           {/* Titre */}
           <div className="flex w-full gap-2">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-white p-2 ">
-              <BoxLivraison className="h-full w-full" />
+            <div className="flex h-10 w-10 bg-white/10 shrink-0 items-center justify-center rounded-full border border-white p-2 ">
+              <BoxLivraison color1="yellow" className="h-full w-full" />
             </div>
             <div className="flex w-full">
-              <h1 className="text-[0.9rem] w-full flex justify-between">
+              <h1 className="text-[0.8rem] w-full flex justify-between">
                 {titre}
-                <span className="rounded-xl px-2 bg-green-700 font-bold self-start">
+                <span className="rounded-xl px-2 bg-green-700/20 text-green-400 self-start">
                   En cours
                 </span>
               </h1>
@@ -38,15 +38,15 @@ export default function CardLivraisons({
           {/* Details */}
           <div className="flex w-1/2 shrink-0 items-center">
             {/* Icone de card */}
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-6 text-[0.7rem]">
               {/* div de section */}
               <div className="flex w-full gap-2">
                 <div className="w-[10vw] aspect-square">
                   <Location className="w-full h-full" />
                 </div>
                 <div className="flex flex-col w-full">
-                  <h1 className="font-bold flex items-start">Depart</h1>
-                  <p className=" break-words whitespace-normal text-[0.8rem]">
+                  <h1 className="flex items-start">Depart</h1>
+                  <p className=" break-words whitespace-normal text-[0.6rem]">
                     {depart}
                   </p>
                 </div>
@@ -58,7 +58,7 @@ export default function CardLivraisons({
                 </div>
                 <div className="flex flex-col w-full">
                   <h1 className="font-bold flex items-start">Arrivée</h1>
-                  <p className=" break-words whitespace-normal text-[0.8rem]">
+                  <p className=" break-words whitespace-normal text-[0.6rem]">
                     {arrivee}
                   </p>
                 </div>
@@ -70,7 +70,7 @@ export default function CardLivraisons({
                 </div>
                 <div className="flex flex-col w-full">
                   <h1 className="font-bold flex items-start">Produits</h1>
-                  <p className=" break-words whitespace-normal text-[0.8rem]">
+                  <p className=" break-words whitespace-normal text-[0.6rem]">
                     {produits}
                   </p>
                 </div>
@@ -79,8 +79,8 @@ export default function CardLivraisons({
           </div>
           {/* Jauge */}
           <div className="flex w-1/2">
-            <div className="flex flex-row gap-4 justify-between">
-              <div className="flex relative flex-col gap-4 border-l border-white/30 pl-4 p-2">
+            <div className="flex flex-row gap-2 justify-between">
+              <div className="flex relative flex-col gap-4 border-l border-white/30 pl-4 -mt-4">
                 <div className="relative mx-auto aspect-square w-full max-w-[130px]">
                   <Jauge
                     className="h-full w-full"

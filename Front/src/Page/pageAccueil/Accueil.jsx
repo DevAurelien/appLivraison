@@ -5,6 +5,7 @@ import { UserContext } from "../../contexte/userContext.jsx";
 import { MenuContext } from "../../contexte/menuContext.jsx";
 import CardMessage from "../../components/CardMessage.jsx";
 import CardLivraisons from "../../components/CardLivraisons.jsx";
+import CardPointage from "../../components/CardPointage.jsx";
 
 export default function Accueil() {
   const { user } = useContext(UserContext);
@@ -42,8 +43,7 @@ export default function Accueil() {
             >
               Lorem ipsum dolor sit amet consectetur adipisicing elit. Optio
               tempore ratione expedita maiores, vero dicta reprehenderit
-              inventore sequi animi nisi debitis porro numquam? Quibusdam
-              molestiae est at ipsum temporibus quae!
+              inventore sequi animi nisi debitis porro
             </CardMessage>
             <CardLivraisons
               className=""
@@ -59,6 +59,7 @@ export default function Accueil() {
                   : ""
               }
             ></CardLivraisons>
+            <CardPointage></CardPointage>
             {/* <button
               className="h-[20%] w-[50%]"
               onClick={() => handleLivraison(token)}
