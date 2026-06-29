@@ -8,7 +8,8 @@ export default function CardPointage() {
   const dateActuelle = new Date();
   const date = dateActuelle.toLocaleDateString("fr-FR");
   const heure = dateActuelle.toLocaleTimeString("fr-FR");
-  const accessToken = localStorage.getItem("accessToken")
+  const accessToken = localStorage.getItem("accessToken");
+  const [mesPointages, setMesPointages] = useState([]);
 
   useEffect(() => {
     const verifierMoment = () => {
@@ -30,54 +31,46 @@ export default function CardPointage() {
   }, []);
 
   useEffect(() => {
-  const synchroniserPointages = async () => {
-    const pointages =
-      JSON.parse(localStorage.getItem("pointagesPending")) || [];
+    const synchroniserPointages = async () => {
+      const pointages =
+        JSON.parse(localStorage.getItem("pointagesPending")) || [];
 
-    if (pointages.length === 0) return;
+      if (pointages.length === 0) return;
 
-    for (const pointage of pointages) {
-      try {
-        const res = await apifetch(`/pointages`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-          },
-          body: JSON.stringify(pointage),
-        });
+      for (const pointage of pointages) {
+        try {
+          const res = await apifetch(`/pointages`, "POST", {
+            body: JSON.stringify(pointage),
+          });
 
-        if (res.ok) {
-          const pointagesActuels =
-            JSON.parse(localStorage.getItem("pointagesPending")) || [];
+          if (res.ok) {
+            const pointagesActuels =
+              JSON.parse(localStorage.getItem("pointagesPending")) || [];
 
-          const restants = pointagesActuels.filter(
-            (p) => p.idLocal !== pointage.idLocal
-          );
+            const restants = pointagesActuels.filter(
+              (p) => p.idLocal !== pointage.idLocal,
+            );
 
-          localStorage.setItem(
-            "pointagesPending",
-            JSON.stringify(restants)
-          );
+            localStorage.setItem("pointagesPending", JSON.stringify(restants));
+          }
+        } catch (error) {
+          console.log("Synchro impossible pour l'instant");
         }
-      } catch (error) {
-        console.log("Synchro impossible pour l'instant");
       }
-    }
-  };
+    };
 
-  window.addEventListener("online", synchroniserPointages);
+    window.addEventListener("online", synchroniserPointages);
 
-  synchroniserPointages();
+    synchroniserPointages();
 
-  return () => {
-    window.removeEventListener("online", synchroniserPointages);
-  };
-}, []);
+    return () => {
+      window.removeEventListener("online", synchroniserPointages);
+    };
+  }, []);
 
   const handlePointage = () => {
     setAction("");
-    setIsPointé(true)
+    setIsPointé(true);
   };
 
   return (
@@ -88,9 +81,9 @@ export default function CardPointage() {
         </div>
 
         <div className="flex flex-col">
-          <h1 className="">Pointer ma presence</h1>
-          
-          <p className=" text-[0.6rem]">
+          <h1 className="select-none">Pointer ma présence</h1>
+
+          <p className="select-none text-[0.6rem]">
             Pointage {moment} {action} effectué{" "}
             {action === "" ? `a ${heure}` : ""}
           </p>
@@ -99,7 +92,7 @@ export default function CardPointage() {
       <button
         disabled={isPointé}
         onClick={handlePointage}
-        className="text-black bg-yellow-300 rounded-md self-center px-4 p-1"
+        className="text-black bg-yellow-300 rounded-md self-center px-4 p-1 cursor-pointer"
       >
         Pointer
       </button>

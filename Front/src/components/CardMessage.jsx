@@ -3,7 +3,7 @@ import { Director } from "./Director";
 export default function CardMessage({ className, children, titre, signature }) {
   return (
     <div
-      className={`${className} flex card w-full rounded-xl text-white p-2 gap-2 -mt-2`}
+      className={`${className} flex card w-full rounded-xl text-white p-2 gap-2 -mt-2 select-none`}
     >
       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-800/30 border border-white/70 p-1">
         <Director className="h-full w-full" />

@@ -16,7 +16,7 @@ export default function CardLivraisons({
 
   return (
     <div
-      className={`${className} flex card w-full opacity-[0.8] rounded-xl text-white p-2 gap-2`}
+      className={`${className} flex card w-full opacity-[0.8] rounded-xl text-white p-2 gap-2 select-none`}
     >
       
         <div className="flex flex-col w-full">

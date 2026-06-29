@@ -15,7 +15,8 @@ try{
       "Content-Type": "application/json",
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
-  });
+  }
+);
   if (!res.ok) {
     if (!endPoint.startsWith("/auth") && res.status === 401) {
       const resRefresh = await fetch(`${backend_URL}${"/auth/refresh"}`, {
