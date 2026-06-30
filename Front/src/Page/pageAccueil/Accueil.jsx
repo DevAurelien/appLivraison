@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import BarreNavigation from "./Navigation.jsx";
+import BarreNavigation from "../../Navigation.jsx";
 import HeaderLogo from "./HeaderLogo.jsx";
 import { UserContext } from "../../contexte/userContext.jsx";
 import { MenuContext } from "../../contexte/menuContext.jsx";
@@ -31,7 +31,6 @@ export default function Accueil() {
 
   return (
     <div className="relative w-full h-full">
-      <BarreNavigation />
       <div className="fd relative bg-(--bg-main) w-full h-full flex justify-center text-white overflow-x-scroll">
         <div className="mx-4 w-full h-full gap-4">
           <HeaderLogo />

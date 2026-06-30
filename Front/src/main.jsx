@@ -5,6 +5,7 @@ import { Routes, Route, BrowserRouter } from "react-router-dom";
 import { MenuContextProvider } from "./contexte/menuContext.jsx";
 import { NavContextProvider } from "./contexte/navContext.jsx";
 import { UserContextProvider } from "./contexte/userContext.jsx";
+import BarreNavigation from "./Navigation.jsx";
 
 createRoot(document.getElementById("root")).render(
   <BrowserRouter>
@@ -12,7 +13,8 @@ createRoot(document.getElementById("root")).render(
       <MenuContextProvider>
         <NavContextProvider>
           <Routes>
-            <Route path="/" element={<App />} />
+      
+            <Route path="/" element={<><App /><BarreNavigation /></>} />
           </Routes>
         </NavContextProvider>
       </MenuContextProvider>
