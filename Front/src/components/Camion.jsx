@@ -94,7 +94,7 @@ export default function Camion({
         strokeMiterlimit={10}
       />
     </svg>
-    <h1 className={tailleTexte}>{titre}</h1>
+    <h1 className={`${tailleTexte} flex justify-center items-center`}>{titre}</h1>
     </div>
   );
 }

@@ -4,7 +4,7 @@ import { ArrivedLocation, Location } from "./IconeStartEnd.jsx";
 import BoxLivraison from "./BoxLivraison.jsx";
 import Boites from "./Boites.jsx";
 
-export default function CardLivraisons({
+export default function CardLivraisonsDash({
   className,
   titre,
   depart = "",

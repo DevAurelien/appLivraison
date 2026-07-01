@@ -28,6 +28,6 @@ export default function FactureIcone({
         <path d="M850 1757 c-53 -27 -49 -106 6 -127 16 -6 492 -10 1300 -10 1098 0 1279 2 1303 15 50 25 50 94 0 120 -24 13 -203 15 -1306 15 -1006 0 -1283 -3 -1303 -13z" />
         <path d="M830 1340 c-27 -27 -25 -66 5 -95 l24 -25 1296 0 1296 0 24 25 c30 30 31 54 4 89 l-20 26 -1305 0 c-1291 0 -1304 0 -1324 -20z" />
       </g>
-    </svg><h1 className={tailleTexte}>{titre}</h1></div>
+    </svg><h1 className={`${tailleTexte} flex justify-center items-center`}>{titre}</h1></div>
   );
 }

@@ -4,7 +4,7 @@ import HeaderLogo from "./HeaderLogo.jsx";
 import { UserContext } from "../../contexte/userContext.jsx";
 import { MenuContext } from "../../contexte/menuContext.jsx";
 import CardMessage from "../../components/CardMessage.jsx";
-import CardLivraisons from "../../components/CardLivraisons.jsx";
+import CardLivraisonsDash from "../../components/CardLivraisonsDash.jsx";
 import CardPointage from "../../components/CardPointage.jsx";
 
 export default function Accueil() {
@@ -44,7 +44,7 @@ export default function Accueil() {
               tempore ratione expedita maiores, vero dicta reprehenderit
               inventore sequi animi nisi debitis porro
             </CardMessage>
-            <CardLivraisons
+            <CardLivraisonsDash
               className=""
               titre={`Tournée du jour`}
               depart={
@@ -57,7 +57,9 @@ export default function Accueil() {
                   ? `${livraison[1].adresse.rue} ${livraison[1].adresse.codePostal} ${livraison[1].adresse.ville}`
                   : ""
               }
-            ></CardLivraisons>
+            >
+
+            </CardLivraisonsDash>
             <CardPointage></CardPointage>
             {/* <button
               className="h-[20%] w-[50%]"

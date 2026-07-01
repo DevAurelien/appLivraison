@@ -2,10 +2,25 @@ import { createRoot } from "react-dom/client";
 import App from "./App.jsx";
 import "./style.css";
 import { Routes, Route, BrowserRouter } from "react-router-dom";
-import { MenuContextProvider } from "./contexte/menuContext.jsx";
+import { MenuContext, MenuContextProvider } from "./contexte/menuContext.jsx";
 import { NavContextProvider } from "./contexte/navContext.jsx";
 import { UserContextProvider } from "./contexte/userContext.jsx";
 import BarreNavigation from "./Navigation.jsx";
+import { useContext } from "react";
+
+function Layout() {
+  const { page } = useContext(MenuContext);
+
+  const cacherNav =
+    page === "connection" || page === "inscription";
+
+  return (
+    <>
+      <App />
+      {!cacherNav && <BarreNavigation />}
+    </>
+  );
+}
 
 createRoot(document.getElementById("root")).render(
   <BrowserRouter>
@@ -13,15 +28,10 @@ createRoot(document.getElementById("root")).render(
       <MenuContextProvider>
         <NavContextProvider>
           <Routes>
-      
-            <Route path="/" element={<><App /><BarreNavigation /></>} />
+            <Route path="/" element={<Layout />} />
           </Routes>
         </NavContextProvider>
       </MenuContextProvider>
     </UserContextProvider>
-  </BrowserRouter>,
+  </BrowserRouter>
 );
-{
-  /* <Route path="/seConnecter" element={<SeConnecter />} />
-        <Route path="/inscription" element={<Inscription />} /> */
-}
