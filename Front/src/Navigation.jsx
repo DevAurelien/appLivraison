@@ -24,10 +24,19 @@ export default function BarreNavigation() {
       composant: UserIcone,
     },
   ];
+  const activeIndex = listeIcones.findIndex((item) => item.page === page);
+  const nbIcones = listeIcones.length;
+  const segment = 100 / nbIcones;
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 h-[10vh] w-screen text-white">
-      <ul className="flex h-full card min-w-max flex-nowrap items-center justify-evenly gap-2 bg-(--card-bg) px-4">
+      <ul className="flex relative h-full card w-full flex-nowrap items-center bg-(--card-bg)">
+        <div
+          className={`absolute z-10 -top-5 h-16 w-16 rounded-full bg-(--card-bg) transition-all duration-700`}
+          style={{
+            left: `calc(${activeIndex * segment}% + ${segment / 2}% - 2rem)`,
+          }}
+        />
         {listeIcones.map((item) => {
           const Icone = item.composant;
           const actif = page === item.page;
@@ -35,13 +44,13 @@ export default function BarreNavigation() {
           return (
             <li
               key={item.page}
-              className={`flex shrink-0 items-center justify-center pb-2 transition-translate duration-700 ${actif ? "-translate-y-6" : ""}`}
+              className={`flex flex-1 shrink-0 items-center justify-center pb-2 transition-translate duration-700 z-30 ${actif ? "-translate-y-6" : ""}`}
             >
               <button
                 type="button"
                 onClick={() => setPage(item.page)}
                 className={`
-              flex h-18 w-20 shrink-0 items-center justify-center rounded-full cursor-pointer bg-(--card-bg)
+              flex h-16 w-16 shrink-0 items-center justify-center rounded-full cursor-pointer
               ${actif ? "text-yellow-300" : "text-white"}
             `}
               >
