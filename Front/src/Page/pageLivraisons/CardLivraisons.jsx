@@ -37,7 +37,7 @@ export default function CardLivraisons({
   const creneau = "10:00 - 13:00";
 
   return (
-    <div className="flex justify-evenly roboto-400 cardLiv w-full p-2 rounded-xl text-white overflow-hidden">
+    <div className="flex justify-evenly roboto-400 cardLiv w-full p-2 rounded-xl text-white overflow-x-hidden overflow-y-scroll">
       <div className="flex flex-col w-full gap-1 ">
         <div className="flex justify-between ">
           <div className="flex pb-2 items-center">
