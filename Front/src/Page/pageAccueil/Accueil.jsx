@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import BarreNavigation from "../../Navigation.jsx";
-import HeaderLogo from "./HeaderLogo.jsx";
+import HeaderLogo from "../HeaderLogo.jsx";
 import { UserContext } from "../../contexte/userContext.jsx";
 import { MenuContext } from "../../contexte/menuContext.jsx";
 import CardMessage from "../../components/CardMessage.jsx";

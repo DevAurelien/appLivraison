@@ -55,6 +55,11 @@ html {
     border: 1px solid #2A364A;
 }
 
+.cardLiv {
+    background: #151F2E;
+    border: 2px solid #233e6e;
+}
+
 .button-primary {
     background: #2a5bc4;
     color: #FFFFFF;
@@ -69,6 +74,36 @@ html {
 .manrope{
     font-family: "Manrope", system-ui, sans-serif;
 }
+
+.manrope-200 {
+  font-family: "Manrope", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 200;
+  font-style: normal;
+}
+
+.bebas-neue-regular {
+  font-family: "Bebas Neue", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.roboto-400 {
+  font-family: "Roboto", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-variation-settings:
+    "wdth" 100;
+}
+
+.montserrat-200 {
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 200;
+  font-style: normal;
+}
+
 
 /* bleu pour :
  boutons principaux
