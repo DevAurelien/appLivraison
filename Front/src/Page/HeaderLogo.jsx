@@ -12,12 +12,12 @@ export default function HeaderLogo({children}) {
   const {page} = useContext(MenuContext)
 
   return (
-    <div className="flex items-end pb-4 w-full h-[10%] overflow-hidden">
+    <div className="flex shrink-0 items-end pb-4 w-full h-[10%] overflow-hidden">
       <div className="w-[80%] flex justify-between items-end">
-        <ZesteoLogo className="w-[50%] max-h-full object-contain items-end flex text-yellow-300" />
+        <ZesteoLogo className="w-[40%] max-h-full object-contain items-end flex text-yellow-300" />
         {page === "Accueil" ? <CardMetierHeader className="px-4 flex justify-start items-start cursor-default">
           {role}
-        </CardMetierHeader> : (children)}
+        </CardMetierHeader> : <p className="flex justify-center w-[60%] whitespace-nowrap">{children}</p>}
       </div>
       <div className="w-[10%]"></div>
       <div className="w-[10%] h-full items-end flex justify-end">

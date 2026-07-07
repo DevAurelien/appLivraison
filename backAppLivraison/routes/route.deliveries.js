@@ -3,9 +3,11 @@ import {controlRecupDeliveries} from "../controllers/control.deliveries.js"
 
 const router = express.Router();
 
-router.get("/deliveries", controlRecupDeliveries)
+router.get("/livraisonsJour", controlRecupDeliveries)
 
 router.get("/deliveries/:id", controlRecupDeliveries)
+
+// router.get("/livraisonsJour", controlRecupLivraisons)
 
 // router.post("/deliveries", controlDeliveries)
 

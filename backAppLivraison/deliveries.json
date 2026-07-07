@@ -1,107 +1,509 @@
-[
-  {
-    "id": 1,
-    "client": {
-      "nom": "Martin",
-      "prenom": "Sophie",
-      "telephone": "0612345678"
+{
+  "livraisons": [
+    {
+      "numeroDeLivraison": 1,
+      "client": {
+        "nom": "Dutard",
+        "prenom": "Jean-Pierre",
+        "telephone": "06 12 45 78 90"
+      },
+      "adresse": {
+        "rue": "16 Rue des Lilas",
+        "codePostal": "47300",
+        "ville": "Villeneuve-sur-Lot"
+      },
+      "magasin": {
+        "nom": "BUT VILLENEUVE"
+      },
+      "estimation": {
+        "heure": "10:45",
+        "creneau": "10:00 - 13:00",
+        "dureeProchaineLivraison": "7 min",
+        "distanceProchaineLivraison": "4.8 km"
+      },
+      "produits": [
+        {
+          "nom": "Réfrigérateur",
+          "categorie": "Installation",
+          "reprise": true
+        },
+        {
+          "nom": "Table basse",
+          "categorie": "Depose",
+          "reprise": false
+        }
+      ]
     },
-    "adresse": {
-      "rue": "12 rue des Lilas",
-      "codePostal": "47300",
-      "ville": "Villeneuve-sur-Lot"
+    {
+      "numeroDeLivraison": 2,
+      "client": {
+        "nom": "Martins",
+        "prenom": "Sofia",
+        "telephone": "06 34 91 22 18"
+      },
+      "adresse": {
+        "rue": "8 Avenue du Maréchal Juin",
+        "codePostal": "47200",
+        "ville": "Marmande"
+      },
+      "magasin": {
+        "nom": "CONFORAMA VILLENEUVE"
+      },
+      "estimation": {
+        "heure": "09:10",
+        "creneau": "08:00 - 11:00",
+        "dureeProchaineLivraison": "18 min",
+        "distanceProchaineLivraison": "13.2 km"
+      },
+      "produits": [
+        {
+          "nom": "Canapé d'angle",
+          "categorie": "Depose",
+          "reprise": true
+        },
+        {
+          "nom": "Pouf coffre",
+          "categorie": "Depose",
+          "reprise": false
+        }
+      ]
     },
-    "dateLivraison": "2026-06-20",
-    "creneau": "08:00-12:00",
-    "statut": "planifiee",
-    "livreurId": 2,
-    "vehiculeId": 1,
-    "agenceId": 1,
-    "commentaire": "Appeler le client 30 minutes avant",
-    "dateCreation": "2026-06-16T18:30:00.000Z"
-  },
-  {
-    "id": 2,
-    "client": {
-      "nom": "Dubois",
-      "prenom": "Thomas",
-      "telephone": "0678451236"
+    {
+      "numeroDeLivraison": 3,
+      "client": {
+        "nom": "Lacombe",
+        "prenom": "Éric",
+        "telephone": "07 68 44 10 32"
+      },
+      "adresse": {
+        "rue": "21 Chemin des Vignes",
+        "codePostal": "47110",
+        "ville": "Sainte-Livrade-sur-Lot"
+      },
+      "magasin": {
+        "nom": "PIERRE ET DÉCO"
+      },
+      "estimation": {
+        "heure": "09:40",
+        "creneau": "09:00 - 12:00",
+        "dureeProchaineLivraison": "12 min",
+        "distanceProchaineLivraison": "9.6 km"
+      },
+      "produits": [
+        {
+          "nom": "Salon de jardin",
+          "categorie": "Depose",
+          "reprise": false
+        },
+        {
+          "nom": "Parasol",
+          "categorie": "PiedCamion",
+          "reprise": false
+        }
+      ]
     },
-    "adresse": {
-      "rue": "8 avenue de Bordeaux",
-      "codePostal": "47200",
-      "ville": "Marmande"
+    {
+      "numeroDeLivraison": 4,
+      "client": {
+        "nom": "Benali",
+        "prenom": "Nadia",
+        "telephone": "06 83 57 41 06"
+      },
+      "adresse": {
+        "rue": "5 Rue Victor Hugo",
+        "codePostal": "47500",
+        "ville": "Fumel"
+      },
+      "magasin": {
+        "nom": "BUT VILLENEUVE"
+      },
+      "estimation": {
+        "heure": "10:15",
+        "creneau": "10:00 - 13:00",
+        "dureeProchaineLivraison": "25 min",
+        "distanceProchaineLivraison": "21.4 km"
+      },
+      "produits": [
+        {
+          "nom": "Lave-linge",
+          "categorie": "Installation",
+          "reprise": true
+        }
+      ]
     },
-    "dateLivraison": "2026-06-20",
-    "creneau": "14:00-18:00",
-    "statut": "en_cours",
-    "livreurId": 3,
-    "vehiculeId": 2,
-    "agenceId": 1,
-    "commentaire": "Maison avec portail gris",
-    "dateCreation": "2026-06-15T09:10:00.000Z"
-  },
-  {
-    "id": 3,
-    "client": {
-      "nom": "Bernard",
-      "prenom": "Claire",
-      "telephone": "0655987412"
+    {
+      "numeroDeLivraison": 5,
+      "client": {
+        "nom": "Roussel",
+        "prenom": "Camille",
+        "telephone": "07 21 39 84 55"
+      },
+      "adresse": {
+        "rue": "12 Route de Bordeaux",
+        "codePostal": "47400",
+        "ville": "Tonneins"
+      },
+      "magasin": {
+        "nom": "ESPRIT LITERIE"
+      },
+      "estimation": {
+        "heure": "10:50",
+        "creneau": "10:00 - 12:00",
+        "dureeProchaineLivraison": "16 min",
+        "distanceProchaineLivraison": "14.7 km"
+      },
+      "produits": [
+        {
+          "nom": "Matelas 160x200",
+          "categorie": "Depose",
+          "reprise": true
+        },
+        {
+          "nom": "Sommier 160x200",
+          "categorie": "Depose",
+          "reprise": false
+        }
+      ]
     },
-    "adresse": {
-      "rue": "4 chemin du Lac",
-      "codePostal": "47110",
-      "ville": "Sainte-Livrade-sur-Lot"
+    {
+      "numeroDeLivraison": 6,
+      "client": {
+        "nom": "Garnier",
+        "prenom": "Thomas",
+        "telephone": "06 59 72 03 88"
+      },
+      "adresse": {
+        "rue": "3 Impasse des Acacias",
+        "codePostal": "47210",
+        "ville": "Villeréal"
+      },
+      "magasin": {
+        "nom": "BUREAU VALLÉE"
+      },
+      "estimation": {
+        "heure": "11:20",
+        "creneau": "11:00 - 13:00",
+        "dureeProchaineLivraison": "9 min",
+        "distanceProchaineLivraison": "6.1 km"
+      },
+      "produits": [
+        {
+          "nom": "Bureau droit 140 cm",
+          "categorie": "Depose",
+          "reprise": false
+        },
+        {
+          "nom": "Fauteuil Bureau",
+          "categorie": "PiedCamion",
+          "reprise": false
+        }
+      ]
     },
-    "dateLivraison": "2026-06-21",
-    "creneau": "09:00-13:00",
-    "statut": "a_planifier",
-    "livreurId": null,
-    "vehiculeId": null,
-    "agenceId": 1,
-    "commentaire": "Livraison au rez-de-chaussée",
-    "dateCreation": "2026-06-16T11:45:00.000Z"
-  },
-  {
-    "id": 4,
-    "client": {
-      "nom": "Leroy",
-      "prenom": "Julien",
-      "telephone": "0622334455"
+    {
+      "numeroDeLivraison": 7,
+      "client": {
+        "nom": "Moreau",
+        "prenom": "Isabelle",
+        "telephone": "06 42 18 77 29"
+      },
+      "adresse": {
+        "rue": "44 Boulevard de la République",
+        "codePostal": "47300",
+        "ville": "Villeneuve-sur-Lot"
+      },
+      "magasin": {
+        "nom": "CONFORAMA AGEN"
+      },
+      "estimation": {
+        "heure": "11:45",
+        "creneau": "11:00 - 14:00",
+        "dureeProchaineLivraison": "14 min",
+        "distanceProchaineLivraison": "10.3 km"
+      },
+      "produits": [
+        {
+          "nom": "Four encastrable",
+          "categorie": "Installation",
+          "reprise": true
+        },
+        {
+          "nom": "Plaque induction",
+          "categorie": "Installation",
+          "reprise": false
+        }
+      ]
     },
-    "adresse": {
-      "rue": "25 boulevard de la République",
-      "codePostal": "47000",
-      "ville": "Agen"
+    {
+      "numeroDeLivraison": 8,
+      "client": {
+        "nom": "Perez",
+        "prenom": "Antoine",
+        "telephone": "07 90 14 63 51"
+      },
+      "adresse": {
+        "rue": "19 Rue de la Gare",
+        "codePostal": "47140",
+        "ville": "Penne-d'Agenais"
+      },
+      "magasin": {
+        "nom": "BUT VILLENEUVE"
+      },
+      "estimation": {
+        "heure": "12:20",
+        "creneau": "12:00 - 15:00",
+        "dureeProchaineLivraison": "22 min",
+        "distanceProchaineLivraison": "18.9 km"
+      },
+      "produits": [
+        {
+          "nom": "Cuisine",
+          "categorie": "Depose",
+          "reprise": false
+        },
+        {
+          "nom": "Plan de travail",
+          "categorie": "Depose",
+          "reprise": false
+        }
+      ]
     },
-    "dateLivraison": "2026-06-18",
-    "creneau": "08:00-12:00",
-    "statut": "livree",
-    "livreurId": 2,
-    "vehiculeId": 1,
-    "agenceId": 2,
-    "commentaire": "Livraison terminée sans incident",
-    "dateCreation": "2026-06-14T16:20:00.000Z"
-  },
-  {
-    "id": 5,
-    "client": {
-      "nom": "Petit",
-      "prenom": "Laura",
-      "telephone": "0699887766"
+    {
+      "numeroDeLivraison": 9,
+      "client": {
+        "nom": "Boyer",
+        "prenom": "Lucie",
+        "telephone": "06 77 35 96 20"
+      },
+      "adresse": {
+        "rue": "27 Rue Pasteur",
+        "codePostal": "47290",
+        "ville": "Cancon"
+      },
+      "magasin": {
+        "nom": "ESPRIT LITERIE"
+      },
+      "estimation": {
+        "heure": "13:05",
+        "creneau": "13:00 - 16:00",
+        "dureeProchaineLivraison": "11 min",
+        "distanceProchaineLivraison": "8.5 km"
+      },
+      "produits": [
+        {
+          "nom": "Lit coffre 140x190",
+          "categorie": "Depose",
+          "reprise": true
+        },
+        {
+          "nom": "Tête de lit",
+          "categorie": "PiedCamion",
+          "reprise": false
+        }
+      ]
     },
-    "adresse": {
-      "rue": "3 impasse des Chênes",
-      "codePostal": "47500",
-      "ville": "Fumel"
+    {
+      "numeroDeLivraison": 10,
+      "client": {
+        "nom": "Nguyen",
+        "prenom": "Minh",
+        "telephone": "07 11 85 49 73"
+      },
+      "adresse": {
+        "rue": "6 Allée des Platanes",
+        "codePostal": "47310",
+        "ville": "Roquefort"
+      },
+      "magasin": {
+        "nom": "BUREAU VALLÉE"
+      },
+      "estimation": {
+        "heure": "13:40",
+        "creneau": "13:00 - 15:00",
+        "dureeProchaineLivraison": "20 min",
+        "distanceProchaineLivraison": "17.2 km"
+      },
+      "produits": [
+        {
+          "nom": "Armoire métallique",
+          "categorie": "Depose",
+          "reprise": false
+        },
+        {
+          "nom": "Bureau",
+          "categorie": "Depose",
+          "reprise": false
+        }
+      ]
     },
-    "dateLivraison": "2026-06-19",
-    "creneau": "13:00-17:00",
-    "statut": "probleme",
-    "livreurId": 4,
-    "vehiculeId": 3,
-    "agenceId": 2,
-    "commentaire": "Client absent lors du passage",
-    "dateCreation": "2026-06-13T14:05:00.000Z"
-  }
-]
+    {
+      "numeroDeLivraison": 11,
+      "client": {
+        "nom": "Fabre",
+        "prenom": "Olivier",
+        "telephone": "06 25 73 18 64"
+      },
+      "adresse": {
+        "rue": "31 Avenue Jean Jaurès",
+        "codePostal": "47000",
+        "ville": "Agen"
+      },
+      "magasin": {
+        "nom": "CONFORAMA AGEN"
+      },
+      "estimation": {
+        "heure": "14:15",
+        "creneau": "14:00 - 17:00",
+        "dureeProchaineLivraison": "15 min",
+        "distanceProchaineLivraison": "12.8 km"
+      },
+      "produits": [
+        {
+          "nom": "Sèche-linge",
+          "categorie": "Installation",
+          "reprise": true
+        },
+        {
+          "nom": "Meuble TV",
+          "categorie": "Depose",
+          "reprise": false
+        }
+      ]
+    },
+    {
+      "numeroDeLivraison": 12,
+      "client": {
+        "nom": "Delmas",
+        "prenom": "Chloé",
+        "telephone": "07 54 62 31 09"
+      },
+      "adresse": {
+        "rue": "9 Rue des Écoles",
+        "codePostal": "47800",
+        "ville": "Miramont-de-Guyenne"
+      },
+      "magasin": {
+        "nom": "PIERRE ET DÉCO"
+      },
+      "estimation": {
+        "heure": "15:00",
+        "creneau": "14:00 - 16:00",
+        "dureeProchaineLivraison": "28 min",
+        "distanceProchaineLivraison": "24.5 km"
+      },
+      "produits": [
+        {
+          "nom": "Bahut 3 portes",
+          "categorie": "Depose",
+          "reprise": true
+        },
+        {
+          "nom": "Miroir mural",
+          "categorie": "PiedCamion",
+          "reprise": false
+        }
+      ]
+    },
+    {
+      "numeroDeLivraison": 13,
+      "client": {
+        "nom": "Charpentier",
+        "prenom": "Marc",
+        "telephone": "06 97 40 52 11"
+      },
+      "adresse": {
+        "rue": "18 Lotissement Bellevue",
+        "codePostal": "47260",
+        "ville": "Castelmoron-sur-Lot"
+      },
+      "magasin": {
+        "nom": "BUT VILLENEUVE"
+      },
+      "estimation": {
+        "heure": "15:35",
+        "creneau": "15:00 - 18:00",
+        "dureeProchaineLivraison": "17 min",
+        "distanceProchaineLivraison": "13.9 km"
+      },
+      "produits": [
+        {
+          "nom": "Cuisine complète",
+          "categorie": "Depose",
+          "reprise": false
+        },
+        {
+          "nom": "Évier inox",
+          "categorie": "Depose",
+          "reprise": false
+        }
+      ]
+    },
+    {
+      "numeroDeLivraison": 14,
+      "client": {
+        "nom": "Masson",
+        "prenom": "Julie",
+        "telephone": "07 36 28 90 47"
+      },
+      "adresse": {
+        "rue": "2 Place du Marché",
+        "codePostal": "47150",
+        "ville": "Monflanquin"
+      },
+      "magasin": {
+        "nom": "ESPRIT LITERIE"
+      },
+      "estimation": {
+        "heure": "16:10",
+        "creneau": "16:00 - 18:00",
+        "dureeProchaineLivraison": "10 min",
+        "distanceProchaineLivraison": "7.4 km"
+      },
+      "produits": [
+        {
+          "nom": "Matelas 180x200",
+          "categorie": "Depose",
+          "reprise": true
+        },
+        {
+          "nom": "Oreillers mémoire de forme",
+          "categorie": "PiedCamion",
+          "reprise": false
+        }
+      ]
+    },
+    {
+      "numeroDeLivraison": 15,
+      "client": {
+        "nom": "Lemoine",
+        "prenom": "Karim",
+        "telephone": "06 48 13 75 82"
+      },
+      "adresse": {
+        "rue": "14 Rue des Mésanges",
+        "codePostal": "47230",
+        "ville": "Lavardac"
+      },
+      "magasin": {
+        "nom": "BUREAU VALLÉE"
+      },
+      "estimation": {
+        "heure": "16:45",
+        "creneau": "16:00 - 19:00",
+        "dureeProchaineLivraison": "19 min",
+        "distanceProchaineLivraison": "15.6 km"
+      },
+      "produits": [
+        {
+          "nom": "Caisson de rangement",
+          "categorie": "Depose",
+          "reprise": false
+        },
+        {
+          "nom": "Chaise de bureau",
+          "categorie": "PiedCamion",
+          "reprise": false
+        }
+      ]
+    }
+  ]
+}

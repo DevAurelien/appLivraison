@@ -12,15 +12,36 @@ import Shop from "../../components/Shop.jsx";
 import CardProduits from "./CardProduits.jsx";
 
 export default function CardLivraisons({
-  nom = "Dutard",
-  prenom = "Jean-Pierre",
-  adresse = "16 Rue des Lilas",
+  onClick=()=>{},
+  numeroDeLivraison = 1,
+
+  client = {
+    nom: "Dutard",
+    prenom: "Jean-Pierre",
+    telephone: "06 12 45 78 90",
+  },
+
+  adresse = {
+    rue: "16 Rue des Lilas",
+    codePostal: "47300",
+    ville: "Villeneuve-sur-Lot",
+  },
+
+  magasin = {
+    nom: "BUT VILLENEUVE",
+  },
+
+  estimation = {
+    heure: "10:45",
+    creneau: "10:00 - 13:00",
+    dureeProchaineLivraison: "7 min",
+    distanceProchaineLivraison: "4.8 km",
+  },
+
   produits = [
-    { produits: "Frigo", categorie: "Installation", reprise: true },
-    { produits: "Table", categorie: "Depose" },
+    { nom: "Réfrigérateur", categorie: "Installation", reprise: true },
+    { nom: "Table basse", categorie: "Depose", reprise: false },
   ],
-  codePostal = "31270",
-  ville = "Didier",
 }) {
   const correspondance = {
     Installation: <Tournevis />,
@@ -29,15 +50,9 @@ export default function CardLivraisons({
     inconnu: <Interro />,
   };
 
-  const numeroDeLivraison = 1;
-  const heureEstimation = "11:30";
-  const dureeProchainLivraison = "7 min";
-  const distanceProchainLivraison = "4.8 km";
-  const nomMagasin = "BUT VILLENEUVE";
-  const creneau = "10:00 - 13:00";
 
   return (
-    <div className="flex justify-evenly roboto-400 cardLiv w-full p-2 rounded-xl text-white overflow-x-hidden overflow-y-scroll">
+    <div onClick={onClick} className="flex shrink-0 justify-evenly roboto-400 cardLiv w-full p-2 rounded-xl text-white overflow-hidden">
       <div className="flex flex-col w-full gap-1 ">
         <div className="flex justify-between ">
           <div className="flex pb-2 items-center">
@@ -48,35 +63,35 @@ export default function CardLivraisons({
           <div className="flex flex-col text-[0.8rem] leading-none">
             <p>Arrivée estimée</p>
             <p className="flex justify-end text-blue-500 font-bold text-xl">
-              {heureEstimation}
+              {estimation.heure}
             </p>
           </div>
         </div>
 
         <div className="w-full flex ">
           <div className="flex w-6/8 text-[1rem] leading-none text-white/50">
-            <p className="flex flex-col gap-0.2">
-              <span className="font-bold text-xl text-white">
-                {nom} {prenom}
-              </span>
-              <span className="flex items-center gap-2 text-[0.6rem]">
-                <Shop /> {nomMagasin}
-              </span>
-              <span>{adresse}</span>
-              <span>
-                {codePostal} {ville}
-              </span>
-            </p>
+            <div className="flex flex-col gap-0.2">
+              <p className="font-bold text-xl text-white">
+                {client.nom} {client.prenom}
+              </p>
+              <p className="flex items-center gap-2 text-[0.6rem]">
+                <Shop /> {magasin.nom}
+              </p>
+              <p>{adresse.rue}</p>
+              <p>
+                {adresse.codePostal} {adresse.ville}
+              </p>
+            </div>
           </div>
 
           <div className="w-2/8 p-1 my-1 flex gap-2 items-center justify-center border rounded-xl flex-col leading-none bg-(--card-bg-soft) text-[0.8rem]">
             <p className="gap-2 flex items-center">
               <TimeA />
-              {dureeProchainLivraison}
+              {estimation.dureeProchaineLivraison}
             </p>
             <p className="gap-2 flex items-center">
               <Road />
-              {distanceProchainLivraison}
+              {estimation.distanceProchaineLivraison}
             </p>
           </div>
         </div>
@@ -85,14 +100,14 @@ export default function CardLivraisons({
           {produits?.map((item, index) => {
             return (
               <CardProduits key={index} className={`text-[0.8rem]`}>
-                <span className="flex size-4 items-center">
+                <p className="flex size-4 items-center">
                   {correspondance[item.categorie]}
-                </span>
-                {item.produits}{" "}
+                </p>
+                {item.nom}{" "}
                 {item.reprise ? (
-                  <span className="border-white border px-1 flex items-center rounded-full h-full aspect-square">
+                  <p className="border-white border px-1 flex items-center rounded-full h-full aspect-square">
                     +R
-                  </span>
+                  </p>
                 ) : (
                   ""
                 )}{" "}
@@ -101,7 +116,7 @@ export default function CardLivraisons({
           })}
         </div>
         <div className="flex w-full items-center gap-2 text-xs">
-          <TimeB /> {creneau}
+          <TimeB /> {estimation.creneau}
         </div>
 
         <div className="flex items-start w-full gap-2 text-xs">
