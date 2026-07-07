@@ -11,11 +11,9 @@ export default function Livraisons() {
   useEffect(() => {
     apifetch("/livraisonsJour")
       .then((res) => {
-        alert(res.status);
         return res.json();
       })
       .then((datas) => {
-        alert(JSON.stringify(datas));
         setLiv(datas.livraisons);
         console.log(liv);
       });
