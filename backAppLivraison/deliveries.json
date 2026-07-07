@@ -296,7 +296,7 @@
         },
         {
           "nom": "Tête de lit",
-          "categorie": "PiedCamion",
+          "categorie": "Depose",
           "reprise": false
         }
       ]
@@ -392,8 +392,8 @@
       },
       "produits": [
         {
-          "nom": "Bahut 3 portes",
-          "categorie": "Depose",
+          "nom": "Buffet 3 portes",
+          "categorie": "PiedCamion",
           "reprise": true
         },
         {
@@ -465,7 +465,7 @@
           "reprise": true
         },
         {
-          "nom": "Oreillers mémoire de forme",
+          "nom": "Oreillers",
           "categorie": "PiedCamion",
           "reprise": false
         }
@@ -494,7 +494,7 @@
       },
       "produits": [
         {
-          "nom": "Caisson de rangement",
+          "nom": "Commode",
           "categorie": "Depose",
           "reprise": false
         },

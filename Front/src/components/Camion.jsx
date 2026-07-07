@@ -2,8 +2,8 @@ export default function Camion({
   color1 = "#fff",
   color2 = "#000",
   color3 = "none",
-  width = 801,
-  height = 801,
+  width = 15,
+  height = 15,
   className,
   titre,tailleTexte,onClick,
 }) {
