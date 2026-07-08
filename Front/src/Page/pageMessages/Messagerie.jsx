@@ -1,4 +1,4 @@
-import BulleGauche from "./bulleGauche.jsx";
+import BulleGauche from "./BulleGauche.jsx";
 import BulleDroite from "./BulleDroite.jsx";
 import { useRef, createRef, useState } from "react";
 
