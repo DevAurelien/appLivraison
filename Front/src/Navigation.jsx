@@ -1,6 +1,7 @@
 import Home from "./components/Home.jsx";
 import LivraisonIcone from "./components/LivraisonIcone.jsx";
 import UserIcone from "./components/UserIcone.jsx";
+import MessagesIcone from "./components/Messages.jsx"
 import { useContext } from "react";
 import { MenuContext } from "./contexte/menuContext.jsx";
 
@@ -19,6 +20,10 @@ export default function BarreNavigation() {
       composant: LivraisonIcone,
     },
     {
+      titre: "Messages",
+      page: "Messagerie",
+      composant: MessagesIcone,
+    },{
       titre: "Profil",
       page: "Profil",
       composant: UserIcone,
@@ -59,7 +64,7 @@ export default function BarreNavigation() {
                   width={30}
                   titre={item.titre}
                   color1={actif ? "#fde047" : "white"}
-                  className="block h-[30px] w-[30px] shrink-0"
+                  className="block h-7.5 w-7.5 shrink-0"
                 />
               </button>
             </li>

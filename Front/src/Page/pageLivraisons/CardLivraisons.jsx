@@ -68,7 +68,7 @@ export default function CardLivraisons({
           </div>
         </div>
 
-        <div className="w-full flex ">
+        <div className="w-full flex">
           <div className="flex w-6/8 text-[1rem] leading-none text-white/50">
             <div className="flex flex-col gap-0.2">
               <p className="font-bold text-xl text-white">
