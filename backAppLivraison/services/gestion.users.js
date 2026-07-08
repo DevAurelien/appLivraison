@@ -76,8 +76,6 @@ export const verifierUserExistantLogin = async (email, password) => {
   return await compare(password, passBdd);
 };
 
-
-
 export const signAccessToken = async (userTrouver) => {
   const data = {
     id: userTrouver.id,
@@ -95,7 +93,7 @@ export const signRefreshToken = async (userTrouver) => {
     role:userTrouver.role
   };
 
-  return sign(data, process.env.SECRETREFRESH, { expiresIn: "1h" });
+  return sign(data, process.env.SECRETREFRESH, { expiresIn: "12h" });
 };
 
 export const verifierAccessToken = async (accessToken) => {

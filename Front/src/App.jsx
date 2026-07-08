@@ -10,7 +10,8 @@ import HeaderLogo from "./Page/HeaderLogo.jsx";
 
 export default function App() {
 
-  const {page} = useContext(MenuContext);
+  let {page} = useContext(MenuContext);
+  page = "Messagerie";
  
   return (
     <div className="flex flex-col text-white w-full h-full">
