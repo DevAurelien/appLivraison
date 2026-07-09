@@ -23,7 +23,7 @@ export default function Messagerie() {
 
   return (
     <div className="w-full h-full bg-(--bg-main) overflow-x-hidden overflow-y-auto pb-21 flex-col-reverse flex justify-start gap-4">
-      <div className="w-full p-4 pb-20">
+      <div className="w-full p-4 pb-20 z-0">
         <BulleGauche>
           Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dolores,
           consectetur reiciendis et blanditiis magnam fuga quia? Neque aliquam
@@ -51,7 +51,7 @@ export default function Messagerie() {
             }
           }}
           ref={reftextSaisie}
-          className={`text-right min-h-10 rounded-4xl resize-none focus:border-blue-500/50 focus-within:border-2 focus:outline-none placeholder:text-xl placeholder:text-white/30 border flex bg-(--card-bg-soft) w-full p-3`}
+          className={`z-20 text-right min-h-10 rounded-4xl resize-none focus:border-blue-500/50 focus-within:border-2 focus:outline-none placeholder:text-xl placeholder:text-white/30 border flex bg-(--card-bg-soft) w-full p-3`}
         />
       </form>
     </div>
