@@ -21,10 +21,10 @@ export function TriangleBulle({
 export default function BulleGauche({ children }) {
   return (
     <div className="">
-      <div className="w-[75%] shrink-0 bg-(--card-bg-soft) rounded-xl p-2 text-[0.8rem]">
+      <div className="w-[75%] shrink-0 bg-(--card-bg) rounded-xl p-2 text-[0.8rem]">
         {children}
       </div>
-      <TriangleBulle className="text-(--card-bg-soft)" />
+      <TriangleBulle className="text-(--card-bg)" />
     </div>
   );
 }

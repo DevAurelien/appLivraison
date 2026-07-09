@@ -1,4 +1,4 @@
-export function TriangleBulle({
+export function TriangleBulles({
   currentColor = "white",
   width = 18,
   height = 12,
@@ -22,11 +22,11 @@ export function TriangleBulle({
 export default function BulleDroite({ children }) {
   return (
     <div className="flex flex-col justify-end items-end">
-      <div className="w-[75%] shrink-0 bg-(--card-bg-soft) rounded-xl p-2 text-[0.8rem] z-10">
+      <div className="w-[75%] shrink-0 bg-(--card-bg) rounded-xl p-2 text-[0.8rem] z-10">
         {children}
       </div>
-      <TriangleBulle 
-      className="text-(--card-bg-soft)" 
+      <TriangleBulles 
+      className="text-(--card-bg)" 
       // className="text-white" 
       />
     </div>
