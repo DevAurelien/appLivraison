@@ -1,7 +1,7 @@
 import Home from "./components/Home.jsx";
 import LivraisonIcone from "./components/LivraisonIcone.jsx";
 import UserIcone from "./components/UserIcone.jsx";
-import MessagesIcone from "./components/Messages.jsx"
+import MessagesIcone from "./components/Messages.jsx";
 import { useContext } from "react";
 import { MenuContext } from "./contexte/menuContext.jsx";
 
@@ -23,7 +23,8 @@ export default function BarreNavigation() {
       titre: "Messages",
       page: "Messagerie",
       composant: MessagesIcone,
-    },{
+    },
+    {
       titre: "Profil",
       page: "Profil",
       composant: UserIcone,
@@ -32,12 +33,20 @@ export default function BarreNavigation() {
   const activeIndex = listeIcones.findIndex((item) => item.page === page);
   const nbIcones = listeIcones.length;
   const segment = 100 / nbIcones;
-
+  // shadow-[inset_5px_5px_10px_rgba(0,0,0,0.45),inset_-3px_-3px_6px_rgba(255,255,255,0.04),0_0_8px_rgba(250,204,21,0.18)]
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 h-[10vh] w-screen text-white">
       <ul className="flex relative h-full card w-full flex-nowrap items-center bg-(--card-bg)">
         <div
-          className={`absolute z-10 -top-5 h-16 w-16 rounded-full bg-(--card-bg) transition-all duration-700`}
+          className={`absolute
+h-16
+w-16
+rounded-full
+bg-(--card-bg)
+shadow-[5px_5px_12px_rgba(0,0,0,0.45),-4px_-4px_10px_rgba(255,255,255,0.06),0_0_10px_rgba(250,204,21,0.16)]
+top-4
+transition-all
+duration-700`}
           style={{
             left: `calc(${activeIndex * segment}% + ${segment / 2}% - 2rem)`,
           }}
@@ -49,7 +58,8 @@ export default function BarreNavigation() {
           return (
             <li
               key={item.page}
-              className={`flex flex-1 shrink-0 items-center justify-center pb-2 transition-translate duration-700 z-30 ${actif ? "-translate-y-6" : ""}`}
+              className={`flex flex-1 shrink-0 items-center justify-center pb-2 transition-translate duration-700 z-30 `}
+              // ${actif ? "-translate-y-6" : ""}
             >
               <button
                 type="button"

@@ -21,14 +21,12 @@ export function TriangleBulles({
 
 export default function BulleDroite({ children }) {
   return (
-    <div className="flex flex-col justify-end items-end">
-      <div className="w-[75%] shrink-0 bg-(--card-bg) rounded-xl p-2 text-[0.8rem] z-10">
+    <div className="flex flex-col items-end w-full">
+      <div className="max-w-[75%] min-w-0 break-words [overflow-wrap:anywhere] whitespace-pre-wrap bg-(--primary) rounded-xl p-2 leading-tight z-10">
         {children}
       </div>
-      <TriangleBulles 
-      className="text-(--card-bg)" 
-      // className="text-white" 
-      />
+
+      <TriangleBulles className="text-(--primary)" />
     </div>
   );
 }
