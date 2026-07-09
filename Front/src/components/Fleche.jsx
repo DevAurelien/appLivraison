@@ -1,6 +1,8 @@
 export default function Fleche({
   color = "currentColor",
   className = "",
+  height=30,
+  width=30,
   ...props
 }) {
   return (
@@ -8,6 +10,8 @@ export default function Fleche({
       viewBox="0 0 539.04 539.04"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
+      width={width}
+      height={height}
       {...props}
     >
       <path

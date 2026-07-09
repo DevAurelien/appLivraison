@@ -7,6 +7,7 @@ import Profil from "./Page/pageProfil/Profil.jsx";
 import Livraisons from "./Page/pageLivraisons/Livraisons.jsx";
 import Messagerie from "./Page/pageMessages/Messagerie.jsx";
 import HeaderLogo from "./Page/HeaderLogo.jsx";
+import Contacts from "./Page/pageMessages/Contacts.jsx";
 
 export default function App() {
 
@@ -21,6 +22,7 @@ export default function App() {
       {page === "Accueil" && <Accueil/>}
       {page === "Profil" && <Profil/>}
       {page === "Livraisons" && <Livraisons/>}
+      {page === "Contacts" && <Contacts/>}
       {page === "Messagerie" && <Messagerie/>}
       {/* <Accueil></Accueil> */}
     </div>

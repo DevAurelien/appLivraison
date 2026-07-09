@@ -24,7 +24,7 @@ export default function Messagerie() {
     textarea.style.height = "auto";
   };
 
-  return (<><div className="w-full h-[5vh] flex justify-start" ><Fleche color="white"/></div>
+  return (<><div className="h-[5vh] flex justify-start items-center rounded-xl border w-fit px-2 gap-2 ml-2" ><Fleche color="white"/>Retour</div>
     <div className="w-full h-full bg-(--bg-main) overflow-x-hidden overflow-y-auto pb-21 flex-col-reverse flex justify-start gap-4">
       
       <div className="w-full p-4 pb-20 z-0">

@@ -21,7 +21,7 @@ export default function BarreNavigation() {
     },
     {
       titre: "Messages",
-      page: "Messagerie",
+      page: "Contacts",
       composant: MessagesIcone,
     },
     {
