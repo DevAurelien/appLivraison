@@ -19,10 +19,10 @@ export const creerUser = async (email, password) => {
   const role = "Client";
 
   const userCree = await sql.query(
-    `INSERT INTO utilisateurs (email, password, role)
-     VALUES ($1, $2, $3)
-     RETURNING id, email, role, created_at`,
-    [email, pass, role]
+    `INSERT INTO utilisateurs (email, password, role, nom, prenom, birth, phone)
+     VALUES ($1, $2, $3, $4, $5, $6, $7)
+     RETURNING id, email, role, created_at,nom, prenom, birth, phone`,
+    [email, pass, role],
   );
 
   return userCree[0];
@@ -30,8 +30,8 @@ export const creerUser = async (email, password) => {
 
 export const loginUser = async (email, password) => {
   const resultat = await sql.query(
-    `SELECT id, email, password, role, created_at FROM utilisateurs WHERE email = $1`,
-    [email]
+    `SELECT id, email, password, role, created_at, nom, prenom, birth, phone FROM utilisateurs WHERE email = $1`,
+    [email],
   );
 
   if (resultat.length === 0) {
@@ -50,14 +50,18 @@ export const loginUser = async (email, password) => {
     id: user.id,
     email: user.email,
     role: user.role,
-    created_at:user.created_at,
+    created_at: user.created_at,
+    nom: user.nom,
+    prenom: user.prenom,
+    birth: user.birth,
+    phone: user.phone,
   };
 };
 
 export const verifierUserExistantRegister = async (email) => {
   const resultat = await sql.query(
     `SELECT id FROM utilisateurs WHERE email = $1`,
-    [email]
+    [email],
   );
 
   return resultat.length > 0;
@@ -81,6 +85,10 @@ export const signAccessToken = async (userTrouver) => {
     id: userTrouver.id,
     email: userTrouver.email,
     role: userTrouver.role ?? "Client",
+    nom: userTrouver.nom,
+    prenom: userTrouver.prenom,
+    birth: userTrouver.birth,
+    phone: userTrouver.phone,
   };
 
   return sign(data, process.env.SECRET, { expiresIn: "15m" });
@@ -90,7 +98,11 @@ export const signRefreshToken = async (userTrouver) => {
   const data = {
     id: userTrouver.id,
     email: userTrouver.email,
-    role:userTrouver.role
+    role: userTrouver.role,
+    nom: userTrouver.nom,
+    prenom: userTrouver.prenom,
+    birth: userTrouver.birth,
+    phone: userTrouver.phone,
   };
 
   return sign(data, process.env.SECRETREFRESH, { expiresIn: "12h" });
@@ -113,6 +125,10 @@ export const verifierRefreshToken = async (refreshToken) => {
       id: tokenVerifier.id,
       email: tokenVerifier.email,
       role: tokenVerifier.role,
+      nom: tokenVerifier.nom,
+      prenom: tokenVerifier.prenom,
+      birth: tokenVerifier.birth,
+      phone: tokenVerifier.phone,
     });
 
     return { accessToken, email: tokenVerifier.email };

@@ -46,6 +46,7 @@ html {
 
 .background{
   background-image: url("/background.png");
+  /* background-image: url("/template.png"); */
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
