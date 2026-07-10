@@ -27,7 +27,7 @@ export default function Profil() {
   };
 
   return (
-    <div className="h-full w-full flex justify-start ">
+    <div className="h-full w-full flex justify-start overflow-x-hidden overflow-y-auto">
       <div className="relative bg-(--bg-main) h-full w-full flex flex-col items-center gap-4 p-4">
         <CardProfil
           role={role}
