@@ -30,8 +30,8 @@ export default function Accueil() {
   
 
   return (
-    <div className="relative w-full h-full overflow-y-auto overflow-x-hidden">
-      <div className="fd relative bg-(--bg-main) w-full h-full flex justify-center text-white overflow-x-scroll">
+    <div className="relative w-full h-full mb-15 overflow-y-auto overflow-x-hidden">
+      <div className="fd relative bg-(--bg-main) w-full h-full flex justify-center text-white">
         <div className="mx-4 w-full h-full gap-4">
           <div className="flex flex-col w-full gap-2 pt-4">
             <CardMessage
