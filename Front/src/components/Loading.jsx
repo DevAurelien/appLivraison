@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 
 export default function Pulse({className}) {
   return (
-    <div className={`${className} flex items-center justify-center`}>
+    <div className={`${className} flex items-center justify-center p-4@`}>
       <div className="flex space-x-6">
         <motion.div
           className="h-3 w-3 rounded-full bg-(--card-bg-soft)"

@@ -44,6 +44,13 @@ html {
 
 }
 
+.background{
+  background-image: url("./background.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
 .fd{
     /* background-image: url("./bg.png"); */
     background-repeat: no-repeat;
