@@ -10,7 +10,19 @@ html {
     background: var(--bg-main);
 }
 
+input[type="date"]:focus::-webkit-datetime-edit,
+input[type="date"]:valid::-webkit-datetime-edit {
+  color: white;
+}
 
+.date-input::-webkit-datetime-edit {
+  color: transparent;
+}
+
+.date-input:focus::-webkit-datetime-edit,
+.date-input:valid::-webkit-datetime-edit {
+  color: white;
+}
 
 :root {
     /* Background */

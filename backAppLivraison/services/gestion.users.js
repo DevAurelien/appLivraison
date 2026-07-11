@@ -19,7 +19,7 @@ export const creerUser = async (email, password) => {
   const role = "Client";
 
   const userCree = await sql.query(
-    `INSERT INTO utilisateurs (email, password, role, nom, prenom, birth, phone)
+    `INSERT INTO users (email, password, role, nom, prenom, birth, phone)
      VALUES ($1, $2, $3, $4, $5, $6, $7)
      RETURNING id, email, role, created_at,nom, prenom, birth, phone`,
     [email, pass, role],
@@ -30,7 +30,7 @@ export const creerUser = async (email, password) => {
 
 export const loginUser = async (email, password) => {
   const resultat = await sql.query(
-    `SELECT id, email, password, role, created_at, nom, prenom, birth, phone FROM utilisateurs WHERE email = $1`,
+    `SELECT id, email, password, role, created_at, nom, prenom, birth, phone FROM users WHERE email = $1`,
     [email],
   );
 
@@ -60,7 +60,7 @@ export const loginUser = async (email, password) => {
 
 export const verifierUserExistantRegister = async (email) => {
   const resultat = await sql.query(
-    `SELECT id FROM utilisateurs WHERE email = $1`,
+    `SELECT id FROM users WHERE email = $1`,
     [email],
   );
 
@@ -69,7 +69,7 @@ export const verifierUserExistantRegister = async (email) => {
 
 export const verifierUserExistantLogin = async (email, password) => {
   const resultat = await sql.query(
-    `SELECT * FROM utilisateurs WHERE email = $1`,
+    `SELECT * FROM users WHERE email = $1`,
     [email],
   );
   if (resultat.length === 0) {

@@ -21,6 +21,7 @@ export default function Inscription() {
 
   const { setPage } = useContext(MenuContext);
   const { setUser } = useContext(UserContext);
+  const [passwordVisible, setPasswordVisible] = useState(false);
   const champs = [
   formulaire.nom,
   formulaire.prenom,
@@ -108,7 +109,7 @@ export default function Inscription() {
   };
 
   return (
-    <div className="flex flex-col background w-full h-full text-white justify-start items-center overflow-y-auto">
+    <div className="flex flex-col background w-full h-full text-white justify-start items-center overflow-y-auto gap-2">
       <div className="w-full flex justify-center">
         <Zesteo_logo
           width={180}
@@ -220,33 +221,51 @@ export default function Inscription() {
             </label>
           </div>
           <div className="relative flex w-full">
-            <input
-            required
-              id="password"
-              name="password"
-              type="password"
-              className="peer border-white border-b w-full p-2 focus:outline-none"
-              value={formulaire.password}
-              onChange={(e) => {
-                const valeur = e.target.value;
-                setFormulaire((ancienneVal) => ({
-                  ...ancienneVal,
-                  password: valeur,
-                }));
-              }}
-            />
-            <label
-              htmlFor="password"
-              className={`pointer-events-none cursor-text
-      absolute left-0 p-2
+  <input
+    required
+    id="password"
+    name="password"
+    type={passwordVisible ? "text" : "password"}
+    className="peer w-full border-b border-white p-2 pr-12 focus:outline-none"
+    value={formulaire.password}
+    onChange={(e) => {
+      const valeur = e.target.value;
+
+      setFormulaire((ancienneVal) => ({
+        ...ancienneVal,
+        password: valeur,
+      }));
+    }}
+  />
+
+  <label
+    htmlFor="password"
+    className={`pointer-events-none absolute left-0 p-2
       transition-all duration-300
       peer-focus:-top-7 peer-focus:opacity-100
-      ${formulaire.password != "" ? "-top-7 opacity-100" : "top-0 opacity-20"}
+      ${
+        formulaire.password !== ""
+          ? "-top-7 opacity-100"
+          : "top-0 opacity-20"
+      }
     `}
-            >
-              Mot de passe
-            </label>
-          </div>
+  >
+    Mot de passe
+  </label>
+
+  <button
+    type="button"
+    onClick={() => setPasswordVisible((ancienneVal) => !ancienneVal)}
+    className="absolute right-2 top-1/2 z-10 -translate-y-1/2"
+    aria-label={
+      passwordVisible
+        ? "Masquer le mot de passe"
+        : "Afficher le mot de passe"
+    }
+  >
+    {passwordVisible ? "🙈" : "👁️"}
+  </button>
+</div>
           <div className="relative flex w-full">
             <input
             required
@@ -282,8 +301,8 @@ export default function Inscription() {
             required
               id="Birth"
               name="Birth"
-              type="text"
-              className="peer border-white border-b w-full p-2 focus:outline-none"
+              type="date"
+              className="date-input peer border-white border-b w-full p-2 focus:outline-none"
               value={formulaire.birth}
               onChange={(e) => {
                 const valeur = e.target.value;
