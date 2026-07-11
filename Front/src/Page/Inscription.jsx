@@ -1,9 +1,12 @@
-import { useContext, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { MenuContext } from "../contexte/menuContext";
 import apiFetch from "../utils/apiFetch";
 import { UserContext } from "../contexte/userContext";
 import Pulse from "../components/Loading.jsx";
 import Zesteo_logo from "../components/Zesteo_Logo.jsx";
+import OeilOuvert from "../components/OeilOuvert.jsx";
+import OeilBarre from "../components/OeilBarre.jsx";
+import Calendrier from "../components/Calendrier.jsx";
 
 export default function Inscription() {
   const [formulaire, setFormulaire] = useState({
@@ -18,27 +21,28 @@ export default function Inscription() {
     couleur: "rouge",
     loading: false,
   });
-
+  const birthRef = useRef(null);
   const { setPage } = useContext(MenuContext);
   const { setUser } = useContext(UserContext);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const champs = [
-  formulaire.nom,
-  formulaire.prenom,
-  formulaire.email,
-  formulaire.password,
-  formulaire.phone,
-  formulaire.birth,
-];
+    formulaire.nom,
+    formulaire.prenom,
+    formulaire.email,
+    formulaire.password,
+    formulaire.phone,
+    formulaire.birth,
+  ];
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const formulaireValide = champs.every(
-  (champ) => champ.trim() !== "",
-);
-    if(!formulaireValide){
-      setFormulaire((prev) => ({ ...prev, reponse: "Veuillez remplir tous les champs" }));
+    const formulaireValide = champs.every((champ) => champ.trim() !== "");
+    if (!formulaireValide) {
+      setFormulaire((prev) => ({
+        ...prev,
+        reponse: "Veuillez remplir tous les champs",
+      }));
       return;
     }
 
@@ -132,7 +136,7 @@ export default function Inscription() {
 
           <div className="relative flex w-full">
             <input
-            required
+              required
               id="Nom"
               name="Nom"
               type="text"
@@ -162,7 +166,7 @@ export default function Inscription() {
           </div>
           <div className="relative flex w-full">
             <input
-            required
+              required
               id="Prenom"
               name="Prenom"
               type="text"
@@ -192,7 +196,7 @@ export default function Inscription() {
           </div>
           <div className="relative flex w-full">
             <input
-            required
+              required
               id="email"
               name="email"
               type="email"
@@ -221,54 +225,50 @@ export default function Inscription() {
             </label>
           </div>
           <div className="relative flex w-full">
-  <input
-    required
-    id="password"
-    name="password"
-    type={passwordVisible ? "text" : "password"}
-    className="peer w-full border-b border-white p-2 pr-12 focus:outline-none"
-    value={formulaire.password}
-    onChange={(e) => {
-      const valeur = e.target.value;
+            <input
+              required
+              id="password"
+              name="password"
+              type={passwordVisible ? "text" : "password"}
+              className="peer w-full border-b border-white p-2 pr-12 focus:outline-none"
+              value={formulaire.password}
+              onChange={(e) => {
+                const valeur = e.target.value;
 
-      setFormulaire((ancienneVal) => ({
-        ...ancienneVal,
-        password: valeur,
-      }));
-    }}
-  />
+                setFormulaire((ancienneVal) => ({
+                  ...ancienneVal,
+                  password: valeur,
+                }));
+              }}
+            />
 
-  <label
-    htmlFor="password"
-    className={`pointer-events-none absolute left-0 p-2
+            <label
+              htmlFor="password"
+              className={`pointer-events-none absolute left-0 p-2
       transition-all duration-300
       peer-focus:-top-7 peer-focus:opacity-100
-      ${
-        formulaire.password !== ""
-          ? "-top-7 opacity-100"
-          : "top-0 opacity-20"
-      }
+      ${formulaire.password !== "" ? "-top-7 opacity-100" : "top-0 opacity-20"}
     `}
-  >
-    Mot de passe
-  </label>
+            >
+              Mot de passe
+            </label>
 
-  <button
-    type="button"
-    onClick={() => setPasswordVisible((ancienneVal) => !ancienneVal)}
-    className="absolute right-2 top-1/2 z-10 -translate-y-1/2"
-    aria-label={
-      passwordVisible
-        ? "Masquer le mot de passe"
-        : "Afficher le mot de passe"
-    }
-  >
-    {passwordVisible ? "🙈" : "👁️"}
-  </button>
-</div>
+            <button
+              type="button"
+              onClick={() => setPasswordVisible((ancienneVal) => !ancienneVal)}
+              className="absolute right-2 top-1/2 z-10 -translate-y-1/2"
+              aria-label={
+                passwordVisible
+                  ? "Masquer le mot de passe"
+                  : "Afficher le mot de passe"
+              }
+            >
+              {passwordVisible ? <OeilBarre /> : <OeilOuvert />}
+            </button>
+          </div>
           <div className="relative flex w-full">
             <input
-            required
+              required
               id="Phone"
               name="Phone"
               type="text"
@@ -298,7 +298,8 @@ export default function Inscription() {
           </div>
           <div className="relative flex w-full">
             <input
-            required
+              ref={birthRef}
+              required
               id="Birth"
               name="Birth"
               type="date"
@@ -325,6 +326,13 @@ export default function Inscription() {
             >
               Date de Naissance
             </label>
+            <button
+              onClick={() => birthRef.current?.showPicker()}
+              type="button"
+              className="absolute right-2 top-1/2 z-10 -translate-y-1/2"
+            >
+              <Calendrier />
+            </button>
           </div>
           <p
             className={`text-center text-[0.8rem] ${formulaire.couleur === "rouge" ? "text-red-600" : "text-green-600"} `}
