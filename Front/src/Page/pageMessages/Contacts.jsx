@@ -22,6 +22,7 @@ export default function Contacts() {
   return (
     <div className='bg-(--main) w-full h-full px-4 flex flex-col text-white justify-between mb-15 md:pb-30'>
         <input  placeholder="Rechercher..." className="placeholder:text-white/20 flex border w-full min-h-10 bg-zinc-900 rounded-full text-right p-2 cursor-text outline-none focus:outline-none"/>
+        <button onClick={()=>{setPage("Messagerie")}}> clic</button>
         <div className="flex justify-end">Pour commencer,<br/> ajoutez un contact...</div>
     </div>
   )

@@ -2,6 +2,9 @@ import { useContext, useState } from "react";
 import { MenuContext } from "../contexte/menuContext";
 import apiFetch from "../utils/apiFetch";
 import { UserContext } from "../contexte/userContext";
+import Zesteo_logo from "../components/Zesteo_Logo";
+import OeilOuvert from "../components/OeilOuvert.jsx";
+import OeilBarre from "../components/OeilBarre.jsx";
 
 export default function SeConnecter() {
   const [formulaire, setFormulaire] = useState({
@@ -10,7 +13,7 @@ export default function SeConnecter() {
     reponse: null,
     loading: false,
   });
-
+  const [passwordVisible, setPasswordVisible] = useState(false);
   const { setPage } = useContext(MenuContext);
   const { setUser } = useContext(UserContext);
 
@@ -60,7 +63,9 @@ export default function SeConnecter() {
       });
   };
 
-  return (
+{
+
+return (
     <div className="flex bg-black w-full h-full text-white justify-center items-center">
       <div className="p-4 flex w-4/5 md:w-2/3 justify-center items-center border border-white rounded-xl">
         <form
@@ -113,5 +118,125 @@ export default function SeConnecter() {
         </form>
       </div>
     </div>
-  );
+  ); 
 }
+}
+
+
+
+
+  // return (
+  //   <div className="flex flex-col background w-full h-full text-white justify-start items-center overflow-y-auto gap-2">
+  //     <div className="w-full z-5 flex justify-center">
+  //       <Zesteo_logo
+  //         width={180}
+  //         height={130}
+  //         className="text-yellow-300 -mb-10"
+  //       />
+  //     </div>
+  //     <div className="w-full flex flex-col justify-center items-center h-[14vh] gap-2">
+  //       <h1 className="text-2xl font-bold">Se connecter</h1>
+  //       <h6 className="text-[0.8rem] ">
+  //         Acceder a vos livraisons en toute simplicité
+  //       </h6>
+  //     </div>
+  //     <div className="p-4 relative flex w-[95vw] md:w-[75vw] justify-center items-center bg-transparent rounded-xl">
+  //       <form
+  //         className="z-5 p-4 w-full flex flex-col gap-7 justify-center items-center"
+  //         onSubmit={handleSubmit}
+  //       >
+  //         <div className="relative flex w-full">
+  //           <input
+  //             required
+  //             id="email"
+  //             name="email"
+  //             type="email"
+  //             className="peer border-white border-b w-full p-2 focus:outline-none"
+  //             value={formulaire.email}
+  //             onChange={(e) => {
+  //               const valeur = e.target.value;
+
+  //               setFormulaire((ancienneValeur) => ({
+  //                 ...ancienneValeur,
+  //                 email: valeur,
+  //               }));
+  //             }}
+  //           />
+
+  //           <label
+  //             htmlFor="email"
+  //             className={`pointer-events-none cursor-text
+  //             absolute left-0 p-2
+  //             transition-all duration-300
+  //             peer-focus:-top-7 peer-focus:opacity-100
+  //             ${formulaire.email != "" ? "-top-7 opacity-100" : "top-0 opacity-20"}
+  //           `}
+  //           >
+  //             Email
+  //           </label>
+  //         </div>
+  //         <div className="relative flex w-full">
+  //           <input
+  //             required
+  //             id="password"
+  //             name="password"
+  //             type={passwordVisible ? "text" : "password"}
+  //             className="peer w-full border-b border-white p-2 pr-12 focus:outline-none"
+  //             value={formulaire.password}
+  //             onChange={(e) => {
+  //               const valeur = e.target.value;
+
+  //               setFormulaire((ancienneVal) => ({
+  //                 ...ancienneVal,
+  //                 password: valeur,
+  //               }));
+  //             }}
+  //           />
+
+  //           <label
+  //             htmlFor="password"
+  //             className={`pointer-events-none absolute left-0 p-2
+  //             transition-all duration-300
+  //             peer-focus:-top-7 peer-focus:opacity-100
+  //             ${formulaire.password !== "" ? "-top-7 opacity-100" : "top-0 opacity-20"}
+  //           `}
+  //           >
+  //             Mot de passe
+  //           </label>
+
+  //           <button
+  //             type="button"
+  //             onClick={() => setPasswordVisible((ancienneVal) => !ancienneVal)}
+  //             className="absolute right-2 top-1/2 z-10 -translate-y-1/2"
+  //             aria-label={
+  //               passwordVisible
+  //                 ? "Masquer le mot de passe"
+  //                 : "Afficher le mot de passe"
+  //             }
+  //           >
+  //             {passwordVisible ? <OeilBarre /> : <OeilOuvert />}
+  //           </button>
+  //         </div>
+  //         <div className="relative w-full rounded-xl bg-yellow-300 p-2">
+  //                     <button
+  //                       type="submit"
+  //                       disabled={formulaire.loading}
+  //                       className="relative z-5 flex cursor-pointer justify-center items-center w-full rounded-xl text-black disabled:cursor-not-allowed"
+  //                     >
+  //                       {formulaire.loading ? <Pulse /> : "Se connecter"}
+  //                     </button>
+  //                   </div>
+  //       </form>
+  //     </div>
+  //     <p className="text-[1rem] py-2">
+  //       Pas encore inscrit ?
+  //       <span
+  //         className="cursor-pointer text-yellow-300"
+  //         onClick={() => setPage("connection")}
+  //       >
+  //         {" "}
+  //         Creer un compte
+  //       </span>
+  //     </p>
+  //   </div>
+  // );
