@@ -48,7 +48,7 @@ export const ControlLoginUsers = async (req, res) => {
 };
 
 export const ControlRegisterUsers = async (req, res) => {
-  let { email, password } = req.body;
+  let { email, password, nom, prenom, birth, phone } = req.body;
   email = email.trim();
   if (email === "" || password === "") {
     return res.status(400).json({
@@ -59,9 +59,13 @@ export const ControlRegisterUsers = async (req, res) => {
   }
    email = email.trim().toLowerCase();
   password = password.trim();
+  nom = nom.trim();
+  prenom = prenom.trim();
+  birth = birth.trim();
+  phone = phone.trim();
 
   try {
-    const user = await creerUser(email, password);
+    const user = await creerUser(email, password, nom, prenom, birth, phone);
 
     const accessToken = await signAccessToken(user);
     const refreshToken = await signRefreshToken(user);
