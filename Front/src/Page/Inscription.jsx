@@ -71,7 +71,7 @@ export default function Inscription() {
 
       // console.log("Fichier final :", imageRedimensionnee);
       setPicture(imageRedimensionnee);
-      setUrlPreviewPicture(URL.createObjectURL(imageRedimensionnee))
+      setUrlPreviewPicture(URL.createObjectURL(imageRedimensionnee));
     } catch (error) {
       console.error(error.message);
     }
@@ -97,7 +97,8 @@ export default function Inscription() {
 
     setFormulaire((prev) => ({
       ...prev,
-      image: avatarUrl, loading: true 
+      image: avatarUrl,
+      loading: true,
     }));
 
     apiFetch(`/auth/register`, "POST", {
@@ -187,7 +188,9 @@ export default function Inscription() {
         >
           {" "}
           {/* div de l'image de profil todo fetch vercel blob */}
-          <div className={`z-10 absolute size-20 cursor-pointer overflow-hidden top-0 -translate-y-3/4 left-1/2 -translate-x-1/2 border rounded-full ${urlPreviewPicture ? "bg-white": "bg-white/40"} flex items-center justify-center`}>
+          <div
+            className={`z-10 absolute size-20 cursor-pointer overflow-hidden top-0 -translate-y-3/4 left-1/2 -translate-x-1/2 border rounded-full ${urlPreviewPicture ? "bg-white" : "bg-white/40"} flex items-center justify-center`}
+          >
             {urlPreviewPicture === undefined ? (
               <>
                 <label
@@ -213,10 +216,10 @@ export default function Inscription() {
               </>
             ) : (
               <img
-  className=" size-full object-cover rounded-full"
-  src={urlPreviewPicture}
-  alt="profil"
-/>
+                className=" size-full object-cover rounded-full"
+                src={urlPreviewPicture}
+                alt="profil"
+              />
             )}
           </div>
           {/* <h1 className="text-2xl md:text-4xl cursor-default">S'inscrire</h1> */}
@@ -438,8 +441,8 @@ export default function Inscription() {
               {formulaire.loading ? <Pulse /> : "S'inscrire"}
             </button>
           </div>{" "}
-          <div className="pointer-events-none z-0 absolute top-0 left-0 p-4 h-full w-full border backdrop-blur-xl bg-white/8 shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_20px_60px_rgba(0,0,0,0.35)] border-white/30 rounded-xl"></div>
         </form>
+        <div className="pointer-events-none z-0 absolute top-0 left-0 p-4 h-full w-full border backdrop-blur-xl bg-white/8 shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_20px_60px_rgba(0,0,0,0.35)] border-white/30 rounded-xl"></div>
       </div>
       <p className="text-[1rem] py-2">
         Deja inscrit ?

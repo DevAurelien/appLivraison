@@ -161,8 +161,8 @@ export default function SeConnecter() {
               {formulaire.loading ? <Pulse /> : "Se connecter"}
             </button>
           </div>
-          <div className="pointer-events-none z-0 absolute top-0 left-0 p-10 h-full w-full border backdrop-blur-xl bg-white/8 shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_20px_60px_rgba(0,0,0,0.35)] border-white/30 rounded-xl"></div>
         </form>
+        <div className="pointer-events-none z-0 absolute top-0 left-0 p-10 h-full w-full border backdrop-blur-xl bg-white/8 shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_20px_60px_rgba(0,0,0,0.35)] border-white/30 rounded-xl"></div>
       </div>
       <p className="text-[1rem] py-2 pointer-events-none">
         Pas encore inscrit ?
