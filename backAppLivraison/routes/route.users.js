@@ -1,6 +1,5 @@
 import express from "express";
-import {ControlLoginUsers, ControlRegisterUsers, ControlRefreshUsers, controlImageProfil } from "../controllers/control.users.js"
-
+import {ControlLoginUsers, ControlRegisterUsers, ControlRefreshUsers, controlImageProfil, controlAfficherAvatar, verifierAuthentification } from "../controllers/control.users.js"
 
 const router = express.Router();
 
@@ -25,6 +24,13 @@ router.post(
   uploadAvatar.single("avatar"),
   controlImageProfil,
 );
+
+router.get(
+  "/api/users/avatar",
+  verifierAuthentification,
+  controlAfficherAvatar,
+);
+
 
 // router.get("/users", ControlGetUsers)
 

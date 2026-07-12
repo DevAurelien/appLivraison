@@ -18,7 +18,7 @@ export default function SeConnecter() {
   const { setPage } = useContext(MenuContext);
   const { setUser } = useContext(UserContext);
 
-  const handleSubmit = (e) => {
+  const handleSubmit =async(e) => {
     e.preventDefault();
     setFormulaire((prev) => ({ ...prev, loading: true }));
     apiFetch(`/auth/login`, "POST", {
@@ -28,7 +28,7 @@ export default function SeConnecter() {
       }),
     })
       .then((res) => res.json())
-      .then((data) => {
+      .then(async(data) => {
         setFormulaire((ancienneVal) => ({
           ...ancienneVal,
           email: "",
@@ -42,13 +42,23 @@ export default function SeConnecter() {
             "fr-FR",
           );
           localStorage.setItem("accessToken", data.accessToken);
+          const resAvatar = await apiFetch("/api/users/avatar");
+
+          let avatarLocalUrl = null;
+
+          if (resAvatar.ok) {
+            const avatarBlob = await resAvatar.blob();
+            avatarLocalUrl = URL.createObjectURL(avatarBlob);
+          }
           setUser((prev) => ({
             ...prev,
             email: data.data.email,
             accessToken: data.accessToken,
             role: data.data.role,
             creeLe: dateLisible,
-          }));
+            avatar: avatarLocalUrl,
+            avatarBlobUrl: data.data.avatar,  
+        }));
 
           setPage("Accueil");
         }

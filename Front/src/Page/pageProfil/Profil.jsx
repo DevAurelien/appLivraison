@@ -7,7 +7,7 @@ import Fleche from "../../components/Fleche.jsx";
 
 export default function Profil() {
   const { user, setUser } = useContext(UserContext);
-  const { email, creeLe, role } = user || {};
+  const { email, creeLe, role, avatar } = user || {};
   const { setPage } = useContext(MenuContext);
   const documents = [
     "Bulletins de salaire",
@@ -29,6 +29,7 @@ export default function Profil() {
   return (
     <div className="h-full w-full flex justify-start overflow-x-hidden overflow-y-auto mb-15">
       <div className="relative bg-(--bg-main) h-full w-full flex flex-col items-center gap-4 p-4">
+        <div className="rounded-full flex justify-center items-center border size-20 overflow-hidden"><img src={avatar} alt="" /></div>
         <CardProfil
           role={role}
           email={email}

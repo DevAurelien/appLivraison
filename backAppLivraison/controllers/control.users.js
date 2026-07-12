@@ -4,9 +4,12 @@ import {
   signAccessToken,
   signRefreshToken,
   verifierRefreshToken,
+  verifierAccessToken,
 } from "../services/gestion.users.js";
 import { put } from "@vercel/blob";
-
+import { get } from "@vercel/blob";
+import { Readable } from "node:stream";
+import { sql } from "../database/db.js";
 
 export const ControlLoginUsers = async (req, res) => {
   let { email, password } = req.body;
@@ -50,7 +53,7 @@ export const ControlLoginUsers = async (req, res) => {
 };
 
 export const ControlRegisterUsers = async (req, res) => {
-  let { email, password, nom, prenom, birth, phone } = req.body;
+  let { email, password, nom, prenom, birth, phone, avatar_img_url } = req.body;
   email = email.trim();
   if (email === "" || password === "") {
     return res.status(400).json({
@@ -67,7 +70,15 @@ export const ControlRegisterUsers = async (req, res) => {
   phone = phone.trim();
 
   try {
-    const user = await creerUser(email, password, nom, prenom, birth, phone);
+    const user = await creerUser(
+      email,
+      password,
+      nom,
+      prenom,
+      birth,
+      phone,
+      avatar_img_url,
+    );
 
     const accessToken = await signAccessToken(user);
     const refreshToken = await signRefreshToken(user);
@@ -95,6 +106,30 @@ export const ControlRegisterUsers = async (req, res) => {
   }
 };
 
+export const verifierAuthentification = async (req, res, next) => {
+  try {
+    const authorization = req.headers.authorization;
+
+    if (!authorization?.startsWith("Bearer ")) {
+      return res.status(401).json({
+        message: "Access token manquant",
+      });
+    }
+
+    const accessToken = authorization.split(" ")[1];
+
+    const tokenValide = await verifierAccessToken(accessToken);
+
+    req.user = tokenValide;
+
+    next();
+  } catch (error) {
+    return res.status(401).json({
+      message: "Access token invalide ou expiré",
+    });
+  }
+};
+
 export const ControlRefreshUsers = async (req, res) => {
   try {
     const refreshToken = req.cookies?.refreshToken;
@@ -109,8 +144,6 @@ export const ControlRefreshUsers = async (req, res) => {
     return res.status(e.status || 401).json({ error: e.message });
   }
 };
-
-
 
 export const controlImageProfil = async (req, res) => {
   try {
@@ -138,15 +171,11 @@ export const controlImageProfil = async (req, res) => {
       });
     }
 
-    const blob = await put(
-      `avatars/${fichier.originalname}`,
-      fichier.buffer,
-      {
-        access: "private",
-        contentType: fichier.mimetype,
-        addRandomSuffix: true,
-      },
-    );
+    const blob = await put(`avatars/${fichier.originalname}`, fichier.buffer, {
+      access: "private",
+      contentType: fichier.mimetype,
+      addRandomSuffix: true,
+    });
 
     return res.status(201).json({
       url: blob.url,
@@ -159,6 +188,44 @@ export const controlImageProfil = async (req, res) => {
 
     return res.status(500).json({
       error: error.message || "Impossible d'enregistrer l'image",
+    });
+  }
+};
+
+export const controlAfficherAvatar = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const resultatUser = await sql.query(
+      `SELECT avatar_img_url FROM users WHERE id = $1`,
+      [userId],
+    );
+
+    const avatarUrl = resultatUser[0]?.avatar_img_url;
+
+    if (!avatarUrl) {
+      return res.status(404).json({
+        message: "Aucun avatar trouvé",
+      });
+    }
+
+    const pathname = new URL(avatarUrl).pathname.slice(1);
+
+    const resultatBlob = await get(pathname, {
+      access: "private",
+      oidcToken: process.env.VERCEL_OIDC_TOKEN,
+      storeId: process.env.BLOB_STORE_ID,
+    });
+
+    res.setHeader("Content-Type", resultatBlob.blob.contentType);
+    res.setHeader("Cache-Control", "private, max-age=3600");
+
+    Readable.fromWeb(resultatBlob.stream).pipe(res);
+  } catch (error) {
+    console.error("Erreur affichage avatar :", error);
+
+    return res.status(500).json({
+      message: "Impossible de charger l'avatar",
     });
   }
 };

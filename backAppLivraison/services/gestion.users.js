@@ -6,9 +6,10 @@ import "dotenv/config";
 import { roles } from "../models/role.js";
 import { sql } from "../database/db.js";
 
+
 const USERS_FILE = "./users.json";
 
-export const creerUser = async (email, password, nom, prenom, birth, phone) => {
+export const creerUser = async (email, password, nom, prenom, birth, phone, avatar_img_url) => {
   const userExiste = await verifierUserExistantRegister(email);
 
   if (userExiste) {
@@ -19,10 +20,10 @@ export const creerUser = async (email, password, nom, prenom, birth, phone) => {
   const role = "Client";
 
   const userCree = await sql.query(
-  `INSERT INTO users (email, password, role, nom, prenom, birth, phone)
-   VALUES ($1, $2, $3, $4, $5, $6, $7)
-   RETURNING id, email, role, created_at, nom, prenom, birth, phone`,
-  [email, pass, role, nom, prenom, birth, phone],
+  `INSERT INTO users (email, password, role, nom, prenom, birth, phone, avatar_img_url)
+   VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+   RETURNING id, email, role, created_at, nom, prenom, birth, phone, avatar_img_url`,
+  [email, pass, role, nom, prenom, birth, phone, avatar_img_url],
 );
 
   return userCree[0];
@@ -30,7 +31,7 @@ export const creerUser = async (email, password, nom, prenom, birth, phone) => {
 
 export const loginUser = async (email, password) => {
   const resultat = await sql.query(
-    `SELECT id, email, password, role, created_at, nom, prenom, birth, phone FROM users WHERE email = $1`,
+    `SELECT id, email, password, role, created_at, nom, prenom, birth, phone, avatar_img_url FROM users WHERE email = $1`,
     [email],
   );
 
@@ -55,6 +56,7 @@ export const loginUser = async (email, password) => {
     prenom: user.prenom,
     birth: user.birth,
     phone: user.phone,
+    avatar: user.avatar_img_url
   };
 };
 

@@ -151,8 +151,9 @@ export default function Inscription() {
               nom: data.data.nom,
               prenom: data.data.prenom,
               phone: data.data.phone,
-              avatar_img_url: data.data.avatar_img_url,
               creeLe: dateLisible,
+              avatar: urlPreviewPicture,
+              avatarBlobUrl: avatarUrl,
             }));
 
             setFormulaire((prev) => ({
