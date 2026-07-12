@@ -17,10 +17,10 @@ export default function Zesteo_logo ({
       id="Zesteo_logo"
       data-name="Zesteo_logo"
       xmlns="http://www.w3.org/2000/svg"
-      viewBox={`-50 0 600 92.88`}
+      viewBox={`-23 0 480 92.88`}
       width={width}
       height={height}
-      className={`${className}`}
+      className={`${className} p-1 h-fit`}
       // preserveAspectRatio="xMidYMid meet"
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => {

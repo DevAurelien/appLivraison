@@ -5,6 +5,7 @@ import {
   signRefreshToken,
   verifierRefreshToken,
 } from "../services/gestion.users.js";
+import { handleUpload } from "@vercel/blob/client";
 
 export const ControlLoginUsers = async (req, res) => {
   let { email, password } = req.body;
@@ -107,3 +108,37 @@ export const ControlRefreshUsers = async (req, res) => {
     return res.status(e.status || 401).json({ error: e.message });
   }
 };
+
+export const controlImageProfil = async (req, res)=>{
+     
+  try {
+    const reponse = await handleUpload({
+      body: req.body,
+      request: req,
+
+      onBeforeGenerateToken: async (pathname) => {
+        return {
+          allowedContentTypes: [
+            "image/jpeg",
+            "image/png",
+            "image/webp",
+          ],
+          maximumSizeInBytes: 2 * 1024 * 1024,
+          addRandomSuffix: true,
+          tokenPayload: JSON.stringify({}),
+        };
+      },
+
+      onUploadCompleted: async ({ blob }) => {
+        console.log("Upload terminé :", blob.url);
+      },
+    });
+
+    res.status(200).json(reponse);
+  } catch (error) {
+    console.error("Erreur upload Blob :", error);
+    res.status(400).json({
+      error: error.message,
+    });
+  }
+}

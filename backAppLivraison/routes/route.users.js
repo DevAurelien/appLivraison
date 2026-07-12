@@ -1,5 +1,6 @@
 import express from "express";
-import {ControlLoginUsers, ControlRegisterUsers, ControlRefreshUsers} from "../controllers/control.users.js"
+import {ControlLoginUsers, ControlRegisterUsers, ControlRefreshUsers, controlImageProfil } from "../controllers/control.users.js"
+
 
 const router = express.Router();
 
@@ -10,6 +11,7 @@ router.post("/auth/register", ControlRegisterUsers);
 router.post("/auth/login", ControlLoginUsers);
 
 router.post("/auth/refresh", ControlRefreshUsers);
+router.post("/api/avatar/upload", controlImageProfil)
 
 // router.get("/users", ControlGetUsers)
 
