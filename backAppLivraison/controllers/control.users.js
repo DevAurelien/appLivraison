@@ -5,7 +5,8 @@ import {
   signRefreshToken,
   verifierRefreshToken,
 } from "../services/gestion.users.js";
-import { handleUpload } from "@vercel/blob/client";
+import { put } from "@vercel/blob";
+
 
 export const ControlLoginUsers = async (req, res) => {
   let { email, password } = req.body;
@@ -34,7 +35,7 @@ export const ControlLoginUsers = async (req, res) => {
       return res.json({
         couleur: "vert",
         message: "Connection Réussie",
-        data:user,
+        data: user,
         accessToken,
         ok: true,
       });
@@ -58,7 +59,7 @@ export const ControlRegisterUsers = async (req, res) => {
       ok: false,
     });
   }
-   email = email.trim().toLowerCase();
+  email = email.trim().toLowerCase();
   password = password.trim();
   nom = nom.trim();
   prenom = prenom.trim();
@@ -109,36 +110,55 @@ export const ControlRefreshUsers = async (req, res) => {
   }
 };
 
-export const controlImageProfil = async (req, res)=>{
-     
+
+
+export const controlImageProfil = async (req, res) => {
   try {
-    const reponse = await handleUpload({
-      body: req.body,
-      request: req,
+    const fichier = req.file;
 
-      onBeforeGenerateToken: async (pathname) => {
-        return {
-          allowedContentTypes: [
-            "image/jpeg",
-            "image/png",
-            "image/webp",
-          ],
-          maximumSizeInBytes: 2 * 1024 * 1024,
-          addRandomSuffix: true,
-          tokenPayload: JSON.stringify({}),
-        };
-      },
+    if (!fichier) {
+      return res.status(400).json({
+        error: "Aucune image reçue",
+      });
+    }
 
-      onUploadCompleted: async ({ blob }) => {
-        console.log("Upload terminé :", blob.url);
+    const typesAutorises = ["image/jpeg", "image/png", "image/webp"];
+
+    if (!typesAutorises.includes(fichier.mimetype)) {
+      return res.status(400).json({
+        error: "Format d'image non autorisé",
+      });
+    }
+
+    const tailleMax = 2 * 1024 * 1024;
+
+    if (fichier.size > tailleMax) {
+      return res.status(400).json({
+        error: "L'image dépasse 2 Mo",
+      });
+    }
+
+    const blob = await put(
+      `avatars/${fichier.originalname}`,
+      fichier.buffer,
+      {
+        access: "private",
+        contentType: fichier.mimetype,
+        addRandomSuffix: true,
       },
+    );
+
+    return res.status(201).json({
+      url: blob.url,
+      pathname: blob.pathname,
+      contentType: blob.contentType,
+      size: fichier.size,
     });
-
-    res.status(200).json(reponse);
   } catch (error) {
     console.error("Erreur upload Blob :", error);
-    res.status(400).json({
-      error: error.message,
+
+    return res.status(500).json({
+      error: error.message || "Impossible d'enregistrer l'image",
     });
   }
-}
+};

@@ -10,7 +10,6 @@ import Calendrier from "../components/Calendrier.jsx";
 import UserIcone from "../components/UserIcone.jsx";
 import PlusIcone from "../components/PlusIcone.jsx";
 import { redimensionnerImage } from "../utils/fnImages.jsx";
-import { upload } from "@vercel/blob/client";
 
 export default function Inscription() {
   const backend_URL = import.meta.env.VITE_BACKEND_URL;
@@ -89,81 +88,116 @@ export default function Inscription() {
       return;
     }
 
-    const blob = await upload(picture.name.trim(), picture, {
-      access: "private",
-      handleUploadUrl: `${backend_URL}/api/avatar/upload`,
-    });
-    const avatarUrl = blob.url;
-
     setFormulaire((prev) => ({
       ...prev,
-      image: avatarUrl,
       loading: true,
+      reponse: "",
     }));
 
-    apiFetch(`/auth/register`, "POST", {
-      body: JSON.stringify({
-        email: formulaire.email,
-        password: formulaire.password,
-        role: formulaire.role,
-        birth: formulaire.birth,
-        nom: formulaire.nom,
-        prenom: formulaire.prenom,
-        phone: formulaire.phone,
-        avatar_img_url: avatarUrl,
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.accessToken) {
-          const dateLisible = new Date(data.data.created_at).toLocaleDateString(
-            "fr-FR",
-          );
-          localStorage.setItem("accessToken", data.accessToken);
-          setUser((prev) => ({
-            ...prev,
-            email: data.data.email,
-            accessToken: data.accessToken,
-            role: data.data.role,
-            birth: data.data.birth,
-            nom: data.data.nom,
-            prenom: data.data.prenom,
-            phone: data.data.phone,
-            creeLe: dateLisible,
-          }));
+    try {
+      const formDataImage = new FormData();
+      formDataImage.append("avatar", picture);
 
-          setFormulaire((prev) => ({
-            ...prev,
-            email: "",
-            password: "",
-            birth: "",
-            nom: "",
-            prenom: "",
-            phone: "",
-            reponse: data.message || "Inscription réussie",
-            couleur: "vert",
-            loading: false,
-          }));
+      const reponseUpload = await fetch(
+        `${backend_URL}/api/avatar/upload`,
+        {
+          method: "POST",
+          body: formDataImage,
+        },
+      );
 
-          setPage("Accueil");
-        } else {
-          setFormulaire((prev) => ({
-            ...prev,
-            reponse: data.message || "Inscription échouée",
-            couleur: "rouge",
-            loading: false,
-          }));
-        }
+      const dataUpload = await reponseUpload.json();
+
+      if (!reponseUpload.ok || !dataUpload.url) {
+        throw new Error(
+          dataUpload.message || dataUpload.error || "Échec de l'upload de l'image",
+        );
+      }
+
+      const avatarUrl = dataUpload.url;
+
+      setFormulaire((prev) => ({
+        ...prev,
+        image: avatarUrl,
+      }));
+
+      apiFetch(`/auth/register`, "POST", {
+        body: JSON.stringify({
+          email: formulaire.email,
+          password: formulaire.password,
+          role: formulaire.role,
+          birth: formulaire.birth,
+          nom: formulaire.nom,
+          prenom: formulaire.prenom,
+          phone: formulaire.phone,
+          avatar_img_url: avatarUrl,
+        }),
       })
-      .catch((e) => {
-        setFormulaire((prev) => ({
-          ...prev,
-          loading: false,
-          reponse:
-            e.message || "Une erreur s'est produite pendant l'inscription",
-          couleur: "rouge",
-        }));
-      });
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.accessToken) {
+            const dateLisible = new Date(
+              data.data.created_at,
+            ).toLocaleDateString("fr-FR");
+
+            localStorage.setItem("accessToken", data.accessToken);
+
+            setUser((prev) => ({
+              ...prev,
+              email: data.data.email,
+              accessToken: data.accessToken,
+              role: data.data.role,
+              birth: data.data.birth,
+              nom: data.data.nom,
+              prenom: data.data.prenom,
+              phone: data.data.phone,
+              avatar_img_url: data.data.avatar_img_url,
+              creeLe: dateLisible,
+            }));
+
+            setFormulaire((prev) => ({
+              ...prev,
+              email: "",
+              password: "",
+              birth: "",
+              nom: "",
+              prenom: "",
+              phone: "",
+              image: "",
+              reponse: data.message || "Inscription réussie",
+              couleur: "vert",
+              loading: false,
+            }));
+
+            setPage("Accueil");
+          } else {
+            setFormulaire((prev) => ({
+              ...prev,
+              reponse: data.message || "Inscription échouée",
+              couleur: "rouge",
+              loading: false,
+            }));
+          }
+        })
+        .catch((error) => {
+          setFormulaire((prev) => ({
+            ...prev,
+            loading: false,
+            reponse:
+              error.message ||
+              "Une erreur s'est produite pendant l'inscription",
+            couleur: "rouge",
+          }));
+        });
+    } catch (error) {
+      console.error(error.message);
+      setFormulaire((prev) => ({
+        ...prev,
+        loading: false,
+        reponse: error.message || "Échec de l'upload de l'image",
+        couleur: "rouge",
+      }));
+    }
   };
 
   return (

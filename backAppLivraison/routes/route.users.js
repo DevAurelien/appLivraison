@@ -11,7 +11,20 @@ router.post("/auth/register", ControlRegisterUsers);
 router.post("/auth/login", ControlLoginUsers);
 
 router.post("/auth/refresh", ControlRefreshUsers);
-router.post("/api/avatar/upload", controlImageProfil)
+import multer from "multer";
+
+const uploadAvatar = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 2 * 1024 * 1024,
+  },
+});
+
+router.post(
+  "/api/avatar/upload",
+  uploadAvatar.single("avatar"),
+  controlImageProfil,
+);
 
 // router.get("/users", ControlGetUsers)
 

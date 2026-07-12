@@ -1,11 +1,21 @@
 import express from "express"
 import cors from "cors"
 import cookieParser from "cookie-parser"
+import dotenv from "dotenv";
+
+dotenv.config({
+  path: ".env.local",
+  override: true,
+});
 
 import routeDeliveries from "./routes/route.deliveries.js"
 import routeUsers from "./routes/route.users.js"
 import routeSalaries from "./routes/route.salaries.js"
 
+console.log({
+  storeId: Boolean(process.env.BLOB_STORE_ID),
+  oidcToken: Boolean(process.env.VERCEL_OIDC_TOKEN),
+});
 
 const app = express();
 app.use(cors({
