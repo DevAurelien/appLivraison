@@ -30,6 +30,17 @@ export default function Messagerie() {
   reftextSaisie.current.style.height = "auto";
 };
 
+const envoyerMessage = () => {
+  const message = reftextSaisie.current?.textContent?.trim();
+
+  if (!message) return;
+
+  setContent((prev) => [...prev, message]);
+  setSaisie("");
+
+  reftextSaisie.current.textContent = "";
+};
+
   return (
     <>
       <div
@@ -51,25 +62,51 @@ export default function Messagerie() {
             ))}
         </div>
 
-        <form onSubmit={handleSubmit} className="flex w-full fixed bottom-22">
-          <textarea
-            rows={1}
-            onChange={handleChangeTaille}
-            placeholder="Messages"
-            name="Saisie"
-            id="saisie"
-            value={saisie}
-            enterKeyHint="send"
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                handleSubmit(e);
-              }
-            }}
-            ref={reftextSaisie}
-            className="z-20 text-right min-h-10 rounded-4xl resize-none focus:border-blue-500/50 focus-within:border-2 focus:outline-none placeholder:text-xl placeholder:text-white/30 border flex bg-(--card-bg-soft) w-full p-3"
-          />
-        </form>
+         <form
+    onSubmit={(e) => {
+      e.preventDefault();
+      envoyerMessage();
+    }}
+    className="flex w-full fixed bottom-22"
+  >
+    <div
+      ref={reftextSaisie}
+      contentEditable
+      suppressContentEditableWarning
+      role="textbox"
+      aria-multiline="false"
+      enterKeyHint="send"
+      data-placeholder="Messages"
+      onInput={(e) => {
+        setSaisie(e.currentTarget.textContent);
+      }}
+      onBeforeInput={(e) => {
+        const inputType = e.nativeEvent.inputType;
+
+        if (
+          inputType === "insertParagraph" ||
+          inputType === "insertLineBreak"
+        ) {
+          e.preventDefault();
+          envoyerMessage();
+        }
+      }}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault();
+          envoyerMessage();
+        }
+      }}
+      className="
+        z-20 min-h-10 w-full rounded-4xl
+        border bg-(--card-bg-soft) p-3 text-right
+        outline-none focus:border-2 focus:border-blue-500/50
+        empty:before:content-[attr(data-placeholder)]
+        empty:before:text-xl
+        empty:before:text-white/30
+      "
+    />
+  </form>
       </div>
     </>
   );
