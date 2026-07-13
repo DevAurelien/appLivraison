@@ -6,7 +6,9 @@ export const UserContext = createContext({
   name:"",
   role:"",
   creeLe:"",
-  email:""
+  email:"",
+  avatar: "",
+  avatarBlobUrl: "", 
 })
 
 export const UserContextProvider = ({ children }) => {

@@ -1,16 +1,17 @@
 import express from "express"
 import cors from "cors"
 import cookieParser from "cookie-parser"
+
+import routeDeliveries from "./routes/route.deliveries.js"
+import routeUsers from "./routes/route.users.js"
+import routeSalaries from "./routes/route.salaries.js"
 import dotenv from "dotenv";
 
 dotenv.config({
   path: ".env.local",
   override: true,
+  quiet: true,
 });
-
-import routeDeliveries from "./routes/route.deliveries.js"
-import routeUsers from "./routes/route.users.js"
-import routeSalaries from "./routes/route.salaries.js"
 
 const app = express();
 app.use(cors({
@@ -29,6 +30,5 @@ if (process.env.NODE_ENV !== "production") {
     console.log("API lancée");
   });
 }
-
 
 export default app;

@@ -106,30 +106,6 @@ export const ControlRegisterUsers = async (req, res) => {
   }
 };
 
-export const verifierAuthentification = async (req, res, next) => {
-  try {
-    const authorization = req.headers.authorization;
-
-    if (!authorization?.startsWith("Bearer ")) {
-      return res.status(401).json({
-        message: "Access token manquant",
-      });
-    }
-
-    const accessToken = authorization.split(" ")[1];
-
-    const tokenValide = await verifierAccessToken(accessToken);
-
-    req.user = tokenValide;
-
-    next();
-  } catch (error) {
-    return res.status(401).json({
-      message: "Access token invalide ou expiré",
-    });
-  }
-};
-
 export const ControlRefreshUsers = async (req, res) => {
   try {
     const refreshToken = req.cookies?.refreshToken;
@@ -170,11 +146,13 @@ export const controlImageProfil = async (req, res) => {
         error: "L'image dépasse 2 Mo",
       });
     }
-
     const blob = await put(`avatars/${fichier.originalname}`, fichier.buffer, {
       access: "private",
       contentType: fichier.mimetype,
       addRandomSuffix: true,
+
+      storeId: process.env.BLOB_STORE_ID,
+      oidcToken: process.env.VERCEL_OIDC_TOKEN,
     });
 
     return res.status(201).json({

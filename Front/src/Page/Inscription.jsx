@@ -1,4 +1,4 @@
-import { useContext, useRef, useState } from "react";
+import { useContext, useRef, useState, useCallback } from "react";
 import { MenuContext } from "../contexte/menuContext";
 import apiFetch from "../utils/apiFetch";
 import { UserContext } from "../contexte/userContext";
@@ -10,6 +10,7 @@ import Calendrier from "../components/Calendrier.jsx";
 import UserIcone from "../components/UserIcone.jsx";
 import PlusIcone from "../components/PlusIcone.jsx";
 import { redimensionnerImage } from "../utils/fnImages.jsx";
+import Cropper from "react-easy-crop";
 
 export default function Inscription() {
   const backend_URL = import.meta.env.VITE_BACKEND_URL;
@@ -33,6 +34,12 @@ export default function Inscription() {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [picture, setPicture] = useState(null);
   const [urlPreviewPicture, setUrlPreviewPicture] = useState(undefined);
+  const [fichierOriginal, setFichierOriginal] = useState(null);
+  const [urlImageOriginale, setUrlImageOriginale] = useState(null); //(URL.createObjectURL(file));
+  const [crop, setCrop] = useState({ x: 0, y: 0 }); // react-easy-crop
+  const [zoom, setZoom] = useState(1);
+  const [cropOpen, setCropOpen] = useState(false);
+  const [zoneCropPixels, setZoneCropPixels] = useState(null);
   const champs = [
     formulaire.nom,
     formulaire.prenom,
@@ -42,8 +49,9 @@ export default function Inscription() {
     formulaire.birth,
   ];
 
-  const handleDimensionImage = async (e) => {
+  const handleCrop = async (e) => {
     const file = e.target.files?.[0];
+    setFichierOriginal(file);
 
     if (!file) return;
 
@@ -66,11 +74,43 @@ export default function Inscription() {
     }
 
     try {
-      const imageRedimensionnee = await redimensionnerImage(file);
+      setUrlImageOriginale(URL.createObjectURL(file));
+      setCropOpen(true);
+    } catch (error) {
+      console.error(error.message);
+    }
+  };
+
+  const handleDimensionImage = async (e) => {
+    // const file = e.target.files?.[0];
+    const file = fichierOriginal;
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setFormulaire((prev) => ({
+        ...prev,
+        reponse: "Le fichier sélectionné n'est pas une image",
+      }));
+      return;
+    }
+
+    const tailleMax = 2 * 1024 * 1024;
+
+    if (file.size > tailleMax) {
+      setFormulaire((prev) => ({
+        ...prev,
+        reponse: "L'image dépasse 2 Mo",
+      }));
+      return;
+    }
+
+    try {
+      const imageRedimensionnee = await redimensionnerImage(fichierOriginal, zoneCropPixels);
 
       // console.log("Fichier final :", imageRedimensionnee);
       setPicture(imageRedimensionnee);
       setUrlPreviewPicture(URL.createObjectURL(imageRedimensionnee));
+      setCropOpen(false);
     } catch (error) {
       console.error(error.message);
     }
@@ -98,23 +138,23 @@ export default function Inscription() {
       const formDataImage = new FormData();
       formDataImage.append("avatar", picture);
 
-      const reponseUpload = await fetch(
-        `${backend_URL}/api/avatar/upload`,
-        {
-          method: "POST",
-          body: formDataImage,
-        },
-      );
+      const reponseUpload = await fetch(`${backend_URL}/api/avatar/upload`, {
+        method: "POST",
+        body: formDataImage,
+      });
 
       const dataUpload = await reponseUpload.json();
 
       if (!reponseUpload.ok || !dataUpload.url) {
         throw new Error(
-          dataUpload.message || dataUpload.error || "Échec de l'upload de l'image",
+          dataUpload.message ||
+            dataUpload.error ||
+            "Échec de l'upload de l'image",
         );
       }
 
       const avatarUrl = dataUpload.url;
+      formulaire.phone.
 
       setFormulaire((prev) => ({
         ...prev,
@@ -201,6 +241,23 @@ export default function Inscription() {
     }
   };
 
+  const annulerInput = () => {
+    if (urlImageOriginale) {
+      URL.revokeObjectURL(urlImageOriginale);
+    }
+
+    setUrlImageOriginale(undefined);
+    setCrop({ x: 0, y: 0 });
+    setZoom(1);
+    setZoneCropPixels(null);
+    setFichierOriginal(null);
+    setCropOpen(false);
+
+    if (inputFileRef.current) {
+      inputFileRef.current.value = "";
+    }
+  };
+
   return (
     <div className="flex flex-col background w-full h-full text-white justify-start items-center overflow-y-auto gap-2">
       <div className="w-full flex justify-center -mb-10">
@@ -222,41 +279,86 @@ export default function Inscription() {
           onSubmit={handleSubmit}
         >
           {" "}
+          {cropOpen && (
+            <>
+              <div className="absolute inset-0 z-40 flex flex-col bg-black p-4">
+                <div className="relative z-50 flex w-full justify-center gap-4 pt-4">
+                  <button
+                    type="button"
+                    className="button-primary-echec scale-[1.2]"
+                    onClick={annulerInput}
+                  >
+                    Annuler
+                  </button>
+                  <button
+                    type="button"
+                    className="button-primary-success scale-[1.2]"
+                    onClick={handleDimensionImage}
+                  >
+                    Valider
+                  </button>
+                </div>
+                <div className="relative flex-1 w-full mt-4">
+                  <Cropper
+                    image={urlImageOriginale}
+                    crop={crop}
+                    zoom={zoom}
+                    aspect={1}
+                    onCropComplete={(zonePourcentage, zonePixels) => {
+                      setZoneCropPixels(zonePixels);
+                    }}
+                    cropShape="round"
+                    onCropChange={setCrop}
+                    onZoomChange={setZoom}
+                    showGrid
+                  />
+                </div>
+              </div>
+            </>
+          )}
           {/* div de l'image de profil todo fetch vercel blob */}
-          <div
-            className={`z-10 absolute size-20 cursor-pointer overflow-hidden top-0 -translate-y-3/4 left-1/2 -translate-x-1/2 border rounded-full ${urlPreviewPicture ? "bg-white" : "bg-white/40"} flex items-center justify-center`}
-          >
-            {urlPreviewPicture === undefined ? (
-              <>
-                <label
-                  htmlFor="file"
-                  className="relative size-full flex justify-center items-center cursor-pointer"
-                >
-                  <UserIcone color1="black" className="size-10" />
-                  <div className="absolute flex justify-center size-2 items-center rounded-full bg-zinc-800 p-2 right-4 bottom-4">
-                    <PlusIcone className="absolute size-2" />
-                  </div>
-                </label>
-                <input
-                  onChange={handleDimensionImage}
-                  id="file"
-                  hidden
-                  name="file"
-                  ref={inputFileRef}
-                  className="absolute"
-                  type="file"
-                  accept="image/jpg, image/png, image/webp"
-                  required
-                />
-              </>
-            ) : (
-              <img
-                className=" size-full object-cover rounded-full"
-                src={urlPreviewPicture}
-                alt="profil"
-              />
-            )}
-          </div>
+          {!cropOpen && (
+            <div
+              className={`z-10 absolute size-20 cursor-pointer overflow-hidden top-0 -translate-y-3/4 left-1/2 -translate-x-1/2 border rounded-full ${urlPreviewPicture ? "bg-white" : "bg-white/40"} flex items-center justify-center`}
+            >
+              {urlPreviewPicture === undefined ? (
+                <>
+                  <label
+                    htmlFor="file"
+                    className="relative size-full flex justify-center items-center cursor-pointer"
+                  >
+                    <UserIcone color1="black" className="size-10" />
+                    <div className="absolute flex justify-center size-2 items-center rounded-full bg-zinc-800 p-2 right-4 bottom-4">
+                      <PlusIcone className="absolute size-2" />
+                    </div>
+                  </label>
+                  <input
+                    onChange={handleCrop}
+                    id="file"
+                    hidden
+                    name="file"
+                    ref={inputFileRef}
+                    className="absolute"
+                    type="file"
+                    accept="image/jpg, image/png, image/webp"
+                    required
+                  />
+                </>
+              ) : (
+                <div>
+                  <img
+                    src={urlPreviewPicture}
+                    className="size-full object-cover rounded-full"
+                  />
+                </div>
+                // <img
+                //   className=" size-full object-cover rounded-full"
+                //   src={urlPreviewPicture}
+                //   alt="profil"
+                // />
+              )}
+            </div>
+          )}
           {/* <h1 className="text-2xl md:text-4xl cursor-default">S'inscrire</h1> */}
           <div className="relative flex w-full">
             <input

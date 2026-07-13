@@ -4,11 +4,13 @@ import CardProfil from "../pageProfil/CardProfil.jsx";
 import CardDocuments from "./CardDocuments.jsx";
 import { MenuContext } from "../../contexte/menuContext.jsx";
 import Fleche from "../../components/Fleche.jsx";
+import { ContactContext } from "../../contexte/contactContext.jsx";
 
 export default function Profil() {
   const { user, setUser } = useContext(UserContext);
   const { email, creeLe, role, avatar } = user || {};
   const { setPage } = useContext(MenuContext);
+  const {setListeContacts} = useContext(ContactContext);
   const documents = [
     "Bulletins de salaire",
     "Contrat de travail",
@@ -23,6 +25,7 @@ export default function Profil() {
   const handleDeco = () => {
     localStorage.removeItem("accessToken");
     setUser({});
+    setListeContacts([])
     setPage("connection");
   };
 
@@ -36,7 +39,7 @@ export default function Profil() {
           creeLe={creeLe}
           className="select-none "
         ></CardProfil>
-        <CardDocuments titre={"Mes Documents"}>
+        {user.role != "Client" && (<><CardDocuments titre={"Mes Documents"}>
           <ul className="flex items-center flex-col">
             {documents.map((el, index) => (
               <li className="cursor-pointer" key={index}>
@@ -53,7 +56,7 @@ export default function Profil() {
               </li>
             ))}
           </ul>
-        </CardDocuments>
+        </CardDocuments></>)}
         <button
           onClick={() => handleDeco()}
           className="w-1/2 rounded-md p-2 bg-red-800 select-none cursor-pointer"

@@ -1,4 +1,4 @@
-export async function redimensionnerImage(file) {
+export async function redimensionnerImage(file, zoneCropPixels) {
   return new Promise((resolve, reject) => {
     const image = new Image();
     const urlTemporaire = URL.createObjectURL(file);
@@ -10,17 +10,12 @@ export async function redimensionnerImage(file) {
       canvas.width = 512;
       canvas.height = 512;
 
-      const coteSource = Math.min(image.width, image.height);
-
-      const sourceX = (image.width - coteSource) / 2;
-      const sourceY = (image.height - coteSource) / 2;
-
       contexte.drawImage(
         image,
-        sourceX,
-        sourceY,
-        coteSource,
-        coteSource,
+        zoneCropPixels.x,
+        zoneCropPixels.y,
+        zoneCropPixels.width,
+        zoneCropPixels.height,
         0,
         0,
         512,

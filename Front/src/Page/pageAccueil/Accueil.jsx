@@ -34,7 +34,7 @@ export default function Accueil() {
       <div className="fd relative bg-(--bg-main) w-full h-full flex justify-center text-white">
         <div className="mx-4 w-full h-full gap-4">
           <div className="flex flex-col w-full gap-2 pt-4">
-            <CardMessage
+            {user.role != "Client" ? <CardMessage
               className=""
               titre={"Mot du Directeur"}
               signature={"- Jean-Louis"}
@@ -42,8 +42,14 @@ export default function Accueil() {
               Lorem ipsum dolor sit amet consectetur adipisicing elit. Optio
               tempore ratione expedita maiores, vero dicta reprehenderit
               inventore sequi animi nisi debitis porro
-            </CardMessage>
-            <CardLivraisonsDash
+            </CardMessage>: <CardMessage
+              className=""
+              titre={"Mot du Directeur"}
+              signature={"- Jean-Louis"}
+            >
+              Nous informons notre aimable clientèle que votre livraison pourrait être retardée en raison des fortes chaleurs
+            </CardMessage>}
+            {user.role != "Client" ? <><CardLivraisonsDash
               className=""
               titre={`Tournée du jour`}
               depart={
@@ -59,7 +65,7 @@ export default function Accueil() {
             >
 
             </CardLivraisonsDash>
-            <CardPointage></CardPointage>
+            <CardPointage></CardPointage></> : <p className="flex justify-center items-center card">Votre livraison</p> }
             {/* <button
               className="h-[20%] w-[50%]"
               onClick={() => handleLivraison(token)}

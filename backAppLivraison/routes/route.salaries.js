@@ -1,8 +1,17 @@
-import express from "express"
-import {controlSalaries} from "../controllers/control.salaries.js"
+import express from "express";
+import {
+  controlRecupSalaries,
+  controlAfficherAvatarSalarie,
+} from "../controllers/control.salaries.js";
+import { verifierAuthentification } from "../middlewares/middlewares.auth.js";
 
-const router = express.Router()
+const router = express.Router();
 
-router.get("/salariesSearch", controlSalaries);
+router.get("/salariesSearch", verifierAuthentification, controlRecupSalaries);
+router.get(
+  "/salaries/:id/avatar",
+  verifierAuthentification,
+  controlAfficherAvatarSalarie,
+);
 
 export default router;

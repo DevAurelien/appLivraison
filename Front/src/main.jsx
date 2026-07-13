@@ -5,14 +5,14 @@ import { Routes, Route, BrowserRouter } from "react-router-dom";
 import { MenuContext, MenuContextProvider } from "./contexte/menuContext.jsx";
 import { NavContextProvider } from "./contexte/navContext.jsx";
 import { UserContextProvider } from "./contexte/userContext.jsx";
+import { ContactContextProvider } from "./contexte/contactContext.jsx";
 import BarreNavigation from "./Navigation.jsx";
 import { useContext } from "react";
 
 function Layout() {
   const { page } = useContext(MenuContext);
 
-  const cacherNav =
-    page === "connection" || page === "inscription";
+  const cacherNav = page === "connection" || page === "inscription";
 
   return (
     <>
@@ -27,11 +27,13 @@ createRoot(document.getElementById("root")).render(
     <UserContextProvider>
       <MenuContextProvider>
         <NavContextProvider>
-          <Routes>
-            <Route path="/" element={<Layout />} />
-          </Routes>
+          <ContactContextProvider>
+            <Routes>
+              <Route path="/" element={<Layout />} />
+            </Routes>
+          </ContactContextProvider>
         </NavContextProvider>
       </MenuContextProvider>
     </UserContextProvider>
-  </BrowserRouter>
+  </BrowserRouter>,
 );

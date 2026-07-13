@@ -43,8 +43,8 @@ export class Livraison {
 }
 
 export class Statut {
-  constructor({ statut }) {
-    this.statut = statut;
+  constructor({ statutLivraison }) {
+    this.statut = statutLivraison;
   }
   peutModifier(utilisateur) {
     if (!utilisateur.peut("modifier_livraison")) {
@@ -54,7 +54,7 @@ export class Statut {
   }
 }
 
-export const statut = {
+export const statutLivraison = {
   Crée: new Statut("crée"),
   En_Attente: new Statut("en_attente"),
   Planifiée: new Statut("planifiée"),

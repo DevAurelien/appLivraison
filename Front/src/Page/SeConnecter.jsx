@@ -31,18 +31,15 @@ export default function SeConnecter() {
       .then(async(data) => {
         setFormulaire((ancienneVal) => ({
           ...ancienneVal,
-          email: "",
-          password: "",
           reponse: data.message || JSON.stringify(data),
-          couleur: data.couleur || (data.accessToken ? "vert" : "rouge"),
-          loading: false,
+          couleur: data.couleur || (data.accessToken ? "vert" : "rouge")
         }));
         if (data.accessToken) {
           const dateLisible = new Date(data.data.created_at).toLocaleDateString(
             "fr-FR",
           );
           localStorage.setItem("accessToken", data.accessToken);
-          const resAvatar = await apiFetch("/api/users/avatar");
+          const resAvatar = await apiFetch("/users/avatar");
 
           let avatarLocalUrl = null;
 
@@ -59,7 +56,12 @@ export default function SeConnecter() {
             avatar: avatarLocalUrl,
             avatarBlobUrl: data.data.avatar,  
         }));
-
+setFormulaire((ancienneVal) => ({
+          ...ancienneVal,
+          email: "",
+          password: "",
+          loading: false,
+        }));
           setPage("Accueil");
         }
       })

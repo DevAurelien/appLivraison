@@ -2,11 +2,14 @@ import BulleGauche from "./BulleGauche.jsx";
 import BulleDroite from "./BulleDroite.jsx";
 import { useRef, createRef, useState } from "react";
 import Fleche from "../../components/Fleche.jsx"
+import {MenuContext} from '../../contexte/menuContext.jsx'
+import { useContext } from "react";
 
 export default function Messagerie() {
   const reftextSaisie = useRef(null);
   const [saisie, setSaisie] = useState("");
   const [content, setContent] = useState([]);
+  const {setPage} = useContext(MenuContext)
 
   const handleChangeTaille = () => {
     setSaisie(reftextSaisie.current.value);
@@ -24,7 +27,7 @@ export default function Messagerie() {
     textarea.style.height = "auto";
   };
 
-  return (<><div className="h-[5vh] flex justify-start items-center rounded-xl border w-fit px-2 gap-2 ml-2" ><Fleche color="white"/>Retour</div>
+  return (<><div onClick={()=>setPage("Contacts")} className="h-[5vh] flex justify-start items-center rounded-xl border w-fit px-2 gap-2 ml-2" ><Fleche color="white"/>Retour</div>
     <div className="w-full h-full bg-(--bg-main) overflow-x-hidden overflow-y-auto pb-21 flex-col-reverse flex justify-start gap-4">
       
       <div className="w-full p-4 pb-20 z-0">

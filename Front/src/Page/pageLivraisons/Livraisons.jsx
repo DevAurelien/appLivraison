@@ -3,15 +3,18 @@ import HeaderLogo from "../HeaderLogo.jsx";
 import CardLivReduit from "./CardLivReduit.jsx";
 import { useEffect, useState } from "react";
 import apifetch from "../../utils/apiFetch.jsx";
-import Pulse from "../../components/Loading.jsx"
+import Pulse from "../../components/Loading.jsx";
+import { UserContext } from "../../contexte/userContext.jsx";
+import { useContext } from "react";
 
 export default function Livraisons() {
   const [liv, setLiv] = useState({
-    loading:true,
-    error:"",
-    data:[],
+    loading: true,
+    error: "",
+    data: [],
   });
   const [livActif, setLivActif] = useState(0);
+  const {user} = useContext(UserContext)
 
   useEffect(() => {
     try {
@@ -20,12 +23,20 @@ export default function Livraisons() {
           return res.json();
         })
         .then((datas) => {
-          setLiv((prev)=>({...prev, data : datas.livraisons, loading:false}));
-          
-          liv.data.length > 0 && console.log(liv.data);
+          setLiv((prev) => ({
+            ...prev,
+            data: datas.livraisons,
+            loading: false,
+          }));
+
+          // liv.data.length > 0 && console.log(liv.data);
         });
     } catch {
-      setLiv((prev)=>({...prev, error : "Une erreur est survenue", loading:false}));
+      setLiv((prev) => ({
+        ...prev,
+        error: "Une erreur est survenue",
+        loading: false,
+      }));
     }
   }, []);
 
@@ -35,7 +46,7 @@ export default function Livraisons() {
 
   return (
     <div className="flex w-full h-full bg-(--bg-main) text-xl flex-col items-center px-4 gap-2 mb-15 overflow-y-scroll overflow-x-hidden">
-      {liv.loading ? <Pulse className={"pt-10"}/>:""}
+      {liv.loading? <Pulse className={"pt-10"} /> : ""}
       {liv?.data?.length > 0 &&
         liv.data.map((livraison, index) =>
           index === livActif ? (
@@ -52,14 +63,6 @@ export default function Livraisons() {
             />
           ),
         )}
-
-      {/* <CardLivraisons {...liv[0]}/> */}
-      {/* <CardLivReduit {...livraison[1]}/>
-      <CardLivReduit {...livraison[2]}/>
-      <CardLivReduit {...livraison[3]}/>
-      <CardLivReduit {...livraison[4]}/>
-      <CardLivReduit {...livraison[5]}/>
-      <CardLivReduit {...livraison[6]}/> */}
     </div>
   );
 }
