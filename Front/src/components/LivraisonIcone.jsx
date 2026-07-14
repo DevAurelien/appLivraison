@@ -27,6 +27,6 @@ export default function LivraisonIcone({
         <path d="M1705 3015 c-30 -29 -33 -74 -7 -103 17 -20 784 -467 833 -485 48 -19 109 24 109 77 0 27 -41 65 -117 108 -43 24 -227 131 -410 236 -198 114 -343 192 -358 192 -14 0 -37 -11 -50 -25z" />
         <path d="M1705 2645 c-27 -26 -33 -71 -12 -98 17 -22 425 -257 459 -264 21 -4 34 1 59 26 26 27 30 37 25 64 -4 17 -12 37 -19 43 -34 33 -435 254 -460 254 -16 0 -38 -10 -52 -25z" />
       </g>
-    </svg><h1 className={`${tailleTexte} flex justify-center items-center`}>{titre}</h1></div>
+    </svg><h1 className={`${tailleTexte} flex justify-center items-center text-[0.6rem] pt-1`}>{titre}</h1></div>
   );
 }

@@ -34,7 +34,7 @@ export default function MessagesIcone({
         </g>
       </svg>
 
-      <h1 className={`${tailleTexte} flex justify-center items-center`}>
+      <h1 className={`${tailleTexte} flex justify-center items-center text-[0.6rem] pt-1`}>
         {titre}
       </h1>
     </div>
