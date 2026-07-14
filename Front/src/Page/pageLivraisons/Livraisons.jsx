@@ -45,7 +45,7 @@ export default function Livraisons() {
   };
 
   return (
-    <div className="flex w-full h-full bg-(--bg-main) text-xl flex-col items-center px-4 gap-2 mb-15 overflow-y-scroll overflow-x-hidden">
+    <div className="flex w-full h-full flex-col items-center px-4 gap-2 mb-25 overflow-y-scroll overflow-x-hidden">
       {liv.loading? <Pulse className={"pt-10"} /> : ""}
       {liv?.data?.length > 0 &&
         liv.data.map((livraison, index) =>

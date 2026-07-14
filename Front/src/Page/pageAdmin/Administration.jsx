@@ -1,26 +1,28 @@
 import UserIcone from "../../components/UserIcone.jsx";
 import Shop from "../../components/Shop.jsx"
-
+import Camion from "../../components/Camion.jsx"
+ 
+ 
 export default function Administration() {
   return (
     <div className="grid grid-cols-3 gap-4 w-full p-4">
       <div className="aspect-square cursor-pointer">
-        <UserIcone titre={"Mes Livreurs"} tailleTexte="text-[1rem]" className={"h-full flex justify-center items-center card rounded-xl"} />
+        <UserIcone titre={"Mes Livreurs"} tailleTexte="text-[1rem]" height="30" width="30" className={"h-full flex justify-center items-center cardLiv rounded-xl"} />
       </div>
       <div className="aspect-square cursor-pointer">
-        <Shop titre={"Mes Agences"} tailleTexte="text-[1rem]" height="30" width="30" className={"h-full flex justify-center items-center card rounded-xl"} />
+        <Shop titre={"Mes Agences"} tailleTexte="text-[1rem]" height="30" width="30" className={"h-full flex justify-center items-center cardLiv rounded-xl"} />
       </div>
       <div className="aspect-square cursor-pointer">
-        <UserIcone className={"h-full flex justify-center items-center card rounded-xl"} />
+        <Camion titre={"Mes Camions"} tailleTexte="text-[1rem]" height="30" width="30" className={"h-full flex justify-center items-center cardLiv rounded-xl"} />
       </div>
       <div className="aspect-square cursor-pointer">
-        <UserIcone className={"h-full flex justify-center items-center card rounded-xl"} />
+        <UserIcone className={"h-full flex justify-center items-center cardLiv rounded-xl"} />
       </div>
       <div className="aspect-square cursor-pointer">
-        <UserIcone className={"h-full flex justify-center items-center card rounded-xl"} />
+        <UserIcone className={"h-full flex justify-center items-center cardLiv rounded-xl"} />
       </div>
       <div className="aspect-square cursor-pointer">
-        <UserIcone className={"h-full flex justify-center items-center card rounded-xl"} />
+        <UserIcone className={"h-full flex justify-center items-center cardLiv rounded-xl"} />
       </div>
     </div>
   );

@@ -82,7 +82,7 @@ export const verifierUserExistantLogin = async (email, password) => {
   return await compare(password, passBdd);
 };
 
-export const signAccessToken = async (userTrouver) => {
+export const signAccessToken = (userTrouver) => {
   const data = {
     id: userTrouver.id,
     email: userTrouver.email,
@@ -96,7 +96,7 @@ export const signAccessToken = async (userTrouver) => {
   return sign(data, process.env.SECRET, { expiresIn: "15m" });
 };
 
-export const signRefreshToken = async (userTrouver) => {
+export const signRefreshToken = (userTrouver) => {
   const data = {
     id: userTrouver.id,
     email: userTrouver.email,

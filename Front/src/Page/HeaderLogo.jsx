@@ -5,6 +5,10 @@ import Notif from "./pageAccueil/Notif.jsx";
 import { UserContext } from "../contexte/userContext.jsx";
 import { MenuContext } from "../contexte/menuContext.jsx";
 
+export const CardTitre = ({children})=>{
+  return(<p className="button-primary-yellow flex justify-center w-[60%] whitespace-nowrap mx-4">{children}</p>)
+}
+
 export default function HeaderLogo({ children, bg }) {
   const { user } = useContext(UserContext);
   const { role } = user;
@@ -16,23 +20,11 @@ export default function HeaderLogo({ children, bg }) {
         {role}
       </CardMetierHeader>
     ),
-    Livraisons: (
-      <p className="flex justify-center w-[60%] whitespace-nowrap">
-        Livraisons du Jour
-      </p>
-    ),
-    Profil: (
-      <p className="flex justify-center w-[60%] whitespace-nowrap">Profil</p>
-    ),
-    Messagerie: (
-      <p className="flex justify-center w-[60%] whitespace-nowrap">Discussions</p>
-    ),
-    Contacts: (
-      <p className="flex justify-center w-[60%] whitespace-nowrap">Discussions</p>
-    ),
-    Administration: (
-      <p className="flex justify-center w-[60%] whitespace-nowrap">Administration</p>
-    ),
+    Livraisons: (<CardTitre>Livraisons du Jour</CardTitre>),
+    Profil: (<CardTitre>Profil</CardTitre>),
+    Messagerie: (<CardTitre>Discussions</CardTitre>),
+    Contacts: (<CardTitre>Discussions</CardTitre>), 
+    Administration: (<CardTitre>Administration</CardTitre>),
   };
 
   return (

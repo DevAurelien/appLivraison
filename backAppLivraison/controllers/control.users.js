@@ -12,21 +12,21 @@ import { Readable } from "node:stream";
 import { sql } from "../database/db.js";
 
 export const ControlLoginUsers = async (req, res) => {
-  let { email, password } = req.body;
-  email = email.trim();
-  if (email === "" || password === "") {
-    return res.status(400).json({
-      couleur: "rouge",
-      message: "Le mot de passe ou le mail sont incorrects",
-      ok: false,
-    });
-  }
-  email = email.trim().toLowerCase();
-  password = password.trim();
+  try {
+    let { email, password } = req.body;
+    email = email.trim();
+    if (email === "" || password === "") {
+      return res.status(400).json({
+        couleur: "rouge",
+        message: "Le mot de passe ou le mail sont incorrects",
+        ok: false,
+      });
+    }
+    email = email.trim().toLowerCase();
+    password = password.trim();
 
-  const user = await loginUser(email, password);
-  if (user) {
-    try {
+    const user = await loginUser(email, password);
+    if (user) {
       const accessToken = await signAccessToken(user);
       const refreshToken = await signRefreshToken(user);
       res.cookie("refreshToken", refreshToken, {
@@ -42,34 +42,35 @@ export const ControlLoginUsers = async (req, res) => {
         accessToken,
         ok: true,
       });
-    } catch (e) {
-      return res.status(500).json({
-        couleur: "rouge",
-        message: `${e}, une erreur s'est produite`,
-        ok: false,
-      });
     }
+  } catch (e) {
+    return res.status(500).json({
+      couleur: "rouge",
+      message: `${e}, une erreur s'est produite`,
+      ok: false,
+    });
   }
 };
 
 export const ControlRegisterUsers = async (req, res) => {
-  let { email, password, nom, prenom, birth, phone, avatar_img_url } = req.body;
-  email = email.trim();
-  if (email === "" || password === "") {
-    return res.status(400).json({
-      couleur: "rouge",
-      message: "Le mot de passe ou le mail sont incorrects",
-      ok: false,
-    });
-  }
-  email = email.trim().toLowerCase();
-  password = password.trim();
-  nom = nom.trim();
-  prenom = prenom.trim();
-  birth = birth.trim();
-  phone = phone.trim();
-
   try {
+    let { email, password, nom, prenom, birth, phone, avatar_img_url } =
+      req.body;
+    email = email.trim();
+    if (email === "" || password === "") {
+      return res.status(400).json({
+        couleur: "rouge",
+        message: "Le mot de passe ou le mail sont incorrects",
+        ok: false,
+      });
+    }
+    email = email.trim().toLowerCase();
+    password = password.trim();
+    nom = nom.trim();
+    prenom = prenom.trim();
+    birth = birth.trim();
+    phone = phone.trim();
+
     const user = await creerUser(
       email,
       password,

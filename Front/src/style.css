@@ -185,8 +185,8 @@ input[type="date"]:valid::-webkit-datetime-edit {
 }
 
 .button-primary {
-    background: #2a5bc4;
-    color: #FFFFFF;
+    background: rgba(42, 91, 196, 0.12);
+    color: #2a5bc4;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -212,6 +212,26 @@ input[type="date"]:valid::-webkit-datetime-edit {
     align-items: center;
     border-radius: var(--radius-md);
     padding-inline: var(--spacing);
+}
+
+.button-primary-orange {
+  background: rgba(245, 158, 11, 0.12);
+  color: #f59e0b;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: var(--radius-md);
+  padding-inline: var(--spacing);
+}
+
+.button-primary-yellow {
+  background: rgba(253, 224, 71, 0.12);
+  color: #fde047;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: var(--radius-md);
+  padding-inline: var(--spacing);
 }
 
 .manrope{

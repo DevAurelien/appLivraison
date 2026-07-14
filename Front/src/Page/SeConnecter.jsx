@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { MenuContext } from "../contexte/menuContext";
 import apiFetch from "../utils/apiFetch";
 import { UserContext } from "../contexte/userContext";
@@ -8,6 +8,14 @@ import OeilBarre from "../components/OeilBarre.jsx";
 import Pulse from "../components/Loading.jsx";
 
 export default function SeConnecter() {
+
+  useEffect(() => {
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
+  fetch(`${backendUrl}/health`).catch(() => {
+  });
+}, []);
+
   const [formulaire, setFormulaire] = useState({
     email: "",
     password: "",
@@ -18,63 +26,93 @@ export default function SeConnecter() {
   const { setPage } = useContext(MenuContext);
   const { setUser } = useContext(UserContext);
 
-  const handleSubmit =async(e) => {
-    e.preventDefault();
-    setFormulaire((prev) => ({ ...prev, loading: true }));
-    apiFetch(`/auth/login`, "POST", {
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  setFormulaire((prev) => ({
+    ...prev,
+    loading: true,
+  }));
+
+  try {
+    const res = await apiFetch("/auth/login", "POST", {
       body: JSON.stringify({
         email: formulaire.email,
         password: formulaire.password,
       }),
-    })
-      .then((res) => res.json())
-      .then(async(data) => {
-        setFormulaire((ancienneVal) => ({
-          ...ancienneVal,
-          reponse: data.message || JSON.stringify(data),
-          couleur: data.couleur || (data.accessToken ? "vert" : "rouge")
-        }));
-        if (data.accessToken) {
-          const dateLisible = new Date(data.data.created_at).toLocaleDateString(
-            "fr-FR",
-          );
-          localStorage.setItem("accessToken", data.accessToken);
-          const resAvatar = await apiFetch("/users/avatar");
+    });
 
-          let avatarLocalUrl = null;
+    const data = await res.json();
 
-          if (resAvatar.ok) {
-            const avatarBlob = await resAvatar.blob();
-            avatarLocalUrl = URL.createObjectURL(avatarBlob);
-          }
-          setUser((prev) => ({
-            ...prev,
-            email: data.data.email,
-            accessToken: data.accessToken,
-            role: data.data.role,
-            creeLe: dateLisible,
-            avatar: avatarLocalUrl,
-            avatarBlobUrl: data.data.avatar,  
-        }));
-setFormulaire((ancienneVal) => ({
-          ...ancienneVal,
-          email: "",
-          password: "",
-          loading: false,
-        }));
-          setPage("Accueil");
+    if (!res.ok || !data.accessToken) {
+      setFormulaire((prev) => ({
+        ...prev,
+        reponse: data.message || "Identifiants incorrects",
+        couleur: "rouge",
+        loading: false,
+      }));
+      return;
+    }
+
+    localStorage.setItem("accessToken", data.accessToken);
+
+    const dateLisible = new Date(
+      data.data.created_at,
+    ).toLocaleDateString("fr-FR");
+
+    setUser((prev) => ({
+      ...prev,
+      email: data.data.email,
+      accessToken: data.accessToken,
+      role: data.data.role,
+      creeLe: dateLisible,
+      avatar: null,
+      avatarBlobUrl: data.data.avatar,
+    }));
+
+    setFormulaire((prev) => ({
+      ...prev,
+      email: "",
+      password: "",
+      loading: false,
+      reponse: data.message,
+      couleur: "vert",
+    }));
+
+    // Affichage immédiat de l'accueil
+    setPage("Accueil");
+
+    // L’avatar se charge ensuite silencieusement
+    apiFetch("/users/avatar")
+      .then((resAvatar) => {
+        if (!resAvatar.ok) {
+          throw new Error("Avatar indisponible");
         }
+
+        return resAvatar.blob();
+      })
+      .then((avatarBlob) => {
+        const avatarLocalUrl = URL.createObjectURL(avatarBlob);
+
+        setUser((prev) => ({
+          ...prev,
+          avatar: avatarLocalUrl,
+        }));
       })
       .catch((error) => {
-        console.error(error.message);
-        setFormulaire((ancienneVal) => ({
-          ...ancienneVal,
-          reponse: "Connection Echoué",
-          couleur: "rouge",
-          loading: false,
-        }));
+        console.warn("Chargement différé de l’avatar :", error.message);
       });
-  };
+  } catch (error) {
+    console.error(error);
+
+    setFormulaire((prev) => ({
+      ...prev,
+      reponse: "Connexion échouée",
+      couleur: "rouge",
+      loading: false,
+    }));
+  }
+};
 
   return (
     <div className="flex flex-col background w-full h-full text-white justify-start items-center overflow-y-auto gap-2">

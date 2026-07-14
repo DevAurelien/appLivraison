@@ -1,4 +1,4 @@
-import { useContext, useRef, useState, useCallback } from "react";
+import { useContext, useRef, useState, useCallback, useEffect } from "react";
 import { MenuContext } from "../contexte/menuContext";
 import apiFetch from "../utils/apiFetch";
 import { UserContext } from "../contexte/userContext";
@@ -14,6 +14,11 @@ import Cropper from "react-easy-crop";
 
 export default function Inscription() {
   const backend_URL = import.meta.env.VITE_BACKEND_URL;
+
+  useEffect(() => {
+    fetch(`${backendUrl}/health`).catch(() => {});
+  }, []);
+
   const [formulaire, setFormulaire] = useState({
     email: "",
     password: "",
@@ -105,7 +110,10 @@ export default function Inscription() {
     }
 
     try {
-      const imageRedimensionnee = await redimensionnerImage(fichierOriginal, zoneCropPixels);
+      const imageRedimensionnee = await redimensionnerImage(
+        fichierOriginal,
+        zoneCropPixels,
+      );
 
       // console.log("Fichier final :", imageRedimensionnee);
       setPicture(imageRedimensionnee);
@@ -154,9 +162,7 @@ export default function Inscription() {
       }
 
       const avatarUrl = dataUpload.url;
-      formulaire.phone.
-
-      setFormulaire((prev) => ({
+      formulaire.phone.setFormulaire((prev) => ({
         ...prev,
         image: avatarUrl,
       }));
