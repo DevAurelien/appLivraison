@@ -4,6 +4,7 @@ import {
   controlAfficherAvatarSalarie,
 } from "../controllers/control.salaries.js";
 import { verifierAuthentification } from "../middlewares/middlewares.auth.js";
+import {autoriserRoles} from "../middlewares/middlewares.auto.js"
 
 const router = express.Router();
 
