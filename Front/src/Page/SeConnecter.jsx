@@ -170,7 +170,7 @@ setFormulaire((ancienneVal) => ({
               disabled={formulaire.loading}
               className="relative z-5 flex cursor-pointer justify-center items-center w-full rounded-xl text-black disabled:cursor-not-allowed"
             >
-              {formulaire.loading ? <Pulse /> : "Se connecter"}
+              {formulaire.loading ? <Pulse className={"p-2"}/> : "Se connecter"}
             </button>
           </div>
         </form>

@@ -107,55 +107,54 @@ const activeIndex = iconesAutorisees.findIndex(
         /> */}
 
         {iconesAutorisees.map((item) => {
-          const Icone = item.composant;
-          const actif = page === item.page;
+  const Icone = item.composant;
+  const actif = page === item.page;
 
-          return (
-            <li
-              key={item.page}
-              ref={(element) => {
-                elementsRef.current[item.page] = element;
-              }}
-              className="
-                relative
-                z-30
-                flex
-                w-18
-                flex-none
-                shrink-0
-                items-center
-                justify-center
-                pb-2
-              "
-            >
-              <button
-                type="button"
-                onClick={() => setPage(item.page)}
-                className={`
-                  relative
-                  z-20
-                  flex
-                  h-16
-                  w-16
-                  shrink-0
-                  cursor-pointer
-                  items-center
-                  justify-center
-                  rounded-full
-                  ${actif ? "text-yellow-300" : "text-white"}
-                `}
-              >
-                <Icone
-                  height={30}
-                  width={30}
-                  titre={item.titre}
-                  color1={actif ? "#fde047" : "white"}
-                  className="block h-7.5 w-7.5 shrink-0"
-                />
-              </button>
-            </li>
-          );
-        })}
+  return (
+    <li
+      key={item.page}
+      ref={(element) => {
+        elementsRef.current[item.page] = element;
+      }}
+      className="
+        relative
+        z-30
+        flex
+        w-18
+        flex-none
+        shrink-0
+        items-center
+        justify-center
+        pb-2
+      "
+    >
+      <button
+        type="button"
+        onClick={() => setPage(item.page)}
+        className={`
+          relative
+          z-20
+          flex
+          h-16
+          w-16
+          shrink-0
+          cursor-pointer
+          items-center
+          justify-center
+          rounded-full
+          ${actif ? "text-yellow-300" : "text-white"}
+        `}
+      >
+        <Icone
+          width={30}
+          height={30}
+          titre={item.titre}
+          color1={actif ? "#fde047" : "#fff"}
+        />
+      </button>
+    </li>
+  );
+})}
       </ul>
     </nav>
   );

@@ -30,6 +30,9 @@ export default function HeaderLogo({ children, bg }) {
     Contacts: (
       <p className="flex justify-center w-[60%] whitespace-nowrap">Discussions</p>
     ),
+    Administration: (
+      <p className="flex justify-center w-[60%] whitespace-nowrap">Administration</p>
+    ),
   };
 
   return (
