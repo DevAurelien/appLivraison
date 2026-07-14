@@ -1,31 +1,27 @@
 import { useState } from "react";
 
-export default function Zesteo_logo ({
+export default function ZesteoLogo({
   className = "",
   color1 = "#fff",
   color2 = "#000",
   color3 = "none",
-  onClick, width, height,
-
+  onClick,
+  width = "100%",
+  height = "100%",
 }) {
-  
-  
   const [hover, setHover] = useState(false);
 
   return (
     <svg
-      id="Zesteo_logo"
-      data-name="Zesteo_logo"
       xmlns="http://www.w3.org/2000/svg"
-      viewBox={`-23 0 480 92.88`}
+      viewBox="-23 0 480 92.88"
       width={width}
       height={height}
-      className={`${className} p-1 h-fit`}
-      // preserveAspectRatio="xMidYMid meet"
+      preserveAspectRatio="xMidYMid meet"
+      className={`${className} block`}
+      onClick={onClick}
       onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => {
-        setHover(false);
-      }}
+      onMouseLeave={() => setHover(false)}
     >
       <g className="transition-[fill] duration-500 ease-linear">
         <polygon

@@ -48,8 +48,12 @@ export default function BarreNavigation() {
   ];
 
   const iconesAutorisees = listeIcones.filter((item) =>
-    item.roleOk?.includes(user?.role),
-  );
+  item.roleOk?.includes(user?.role),
+);
+
+const activeIndex = iconesAutorisees.findIndex(
+  (item) => item.page === page,
+);
 
   useLayoutEffect(() => {
     const calculerPositionCercle = () => {
@@ -60,7 +64,7 @@ export default function BarreNavigation() {
       const centreElement =
         elementActif.offsetLeft + elementActif.offsetWidth / 2;
 
-      setPositionCercle(centreElement - 32);
+      setPositionCercle(centreElement - 37.5);
     };
 
     calculerPositionCercle();
@@ -76,24 +80,31 @@ export default function BarreNavigation() {
     <nav className="fixed bottom-0 left-0 right-0 z-50 h-[10vh] w-full overflow-x-auto bg-(--card-bg) text-white">
       <ul className="relative flex h-full w-max flex-nowrap items-center gap-x-0 bg-(--card-bg) px-1">
         <div
+          className={`nav-active-blob shape-${activeIndex}`}
+          style={{
+            transform: `translate(${positionCercle}px, -50%)`,
+          }}
+        />
+        {/* <div
+        className="nav-active-circle"
           className="
             pointer-events-none
             absolute
             left-0
-            top-4
+            top-2
             z-10
             h-16
             w-16
             rounded-full
             bg-(--card-bg)
-            shadow-[5px_5px_12px_rgba(0,0,0,0.45),-4px_-4px_10px_rgba(255,255,255,0.06),0_0_10px_rgba(250,204,21,0.16)]
-            transition-transform
+            shadow-[0_8px_24px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.07),0_0_14px_rgba(250,204,21,0.1)] transition-transform
             duration-700
+            
           "
           style={{
             transform: `translateX(${positionCercle}px)`,
           }}
-        />
+        /> */}
 
         {iconesAutorisees.map((item) => {
           const Icone = item.composant;

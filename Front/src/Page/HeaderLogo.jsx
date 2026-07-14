@@ -5,28 +5,40 @@ import Notif from "./pageAccueil/Notif.jsx";
 import { UserContext } from "../contexte/userContext.jsx";
 import { MenuContext } from "../contexte/menuContext.jsx";
 
-export default function HeaderLogo({children, bg}) {
-
-  const {user} = useContext(UserContext)
-  const {role} = user;
-  const {page} = useContext(MenuContext)
+export default function HeaderLogo({ children, bg }) {
+  const { user } = useContext(UserContext);
+  const { role } = user;
+  const { page } = useContext(MenuContext);
 
   const content = {
-    "Accueil" : <CardMetierHeader className="px-4 flex justify-start items-start cursor-default text-[1rem]">
-          {role}
-        </CardMetierHeader>,
-        "Livraisons":<p className="flex justify-center w-[60%] whitespace-nowrap">Livraisons du Jour</p>,
-        "Profil":<p className="flex justify-center w-[60%] whitespace-nowrap">Profil</p>,
-        "Messagerie":<p className="flex justify-center w-[60%] whitespace-nowrap">Discussions</p>,
-        
-  }
-
+    Accueil: (
+      <CardMetierHeader className="px-4 flex justify-start items-start cursor-default text-[1rem]">
+        {role}
+      </CardMetierHeader>
+    ),
+    Livraisons: (
+      <p className="flex justify-center w-[60%] whitespace-nowrap">
+        Livraisons du Jour
+      </p>
+    ),
+    Profil: (
+      <p className="flex justify-center w-[60%] whitespace-nowrap">Profil</p>
+    ),
+    Messagerie: (
+      <p className="flex justify-center w-[60%] whitespace-nowrap">Discussions</p>
+    ),
+    Contacts: (
+      <p className="flex justify-center w-[60%] whitespace-nowrap">Discussions</p>
+    ),
+  };
 
   return (
-    <div className={`flex shrink-0 items-end px-4 pb-4 w-full h-[10%] overflow-hidden ${bg ? bg : "bg-(--bg-main)"}`}>
+    <div
+      className={`flex shrink-0 items-end px-4 pb-4 w-full h-[10%] overflow-hidden ${bg ? bg : "bg-(--bg-main)"}`}
+    >
       <div className="w-[80%] flex justify-between items-end text-xl">
-        <ZesteoLogo className="w-[40%] max-h-full object-contain items-end flex text-yellow-300" />
-         {content[page]}
+        <ZesteoLogo className="w-[40%] h-10 shrink-0 text-yellow-300" />
+        {content[page]}
       </div>
       <div className="w-[10%]"></div>
       <div className="w-[10%] h-full items-end flex justify-end">
