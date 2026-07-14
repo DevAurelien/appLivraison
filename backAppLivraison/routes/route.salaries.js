@@ -7,10 +7,11 @@ import { verifierAuthentification } from "../middlewares/middlewares.auth.js";
 
 const router = express.Router();
 
-router.get("/salariesSearch", verifierAuthentification, controlRecupSalaries);
+router.get("/salariesSearch", verifierAuthentification, autoriserRoles("Livreur"), controlRecupSalaries);
 router.get(
   "/salaries/:id/avatar",
   verifierAuthentification,
+  autoriserRoles("Livreur"),
   controlAfficherAvatarSalarie,
 );
 

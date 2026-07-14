@@ -30,7 +30,7 @@ export default function Profil() {
   };
 
   return (
-    <div className="h-full w-full flex justify-start overflow-x-hidden overflow-y-auto mb-15">
+    <div className="h-full w-full flex justify-start overflow-x-hidden overflow-y-auto mb-20">
       <div className="relative bg-(--bg-main) h-full w-full flex flex-col items-center gap-4 p-4">
         <div className="rounded-full flex justify-center items-center border size-20 overflow-hidden shrink-0"><img src={avatar} alt="" /></div>
         <CardProfil

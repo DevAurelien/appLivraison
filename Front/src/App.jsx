@@ -8,6 +8,7 @@ import Livraisons from "./Page/pageLivraisons/Livraisons.jsx";
 import Messagerie from "./Page/pageMessages/Messagerie.jsx";
 import HeaderLogo from "./Page/HeaderLogo.jsx";
 import Contacts from "./Page/pageMessages/Contacts.jsx";
+import Administration from "./Page/pageAdmin/Administration.jsx";
 
 export default function App() {
 
@@ -24,6 +25,7 @@ export default function App() {
       {page === "Livraisons" && <Livraisons/>}
       {page === "Contacts" && <Contacts/>}
       {page === "Messagerie" && <Messagerie/>}
+      {page === "Administration" && <Administration/>}
       {/* <Accueil></Accueil> */}
     </div>
   )

@@ -2,6 +2,7 @@ import Home from "./components/Home.jsx";
 import LivraisonIcone from "./components/LivraisonIcone.jsx";
 import UserIcone from "./components/UserIcone.jsx";
 import MessagesIcone from "./components/Messages.jsx";
+import Engrenages from "./components/Engrenages.jsx";
 import { useContext } from "react";
 import { MenuContext } from "./contexte/menuContext.jsx";
 import { UserContext } from "./contexte/userContext.jsx";
@@ -35,14 +36,20 @@ const { user } = useContext(UserContext);
       composant: UserIcone,
       roleOk: ["Client", "Livreur"],
     },
+    {
+      titre: "Administration",
+      page: "Administration",
+      composant: Engrenages,
+      roleOk: ["Livreur"],
+    },
   ];
   const activeIndex = listeIcones.findIndex((item) => item.page === page);
   const nbIcones = listeIcones.length;
   const segment = 100 / nbIcones;
   // shadow-[inset_5px_5px_10px_rgba(0,0,0,0.45),inset_-3px_-3px_6px_rgba(255,255,255,0.04),0_0_8px_rgba(250,204,21,0.18)]
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 h-[10vh] w-screen text-white">
-      <ul className="flex relative h-full card w-full flex-nowrap items-center bg-(--card-bg)">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 h-[10vh] w-full overflow-x-auto bg-(--card-bg) text-white">
+      <ul className=" relative flex h-full w-max min-w-full flex-nowrap items-center bg-(--card-bg)">
         <div
           className={`absolute
           h-16
