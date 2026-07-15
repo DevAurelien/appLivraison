@@ -16,7 +16,7 @@ export default function Inscription() {
   const backend_URL = import.meta.env.VITE_BACKEND_URL;
 
   useEffect(() => {
-    fetch(`${backendUrl}/health`).catch(() => {});
+    fetch(`${backend_URL}/health`).catch(() => {});
   }, []);
 
   const [formulaire, setFormulaire] = useState({
@@ -162,7 +162,7 @@ export default function Inscription() {
       }
 
       const avatarUrl = dataUpload.url;
-      formulaire.phone.setFormulaire((prev) => ({
+      setFormulaire((prev) => ({
         ...prev,
         image: avatarUrl,
       }));
@@ -266,7 +266,7 @@ export default function Inscription() {
 
   return (
     <div className="flex flex-col background w-full h-full text-white justify-start items-center overflow-y-auto gap-2">
-      <div className="w-full flex justify-center -mb-10">
+      <div className="w-full flex justify-center">
         <Zesteo_logo
           width={180}
           // height={130}

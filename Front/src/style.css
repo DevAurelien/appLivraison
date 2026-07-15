@@ -31,6 +31,7 @@ input[type="date"]:valid::-webkit-datetime-edit {
   --card-bg: #151f2e;
   --card-bg-soft: #1b2638;
   --border-soft: #2a364a;
+  --yellow-zesteo:#fde047;
 
   /* Base */
   --primary: #2563eb;
@@ -232,6 +233,16 @@ input[type="date"]:valid::-webkit-datetime-edit {
   border-radius: var(--radius-md);
   padding-inline: var(--spacing);
 }
+.button_system_green {
+  background: rgba(34, 197, 94, 0.12);
+  color: #22c55e;
+  /* color: white; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
 
 .button-primary-orange {
   background: rgba(245, 158, 11, 0.12);
