@@ -11,6 +11,26 @@ import { get } from "@vercel/blob";
 import { Readable } from "node:stream";
 import { sql } from "../database/db.js";
 
+const cookieOptions = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite:
+    process.env.NODE_ENV === "production"
+      ? "none"
+      : "lax",
+  path: "/",
+  maxAge: 30 * 24 * 60 * 60 * 1000,
+};
+const cookieOptionsClear = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite:
+    process.env.NODE_ENV === "production"
+      ? "none"
+      : "lax",
+  path: "/",
+};
+
 export const ControlLoginUsers = async (req, res) => {
   try {
     let { email, password } = req.body;
@@ -29,12 +49,7 @@ export const ControlLoginUsers = async (req, res) => {
     if (user) {
       const accessToken = await signAccessToken(user);
       const refreshToken = await signRefreshToken(user);
-      res.cookie("refreshToken", refreshToken, {
-        httpOnly: true,
-        secure: false,
-        sameSite: "lax",
-        maxAge: 30 * 24 * 60 * 60 * 1000,
-      });
+      res.cookie("refreshToken", refreshToken, cookieOptions)
       return res.json({
         couleur: "vert",
         message: "Connection Réussie",
@@ -84,12 +99,7 @@ export const ControlRegisterUsers = async (req, res) => {
     const accessToken = await signAccessToken(user);
     const refreshToken = await signRefreshToken(user);
 
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: false,
-      sameSite: "lax",
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-    });
+    res.cookie("refreshToken", refreshToken, cookieOptions);
 
     return res.status(200).json({
       couleur: "vert",
@@ -123,11 +133,7 @@ export const ControlRefreshUsers = async (req, res) => {
 };
 
 export const ControlLogoutUsers = async (req, res) => {
-  res.clearCookie("refreshToken", {
-    httpOnly: true,
-    secure: false,
-    sameSite: "lax",
-  });
+  res.clearCookie("refreshToken", cookieOptionsClear);
 
   return res.status(200).json({
     message: "Déconnexion réussie",
