@@ -1,3 +1,5 @@
+import { useContext } from "react";
+import { MenuContext } from "../../contexte/menuContext";
 export default function CardAdministration({
   icone,
   titre,
@@ -9,6 +11,7 @@ export default function CardAdministration({
   onClick,
   className = "",
 }) {
+  const { setPage } = useContext(MenuContext);
   return (
     <button
       type="button"
