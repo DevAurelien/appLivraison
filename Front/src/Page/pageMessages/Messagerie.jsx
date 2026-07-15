@@ -1,7 +1,7 @@
 import BulleGauche from "./BulleGauche.jsx";
 import BulleDroite from "./BulleDroite.jsx";
 import { useRef, createRef, useState } from "react";
-import Fleche from "../../components/Fleche.jsx";
+import Fleche from "../../components/componentsIcone/Fleche.jsx";
 import { MenuContext } from "../../contexte/menuContext.jsx";
 import { useContext } from "react";
 

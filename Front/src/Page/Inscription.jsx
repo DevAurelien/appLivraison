@@ -4,11 +4,11 @@ import apiFetch from "../utils/apiFetch";
 import { UserContext } from "../contexte/userContext";
 import Pulse from "../components/Loading.jsx";
 import Zesteo_logo from "../components/Zesteo_Logo.jsx";
-import OeilOuvert from "../components/OeilOuvert.jsx";
-import OeilBarre from "../components/OeilBarre.jsx";
-import Calendrier from "../components/Calendrier.jsx";
-import UserIcone from "../components/UserIcone.jsx";
-import PlusIcone from "../components/PlusIcone.jsx";
+import OeilOuvert from "../components/componentsIcone/OeilOuvert.jsx";
+import OeilBarre from "../components/componentsIcone/OeilBarre.jsx";
+import Calendrier from "../components/componentsIcone/Calendrier.jsx";
+import UserIcone from "../components/componentsIcone/UserIcone.jsx";
+import PlusIcone from "../components/componentsIcone/PlusIcone.jsx";
 import { redimensionnerImage } from "../utils/fnImages.jsx";
 import Cropper from "react-easy-crop";
 

@@ -1,5 +1,5 @@
-import UserIcone from "../../components/UserIcone.jsx";
-import PlusIcone from "../../components/PlusIcone.jsx";
+import UserIcone from "../../components/componentsIcone/UserIcone.jsx";
+import PlusIcone from "../../components/componentsIcone/PlusIcone.jsx";
 import { useContext, useEffect, useState } from "react";
 import { MenuContext } from "../../contexte/menuContext";
 import apiFetch from "../../utils/apiFetch.jsx";

@@ -1,8 +1,8 @@
-import Home from "./components/Home.jsx";
-import LivraisonIcone from "./components/LivraisonIcone.jsx";
-import UserIcone from "./components/UserIcone.jsx";
-import MessagesIcone from "./components/Messages.jsx";
-import Engrenages from "./components/Engrenages.jsx";
+import Home from "./components/componentsIcone/Home.jsx";
+import LivraisonIcone from "./components/componentsIcone/LivraisonIcone.jsx";
+import UserIcone from "./components/componentsIcone/UserIcone.jsx";
+import MessagesIcone from "./components/componentsIcone/Messages.jsx";
+import Engrenages from "./components/componentsIcone/Engrenages.jsx";
 import { useContext, useLayoutEffect, useRef, useState } from "react";
 import { MenuContext } from "./contexte/menuContext.jsx";
 import { UserContext } from "./contexte/userContext.jsx";
@@ -36,16 +36,16 @@ export default function BarreNavigation() {
       roleOk: ["Client", "Livreur"],
     },
     {
-      titre: "Profil",
-      page: "Profil",
-      composant: UserIcone,
-      roleOk: ["Client", "Livreur"],
-    },
-    {
       titre: "Administration",
       page: "Administration",
       composant: Engrenages,
       roleOk: ["Livreur"],
+    },
+    {
+      titre: "Profil",
+      page: "Profil",
+      composant: UserIcone,
+      roleOk: ["Client", "Livreur"],
     },
   ];
 
@@ -53,9 +53,7 @@ export default function BarreNavigation() {
     item.roleOk?.includes(user?.role),
   );
 
-  const activeIndex = iconesAutorisees.findIndex(
-    (item) => item.page === page,
-  );
+  const activeIndex = iconesAutorisees.findIndex((item) => item.page === page);
 
   useLayoutEffect(() => {
     const calculerPositionCercle = () => {
@@ -80,8 +78,9 @@ export default function BarreNavigation() {
   }, [page, user?.role]);
 
   return (
-    <nav className="fixed right-0 bottom-0 left-0 z-50 h-[10vh] w-full bg-(--card-bg) text-white">
-      <ul className="relative flex h-full w-full flex-nowrap items-center bg-(--card-bg) px-1">
+    <nav className="fixed right-0 bottom-0 left-0 z-50 h-[10vh] w-full bg-(--card-bg) text-white rounded-4xl">
+      
+      <ul className="relative flex h-full w-full flex-nowrap items-center bg-(--card-bg) cardLiv px-1 rounded-4xl">
         <div
           ref={blobRef}
           className={`nav-active-blob shape-${activeIndex}`}

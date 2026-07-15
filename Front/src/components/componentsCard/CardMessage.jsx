@@ -1,4 +1,4 @@
-import { Director } from "./Director";
+import { Director } from "../componentsIcone/Director";
 
 export default function CardMessage({ className, children, titre, signature }) {
   return (

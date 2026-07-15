@@ -20,7 +20,7 @@ export default function HeaderLogo({ children, bg }) {
         {role}
       </CardMetierHeader>
     ),
-    Livraisons: (<CardTitre>Livraisons du Jour</CardTitre>),
+    Livraisons: (<CardTitre>Livraisons</CardTitre>),
     Profil: (<CardTitre>Profil</CardTitre>),
     Messagerie: (<CardTitre>Discussions</CardTitre>),
     Contacts: (<CardTitre>Discussions</CardTitre>), 

@@ -122,6 +122,19 @@ export const ControlRefreshUsers = async (req, res) => {
   }
 };
 
+export const ControlLogoutUsers = async (req, res) => {
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: false,
+    sameSite: "lax",
+  });
+
+  return res.status(200).json({
+    message: "Déconnexion réussie",
+    ok: true,
+  });
+};
+
 export const controlImageProfil = async (req, res) => {
   try {
     const fichier = req.file;

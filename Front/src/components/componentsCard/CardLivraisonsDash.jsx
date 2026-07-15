@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import Jauge from "./Jauge.jsx";
-import { ArrivedLocation, Location } from "./IconeStartEnd.jsx";
-import BoxLivraison from "./BoxLivraison.jsx";
-import Boites from "./Boites.jsx";
+import Jauge from "../componentsIcone/Jauge.jsx";
+import { ArrivedLocation, Location } from "../componentsIcone/IconeStartEnd.jsx";
+import BoxLivraison from "../componentsIcone/BoxLivraison.jsx";
+import Boites from "../componentsIcone/Boites.jsx";
 
 export default function CardLivraisonsDash({
   className,

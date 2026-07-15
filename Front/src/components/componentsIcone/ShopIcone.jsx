@@ -1,4 +1,4 @@
-export default function Shop({
+export default function ShopIcone({
   color1 = "#fff",
   color2 = "#000",
   color3 = "none",

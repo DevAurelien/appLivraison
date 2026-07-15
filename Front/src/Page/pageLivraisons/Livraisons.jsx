@@ -1,4 +1,4 @@
-import CardLivraisons from "./CardLivraisons";
+import CardLivraisons from "./CardLivraisons.jsx";
 import HeaderLogo from "../HeaderLogo.jsx";
 import CardLivReduit from "./CardLivReduit.jsx";
 import { useEffect, useState } from "react";

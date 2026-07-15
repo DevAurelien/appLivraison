@@ -1,11 +1,9 @@
 import { useContext, useEffect, useState } from "react";
-import BarreNavigation from "../../Navigation.jsx";
-import HeaderLogo from "../HeaderLogo.jsx";
 import { UserContext } from "../../contexte/userContext.jsx";
 import { MenuContext } from "../../contexte/menuContext.jsx";
-import CardMessage from "../../components/CardMessage.jsx";
-import CardLivraisonsDash from "../../components/CardLivraisonsDash.jsx";
-import CardPointage from "../../components/CardPointage.jsx";
+import CardMessage from "../../components/componentsCard/CardMessage.jsx";
+import CardLivraisonsDash from "../../components/componentsCard/CardLivraisonsDash.jsx";
+import CardPointage from "../../components/componentsCard/CardPointage.jsx";
 
 export default function Accueil() {
   const { user } = useContext(UserContext);

@@ -3,8 +3,8 @@ import { MenuContext } from "../contexte/menuContext";
 import apiFetch from "../utils/apiFetch";
 import { UserContext } from "../contexte/userContext";
 import Zesteo_logo from "../components/Zesteo_Logo";
-import OeilOuvert from "../components/OeilOuvert.jsx";
-import OeilBarre from "../components/OeilBarre.jsx";
+import OeilOuvert from "../components/componentsIcone/OeilOuvert.jsx";
+import OeilBarre from "../components/componentsIcone/OeilBarre.jsx";
 import Pulse from "../components/Loading.jsx";
 
 export default function SeConnecter() {

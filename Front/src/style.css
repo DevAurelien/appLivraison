@@ -3,11 +3,11 @@
 #root,
 body,
 html {
-    height: 100%;
-    width: 100%;
-    overflow: hidden;
-    font-family: "Inter", system-ui, sans-serif;
-    background: var(--bg-main);
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  font-family: "Inter", system-ui, sans-serif;
+  background: var(--bg-main);
 }
 
 input[type="date"]:focus::-webkit-datetime-edit,
@@ -25,38 +25,37 @@ input[type="date"]:valid::-webkit-datetime-edit {
 }
 
 :root {
-    /* Background */
-    --bg-main: #0B1220;
-    --bg-secondary: #111827;
-    --card-bg: #151F2E;
-    --card-bg-soft: #1B2638;
-    --border-soft: #2A364A;
+  /* Background */
+  --bg-main: #0b1220;
+  --bg-secondary: #111827;
+  --card-bg: #151f2e;
+  --card-bg-soft: #1b2638;
+  --border-soft: #2a364a;
 
-    /* Base */
-    --primary: #2563EB;
-    --primary-hover: #1D4ED8;
-    --primary-light: #60A5FA;
-    --primary-soft: rgba(37, 99, 235, 0.14);
+  /* Base */
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --primary-light: #60a5fa;
+  --primary-soft: rgba(37, 99, 235, 0.14);
 
-    /* Etats */
-    --success: #22C55E;
-    --success-bg: rgba(34, 197, 94, 0.12);
+  /* Etats */
+  --success: #22c55e;
+  --success-bg: rgba(34, 197, 94, 0.12);
 
-    --warning: #F59E0B;
-    --warning-bg: rgba(245, 158, 11, 0.14);
+  --warning: #f59e0b;
+  --warning-bg: rgba(245, 158, 11, 0.14);
 
-    --danger: #EF4444;
-    --danger-bg: rgba(239, 68, 68, 0.14);
+  --danger: #ef4444;
+  --danger-bg: rgba(239, 68, 68, 0.14);
 
-    /* Texte */
-    --text-main: #F8FAFC;
-    --text-secondary: #CBD5E1;
-    --text-muted: #94A3B8;
-    --text-disabled: #64748B;
-
+  /* Texte */
+  --text-main: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --text-disabled: #64748b;
 }
 
-.background{
+.background {
   background-image: url("/background.png");
   /* background-image: url("/template.png"); */
   background-repeat: no-repeat;
@@ -64,11 +63,10 @@ input[type="date"]:valid::-webkit-datetime-edit {
   background-size: cover;
 }
 
-.fd{
-    /* background-image: url("./bg.png"); */
-    background-repeat: no-repeat;
-    background-size: cover;
-    
+.fd {
+  /* background-image: url("./bg.png"); */
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .nav-active-blob {
@@ -80,7 +78,6 @@ input[type="date"]:valid::-webkit-datetime-edit {
 
   width: 4.7rem;
   height: 4.7rem;
-
 
   transform: translateY(-50%);
   border-radius: 42% 58% 55% 45% / 48% 42% 58% 52%;
@@ -175,43 +172,65 @@ input[type="date"]:valid::-webkit-datetime-edit {
 }
 
 .card {
-    background: #151F2E;
-    border: 1px solid #2A364A;
+  background: #151f2e;
+  border: 1px solid #2a364a;
 }
 
 .cardLiv {
-    background: #151F2E;
-    border: 2px solid #233e6e;
+  background: #151f2e;
+  border: 2px solid #233e6e;
+}
+
+.bg_test {
+  background-image: url("./assets/exempleAdmin.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: auto 100%;
+  background-attachment: fixed;
+  overflow: hidden;
+}
+
+.cardAdmin {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow:
+    0 10px 25px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.035);
+}
+.cardAdmin:hover {
+  border-color: rgba(250, 204, 21, 0.25);
+  background: rgba(250, 204, 21, 0.045);
+  transform: translateY(-2px);
 }
 
 .button-primary {
-    background: rgba(42, 91, 196, 0.12);
-    color: #2a5bc4;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: var(--radius-md);
-    padding-inline: var(--spacing);
+  background: rgba(42, 91, 196, 0.12);
+  color: #2a5bc4;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: var(--radius-md);
+  padding-inline: var(--spacing);
 }
 .button-primary-echec {
-    background: rgba(239, 68, 68, 0.14);
-    color: #EF4444;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: var(--radius-md);
-    padding-inline: var(--spacing);
+  background: rgba(239, 68, 68, 0.14);
+  color: #ef4444;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: var(--radius-md);
+  padding-inline: var(--spacing);
 }
 
 .button-primary-success {
-    background: rgba(34, 197, 94, 0.12);
-    color: #22C55E;
-    /* color: white; */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: var(--radius-md);
-    padding-inline: var(--spacing);
+  background: rgba(34, 197, 94, 0.12);
+  color: #22c55e;
+  /* color: white; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: var(--radius-md);
+  padding-inline: var(--spacing);
 }
 
 .button-primary-orange {
@@ -234,8 +253,8 @@ input[type="date"]:valid::-webkit-datetime-edit {
   padding-inline: var(--spacing);
 }
 
-.manrope{
-    font-family: "Manrope", system-ui, sans-serif;
+.manrope {
+  font-family: "Manrope", system-ui, sans-serif;
 }
 
 .manrope-200 {
@@ -256,8 +275,7 @@ input[type="date"]:valid::-webkit-datetime-edit {
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
-  font-variation-settings:
-    "wdth" 100;
+  font-variation-settings: "wdth" 100;
 }
 
 .montserrat-200 {
@@ -266,7 +284,6 @@ input[type="date"]:valid::-webkit-datetime-edit {
   font-weight: 200;
   font-style: normal;
 }
-
 
 /* bleu pour :
  boutons principaux

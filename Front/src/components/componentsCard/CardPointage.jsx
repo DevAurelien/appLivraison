@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import Radar from "../components/Radar.jsx";
+import Radar from "../componentsIcone/Radar.jsx";
 
 export default function CardPointage() {
   const [action, setAction] = useState("non");

@@ -3,7 +3,7 @@ import { UserContext } from "../../contexte/userContext";
 import CardProfil from "../pageProfil/CardProfil.jsx";
 import CardDocuments from "./CardDocuments.jsx";
 import { MenuContext } from "../../contexte/menuContext.jsx";
-import Fleche from "../../components/Fleche.jsx";
+import Fleche from "../../components/componentsIcone/Fleche.jsx";
 import { ContactContext } from "../../contexte/contactContext.jsx";
 
 export default function Profil() {
@@ -22,12 +22,24 @@ export default function Profil() {
     "Deposer un justificatif d'absence",
   ];
 
-  const handleDeco = () => {
+  const handleDeco = async () => {
+  try {
+    await fetch(
+      `${import.meta.env.VITE_BACKEND_URL}/auth/logout`,
+      {
+        method: "POST",
+        credentials: "include",
+      },
+    );
+  } catch (erreur) {
+    console.error("Erreur déconnexion :", erreur);
+  } finally {
     localStorage.removeItem("accessToken");
-    setUser({});
-    setListeContacts([])
+    setUser(null);
+    setListeContacts([]);
     setPage("connection");
-  };
+  }
+};
 
   return (
     <div className="h-full w-full flex justify-start overflow-x-hidden overflow-y-auto mb-20">

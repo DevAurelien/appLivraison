@@ -1,13 +1,13 @@
-import Tournevis from "../../components/Tournevis.jsx";
-import Boites from "../../components/Boites.jsx";
-import Camion from "../../components/Camion.jsx";
-import Interro from "../../components/Interro.jsx";
-import Location from "../../components/Location.jsx";
-import Road from "../../components/Road.jsx";
-import Tel from "../../components/Tel.jsx";
-import TimeA from "../../components/TimeA.jsx";
-import TimeB from "../../components/TimeB.jsx";
-import Shop from "../../components/Shop.jsx";
+import Tournevis from "../../components/componentsIcone/Tournevis.jsx";
+import Boites from "../../components/componentsIcone/Boites.jsx";
+import CamionIcone from "../../components/componentsIcone/CamionIcone.jsx";
+import Interro from "../../components/componentsIcone/Interro.jsx";
+import Location from "../../components/componentsIcone/Location.jsx";
+import Road from "../../components/componentsIcone/Road.jsx";
+import Tel from "../../components/componentsIcone/Tel.jsx";
+import TimeA from "../../components/componentsIcone/TimeA.jsx";
+import TimeB from "../../components/componentsIcone/TimeB.jsx";
+import ShopIcone from "../../components/componentsIcone/ShopIcone.jsx";
 import CardProduits from "./CardProduits.jsx";
 
 export default function CardLivraisons({
@@ -53,7 +53,7 @@ export default function CardLivraisons({
   const correspondance = {
     Installation: <Tournevis />,
     Depose: <Boites />,
-    PiedCamion: <Camion />,
+    PiedCamion: <CamionIcone />,
     inconnu: <Interro />,
   };
 
@@ -112,7 +112,7 @@ export default function CardLivraisons({
               </p>
 
               <div className="flex items-center gap-2 text-[0.6rem] text-white/50">
-                <Shop />
+                <ShopIcone />
 
                 <span>{magasin.nom}</span>
               </div>
@@ -162,26 +162,16 @@ export default function CardLivraisons({
               correspondance[item.categorie] ?? correspondance.inconnu;
 
             return (
-              <CardProduits key={index} className="text-[0.8rem]">
-                <div className="flex size-4 items-center">
-                  {icone}
-                </div>
+              <CardProduits
+                key={index}
+                className="flex-nowrap whitespace-nowrap text-[0.8rem]"
+              >
+                <div className="flex size-4 shrink-0 items-center">{icone}</div>
 
-                <span>{item.nom}</span>
+                <span className="whitespace-nowrap">{item.nom}</span>
 
                 {item.reprise && (
-                  <span
-                    className="
-                      flex
-                      h-full
-                      aspect-square
-                      items-center
-                      rounded-full
-                      border
-                      border-white
-                      px-1
-                    "
-                  >
+                  <span className="flex size-4 shrink-0 items-center justify-center rounded-full border border-white text-[0.4rem] leading-none">
                     +R
                   </span>
                 )}
