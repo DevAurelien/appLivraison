@@ -56,16 +56,16 @@ const handleSubmit = async (e) => {
 
     localStorage.setItem("accessToken", data.accessToken);
 
-    const dateLisible = new Date(
-      data.data.created_at,
-    ).toLocaleDateString("fr-FR");
+    // const dateLisible = new Date(
+    //   data.data.created_at,
+    // ).toLocaleDateString("fr-FR");
 
     setUser((prev) => ({
       ...prev,
       email: data.data.email,
-      accessToken: data.accessToken,
+      accessToken: data.data.accessToken,
       role: data.data.role,
-      creeLe: dateLisible,
+      creeLe: data.data.creeLe,
       avatar: null,
       avatarBlobUrl: data.data.avatar,
     }));
@@ -79,10 +79,9 @@ const handleSubmit = async (e) => {
       couleur: "vert",
     }));
 
-    // Affichage immédiat de l'accueil
     setPage("Accueil");
 
-    // L’avatar se charge ensuite silencieusement
+    // L’avatar se charge
     apiFetch("/users/avatar")
       .then((resAvatar) => {
         if (!resAvatar.ok) {

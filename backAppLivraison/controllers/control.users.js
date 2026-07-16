@@ -125,7 +125,8 @@ export const ControlRefreshUsers = async (req, res) => {
     }
     const refreshTokenValide = await verifierRefreshToken(refreshToken);
     const accessToken = refreshTokenValide.accessToken;
-    return res.status(200).json({ accessToken });
+    const user = refreshTokenValide.user;
+    return res.status(200).json({...user, accessToken});
   } catch (e) {
     res.clearCookie("refreshToken");
     return res.status(e.status || 401).json({ error: e.message });

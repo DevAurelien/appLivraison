@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 export default async function apiFetch(
   endPoint,
   method = "GET",
@@ -53,6 +55,9 @@ export default async function apiFetch(
 
       const nouveauToken =
         resRefreshJson.accessToken;
+
+      const user = resRefreshJson.user;
+      console.log(user)
 
       if (!nouveauToken) {
         localStorage.removeItem("accessToken");

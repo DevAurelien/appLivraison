@@ -2,6 +2,7 @@ import {
   createContext,
   useEffect,
   useState,
+  useRef
 } from "react";
 
 export const UserContext = createContext({
@@ -48,6 +49,7 @@ const decoderAccessToken = (token) => {
 
 export const UserContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const avatarLocalUrlRef = useRef(null);
 
   const [accessToken, setAccessToken] = useState(() => {
     try {
@@ -68,7 +70,7 @@ export const UserContextProvider = ({ children }) => {
   const [authLoading, setAuthLoading] =
     useState(true);
 
- useEffect(() => {
+  useEffect(() => {
   const restaurerSession = async () => {
     try {
       const reponse = await fetch(
@@ -89,22 +91,64 @@ export const UserContextProvider = ({ children }) => {
         throw new Error("AccessToken absent");
       }
 
-      const utilisateur =
-        decoderAccessToken(resultat.accessToken);
-
-      if (!utilisateur) {
-        throw new Error(
-          "Utilisateur absent du token",
-        );
-      }
-
-      setAccessToken(resultat.accessToken);
-      setUser(utilisateur);
+      const utilisateur = resultat.user ?? resultat;
 
       localStorage.setItem(
         "accessToken",
         resultat.accessToken,
       );
+
+      setAccessToken(resultat.accessToken);
+
+      setUser({
+        ...utilisateur,
+        accessToken: resultat.accessToken,
+        avatar: null,
+        avatarBlobUrl: utilisateur.avatar ?? null,
+      });
+
+      try {
+        const reponseAvatar = await fetch(
+          `${import.meta.env.VITE_BACKEND_URL}/users/avatar`,
+          {
+            method: "GET",
+            credentials: "include",
+            headers: {
+              Authorization: `Bearer ${resultat.accessToken}`,
+            },
+          },
+        );
+
+        if (!reponseAvatar.ok) {
+          throw new Error(
+            `Avatar indisponible : ${reponseAvatar.status}`,
+          );
+        }
+
+        const avatarBlob = await reponseAvatar.blob();
+
+        if (avatarLocalUrlRef.current) {
+          URL.revokeObjectURL(
+            avatarLocalUrlRef.current,
+          );
+        }
+
+        const avatarLocalUrl =
+          URL.createObjectURL(avatarBlob);
+
+        avatarLocalUrlRef.current =
+          avatarLocalUrl;
+
+        setUser((utilisateurActuel) => ({
+          ...utilisateurActuel,
+          avatar: avatarLocalUrl,
+        }));
+      } catch (erreurAvatar) {
+        console.warn(
+          "Chargement de l’avatar impossible :",
+          erreurAvatar.message,
+        );
+      }
     } catch (erreur) {
       setUser(null);
       setAccessToken("");
@@ -120,6 +164,16 @@ export const UserContextProvider = ({ children }) => {
   };
 
   restaurerSession();
+
+  return () => {
+    if (avatarLocalUrlRef.current) {
+      URL.revokeObjectURL(
+        avatarLocalUrlRef.current,
+      );
+
+      avatarLocalUrlRef.current = null;
+    }
+  };
 }, []);
 
 useEffect(() => {

@@ -29,8 +29,8 @@ export default function CardAdministration({
         overflow-hidden
         rounded-3xl
         border
-        border-[color:var(--couleur-card)]
-        bg-[var(--fond-card)]
+        border-r(--couleur-card)
+        bg-(--fond-card)
         p-5
         text-left
         shadow-[0_0_18px_color-mix(in_srgb,var(--couleur-card)_20%,transparent)]
@@ -64,7 +64,7 @@ export default function CardAdministration({
               justify-center
               rounded-2xl
               border
-              border-[color:var(--couleur-card)]
+              border-(--couleur-card)
               bg-[color-mix(in_srgb,var(--couleur-card)_25%,transparent)]
               shadow-[inset_0_0_18px_color-mix(in_srgb,var(--couleur-card)_30%,transparent)]
             "

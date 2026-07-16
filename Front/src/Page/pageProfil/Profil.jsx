@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../contexte/userContext";
 import CardProfil from "../pageProfil/CardProfil.jsx";
 import CardDocuments from "./CardDocuments.jsx";
@@ -11,6 +11,7 @@ export default function Profil() {
   const { email, creeLe, role, avatar } = user || {};
   const { setPage } = useContext(MenuContext);
   const {setListeContacts} = useContext(ContactContext);
+  const [imageAvatar, setImageAvatar] = useState(avatar)
   const documents = [
     "Bulletins de salaire",
     "Contrat de travail",
@@ -41,10 +42,16 @@ export default function Profil() {
   }
 };
 
+// useEffect(()=>{
+//   imgAvatar 
+// },[user])
+  
+  console.log(creeLe)
+  console.log(typeof(creeLe))
   return (
     <div className="h-full w-full flex justify-start overflow-x-hidden overflow-y-auto mb-20">
       <div className="relative bg-(--bg-main) h-full w-full flex flex-col items-center gap-4 p-4">
-        <div className="rounded-full flex justify-center items-center border size-20 overflow-hidden shrink-0"><img src={avatar} alt="" /></div>
+        <div className="rounded-full flex justify-center items-center border size-20 overflow-hidden shrink-0">{avatar &&<img src={avatar} alt="" />}</div>
         <CardProfil
           role={role}
           email={email}
@@ -65,6 +72,7 @@ export default function Profil() {
             {demandes.map((element, index) => (
               <li className="cursor-pointer" key={index}>
                 {element}
+                {/* {console.log(user)} */}
               </li>
             ))}
           </ul>
