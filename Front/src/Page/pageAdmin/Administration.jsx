@@ -89,7 +89,7 @@ export default function Administration() {
   // Mes livreurs · Mes agences · Mes camions · Mes secteurs · Planning · Incidents · Statistiques · Comptes utilisateurs
 
   return (
-    <div className="flex flex-col gap-4 w-full h-full px-4 text-[0.8rem] ">
+    <div className="flex flex-col gap-4 w-full h-full px-4 text-[0.8rem] overflow-y-auto overflow-x-hidden">
       <div className="w-full border flex">
         <div className="flex flex-col w-full  border-yellow-500 pb-2">
           <div className="flex justify-between px-4 py-2">
@@ -120,11 +120,11 @@ export default function Administration() {
           <h1 className="text-xl font-bold">Gestion</h1>
         </p>{" "}
         <p className="relative h-full">
-          <LoupeIcone
-            className=" px-2 absolute left-0 top-1/2 -translate-y-1/2"
+          {inputSearch === "" && <LoupeIcone
+            className="px-2 absolute left-0 top-1/2 -translate-y-1/2"
             height={12}
             width={12}
-          />{" "}
+          />}{" "}
           <input
             type="text"
             value={inputSearch}
