@@ -24,14 +24,14 @@ export default function CardAdministration({
       className={`
         relative
         flex
-        min-h-40
+        min-h-10
         w-full
         overflow-hidden
         rounded-3xl
         border
-        border-r(--couleur-card)
+        border-(--couleur-card)
         bg-(--fond-card)
-        p-5
+        p-2
         text-left
         shadow-[0_0_18px_color-mix(in_srgb,var(--couleur-card)_20%,transparent)]
         transition
@@ -48,17 +48,17 @@ export default function CardAdministration({
           pointer-events-none
           absolute
           inset-0
-          bg-[radial-gradient(circle_at_top_left,color-mix(in_srgb,var(--couleur-card)_35%,transparent),transparent_65%)]
+          bg-[radial-gradient(circle_at_top_left,color-mix(in_srgb,var(--couleur-card)_65%,transparent),transparent_80%)]
         "
       />
 
       <div className="relative z-10 flex w-full flex-col">
-        <div className="flex items-start gap-4">
+        <div className="flex items-start gap-2">
           {/* Conteneur de l’icône */}
           <div
             className="
               flex
-              size-17
+              size-12
               shrink-0
               items-center
               justify-center
@@ -66,27 +66,27 @@ export default function CardAdministration({
               border
               border-(--couleur-card)
               bg-[color-mix(in_srgb,var(--couleur-card)_25%,transparent)]
-              shadow-[inset_0_0_18px_color-mix(in_srgb,var(--couleur-card)_30%,transparent)]
+              shadow-[inset_0_0_18px_color-mix(in_srgb,var(--couleur-card)_20%,transparent)]
             "
           >
             {icone}
           </div>
 
           {/* Textes */}
-          <div className="min-w-0 flex-1 pt-1">
-            <h2 className="truncate text-lg font-semibold text-white">
+          <div className="min-w-0 flex-1">
+            <h2 className="truncate text-[1rem] font-semibold text-white">
               {titre}
             </h2>
 
-            <p className="mt-1 line-clamp-2 text-sm text-slate-400">
+            <p className="mt-1 line-clamp-2 text-[0.6rem] text-slate-400">
               {description}
             </p>
           </div>
         </div>
 
-        <div className="mt-auto flex items-end justify-between pt-5">
+        <div className={`mt-auto flex items-end ${statut ? "justify-between" : "justify-end"} pt-2`}>
           {/* Badge */}
-          <div
+          {statut && <div
             className="
               flex
               items-center
@@ -97,7 +97,7 @@ export default function CardAdministration({
               bg-black/15
               px-3
               py-1.5
-              text-sm
+              text-[0.6rem]
               text-slate-300
             "
           >
@@ -110,8 +110,8 @@ export default function CardAdministration({
               "
             />
 
-            <span>{statut}</span>
-          </div>
+             <span>{statut}</span>
+          </div>}
 
           {/* Flèche */}
           <span

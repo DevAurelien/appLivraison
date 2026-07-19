@@ -183,7 +183,7 @@ input[type="date"]:valid::-webkit-datetime-edit {
 }
 
 .bg_test {
-  background-image: url("./assets/exempleAdmin.png");
+  /* background-image: url("./assets/exempleAdmin.png"); */
   background-repeat: no-repeat;
   background-position: center center;
   background-size: auto 100%;
