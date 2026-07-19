@@ -74,7 +74,7 @@ export default function CardAdministration({
 
           {/* Textes */}
           <div className="min-w-0 flex-1">
-            <h2 className="truncate text-[1rem] font-semibold text-white">
+            <h2 className="truncate text-[0.8rem] font-semibold text-white">
               {titre}
             </h2>
 

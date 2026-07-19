@@ -89,7 +89,7 @@ export default function Administration() {
   // Mes livreurs · Mes agences · Mes camions · Mes secteurs · Planning · Incidents · Statistiques · Comptes utilisateurs
 
   return (
-    <div className="flex flex-col gap-4 w-full h-full px-4 text-[0.8rem] overflow-y-auto overflow-x-hidden">
+    <div className="flex flex-col gap-4 w-full px-4 text-[0.8rem] overflow-y-scroll overflow-x-hidden pb-25">
       <div className="w-full border flex">
         <div className="flex flex-col w-full  border-yellow-500 pb-2">
           <div className="flex justify-between px-4 py-2">
@@ -140,6 +140,7 @@ export default function Administration() {
           const Icone = item.composant;
           return (
             <CardAdministration
+            key={index}
               icone={<Icone color1="white" height={25} width={25} />}
               titre={item.titre}
               description={item.description}
