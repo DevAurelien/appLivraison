@@ -8,6 +8,7 @@ import StatsIcone from "../../components/componentsIcone/StatsIcone.jsx";
 import GestionUsersIcone from "../../components/componentsIcone/GestionUsersIcone.jsx";
 import LoupeIcone from "../../components/componentsIcone/LoupeIcone.jsx";
 import CardAdministration from "./CardAdministration.jsx";
+import PetiteCardAdmin from "./PetiteCardAdmin.jsx";
 import { UserContext } from "../../contexte/userContext.jsx";
 import { useContext, useState } from "react";
 
@@ -108,7 +109,8 @@ export default function Administration() {
           </div>
           {/* card a retravailler pour la vue globale */}
           <div className="grid grid-cols-3 w-full px-2 gap-2 pb-1">
-            <div className="border flex justify-center items-center h-20 rounded-xl "></div>
+            <PetiteCardAdmin icone={UserIcone}/>
+            {/* <div className="border flex justify-center items-center h-20 rounded-xl "></div> */}
             <div className="border flex justify-center items-center h-20 rounded-xl"></div>
             <div className="border flex justify-center items-center h-20 rounded-xl"></div>
           </div>
@@ -130,11 +132,10 @@ export default function Administration() {
             value={inputSearch}
             onChange={(e)=>{setInputSearch(e.target.value)}}
             placeholder="Rechercher un paramètre"
-            className="placeholder:text-[0.6rem] placeholder:text-white/25 text-right border-2 border-(--card-bg-soft) rounded-2xl outline-none px-2 bg-black/25"
+            className="placeholder:text-[0.6rem] h-8 placeholder:text-white/25 text-right border-2 border-(--card-bg-soft) rounded-2xl outline-none px-2 bg-black/25"
           />
         </p>
       </div>
-      {/* <div className="grid grid-cols-2 gap-2 "> */}
       <div className="grid grid-cols-2 gap-2 ">
         {iconesAutorisees.map((item, index) => {
           const Icone = item.composant;
