@@ -2,7 +2,7 @@ export default function LinearBarProgress({
   progress,
   label = "Progress Bar",
   width = "100%",
-  height = "30%",
+  height = "40%",
   max = 120,
   className = "flex flex-col w-full",
   info = false,

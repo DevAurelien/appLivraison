@@ -7,13 +7,16 @@ import IncidentsIcone from "../../components/componentsIcone/IncidentIcone.jsx";
 import StatsIcone from "../../components/componentsIcone/StatsIcone.jsx";
 import GestionUsersIcone from "../../components/componentsIcone/GestionUsersIcone.jsx";
 import LoupeIcone from "../../components/componentsIcone/LoupeIcone.jsx";
+import DangerIcone from "../../components/componentsIcone/DangerIcone.jsx";
 import CardAdministration from "./CardAdministration.jsx";
 import PetiteCardAdmin from "./PetiteCardAdmin.jsx";
 import { UserContext } from "../../contexte/userContext.jsx";
 import { useContext, useState } from "react";
+import { MenuContext } from "../../contexte/menuContext.jsx";
 
 export default function Administration() {
   const { user } = useContext(UserContext);
+  const {setPage} = useContext(MenuContext)
   const [inputSearch, setInputSearch] = useState("");
   const listeIcones = [
     {
@@ -23,6 +26,7 @@ export default function Administration() {
       statut: "12 actifs",
       couleur: "#134BBE",
       roleOk: ["Livreur"],
+      onclick:()=>setPage("AdminLivreurs")
     },
     {
       titre: "Mes Agences",
@@ -80,6 +84,7 @@ export default function Administration() {
       statut: user.role,
       couleur: "#3C4D6D",
       roleOk: ["Livreur"],
+      onclick:()=>setPage("AdminGestions")
     },
   ];
 
@@ -91,8 +96,8 @@ export default function Administration() {
 
   return (
     <div className="flex flex-col gap-4 w-full px-4 text-[0.8rem] overflow-y-scroll overflow-x-hidden pb-25">
-      <div className="w-full border flex">
-        <div className="flex flex-col w-full  border-yellow-500 pb-2">
+      <div className="w-full border border-(--primary)/50 shadow-md shadow-black/80 rounded-2xl flex">
+        <div className="flex flex-col w-full pb-2">
           <div className="flex justify-between px-4 py-2">
             <h1 className="font-bold text-[1rem] flex items-center justify-center gap-2">
               <StatsIcone
@@ -107,41 +112,60 @@ export default function Administration() {
               operationnel
             </p>
           </div>
-          {/* card a retravailler pour la vue globale */}
-          <div className="grid grid-cols-3 w-full px-2 gap-2 pb-1">
-            <PetiteCardAdmin icone={UserIcone}/>
-            {/* <div className="border flex justify-center items-center h-20 rounded-xl "></div> */}
-            <div className="border flex justify-center items-center h-20 rounded-xl"></div>
-            <div className="border flex justify-center items-center h-20 rounded-xl"></div>
+          <div className="grid grid-cols-3 w-full px-2 gap-2 pb-1 pointer-events-none">
+            <PetiteCardAdmin
+              icone={UserIcone}
+              max={3}
+              detail="Livreurs actifs"
+              afficherLivreur
+            />
+            <PetiteCardAdmin
+              icone={CamionIcone}
+              statut="couleurCamions"
+              detail="Tournées en cours"
+              nb={2}
+              max={3}
+              afficherBarre
+            />
+            <PetiteCardAdmin
+              icone={DangerIcone}
+              statut="danger"
+              nb={0}
+              detail={"Incidents en cours"}
+            />
           </div>
         </div>
       </div>
       <div className="w-full flex justify-between">
-        <p className="w-full flex gap-2">
+        <div className="w-full flex gap-2">
           <span className="w-[1vw] bg-(--yellow-zesteo) "></span>{" "}
           <h1 className="text-xl font-bold">Gestion</h1>
-        </p>{" "}
-        <p className="relative h-full">
-          {inputSearch === "" && <LoupeIcone
-            className="px-2 absolute left-0 top-1/2 -translate-y-1/2"
-            height={12}
-            width={12}
-          />}{" "}
+        </div>{" "}
+        <div className="relative h-full">
+          {inputSearch === "" && (
+            <LoupeIcone
+              className="px-2 absolute left-0 top-1/2 -translate-y-1/2"
+              height={12}
+              width={12}
+            />
+          )}{" "}
           <input
             type="text"
             value={inputSearch}
-            onChange={(e)=>{setInputSearch(e.target.value)}}
+            onChange={(e) => {
+              setInputSearch(e.target.value);
+            }}
             placeholder="Rechercher un paramètre"
             className="placeholder:text-[0.6rem] h-8 placeholder:text-white/25 text-right border-2 border-(--card-bg-soft) rounded-2xl outline-none px-2 bg-black/25"
           />
-        </p>
+        </div>
       </div>
       <div className="grid grid-cols-2 gap-2 ">
         {iconesAutorisees.map((item, index) => {
           const Icone = item.composant;
           return (
             <CardAdministration
-            key={index}
+              key={index}
               icone={<Icone color1="white" height={25} width={25} />}
               titre={item.titre}
               description={item.description}
@@ -150,6 +174,7 @@ export default function Administration() {
               couleur={item.couleur}
               // couleurFond={item.couleur}
               couleurFond="#160d24"
+              onClick={item.onclick || null}
               // couleurStatut="#f43f5e"
               // onClick={() => setPage("incidents")}
             />
@@ -160,59 +185,3 @@ export default function Administration() {
   );
 }
 
-{
-  /* <div className="aspect-square cursor-pointer">
-        <UserIcone
-          titre={"Mes Livreurs"}
-          tailleTexte="text-[1rem]"
-          height="30"
-          width="30"
-          className={
-            "h-full flex justify-center items-center cardLiv rounded-xl"
-          }
-        />
-      </div>
-      <div className="aspect-square cursor-pointer">
-        <Shop
-          titre={"Mes Agences"}
-          tailleTexte="text-[1rem]"
-          height="30"
-          width="30"
-          className={
-            "h-full flex justify-center items-center cardLiv rounded-xl"
-          }
-        />
-      </div>
-      <div className="aspect-square cursor-pointer">
-        <Camion
-          titre={"Mes Camions"}
-          tailleTexte="text-[1rem]"
-          height="30"
-          width="30"
-          className={
-            "h-full flex justify-center items-center cardLiv rounded-xl"
-          }
-        />
-      </div>
-      <div className="aspect-square cursor-pointer">
-        <UserIcone
-          className={
-            "h-full flex justify-center items-center cardLiv rounded-xl"
-          }
-        />
-      </div>
-      <div className="aspect-square cursor-pointer">
-        <UserIcone
-          className={
-            "h-full flex justify-center items-center cardLiv rounded-xl"
-          }
-        />
-      </div>
-      <div className="aspect-square cursor-pointer">
-        <UserIcone
-          className={
-            "h-full flex justify-center items-center cardLiv rounded-xl"
-          }
-        />
-      </div> */
-}

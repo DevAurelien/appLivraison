@@ -8,6 +8,7 @@ import { MenuContext } from "./contexte/menuContext.jsx";
 import { UserContext } from "./contexte/userContext.jsx";
 import HeaderLogo from "./Page/HeaderLogo.jsx";
 import Pulse from "./components/Loading.jsx";
+import AdminLivreurs from "./Page/pageAdmin/AdminLivreurs.jsx";
 
 const chargerSeConnecter = () =>
   import("./Page/SeConnecter.jsx");
@@ -122,7 +123,7 @@ export default function App() {
     page !== "inscription";
 
   return (
-    <div className={`${ page === "Administration" ? "bg_test" : ""} flex h-full w-full flex-col text-white`}>
+    <div className={`${ page === "Administration" ? "bg_test" : ""} flex h-full w-full flex-col text-white select-none`}>
       {afficherHeader && <HeaderLogo />}
 
       <Suspense
@@ -148,6 +149,30 @@ export default function App() {
 
         {page === "Administration" && (
           <Administration />
+        )}
+        {page === "AdminLivreurs" && (
+          <AdminLivreurs />
+        )}
+        {/* {page === "AdminAgences" && (
+          <AdminAgences />
+        )}
+        {page === "AdminCamions" && (
+          <AdminCamions />
+        )}
+        {page === "AdminSecteurs" && (
+          <AdminSecteurs />
+        )}
+        {page === "AdminPlannings" && (
+          <AdminPlannings />
+        )}
+        {page === "AdminIncidents" && (
+          <AdminIncidents />
+        )}
+        {page === "AdminStatistiques" && (
+          <AdminStatistiques />
+        )} */}
+        {page === "AdminGestions" && (
+          <AdminGestions />
         )}
       </Suspense>
     </div>

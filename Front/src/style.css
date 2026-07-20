@@ -31,7 +31,7 @@ input[type="date"]:valid::-webkit-datetime-edit {
   --card-bg: #151f2e;
   --card-bg-soft: #1b2638;
   --border-soft: #2a364a;
-  --yellow-zesteo:#fde047;
+  --yellow-zesteo: #fde047;
 
   /* Base */
   --primary: #2563eb;
@@ -54,6 +54,15 @@ input[type="date"]:valid::-webkit-datetime-edit {
   --text-secondary: #cbd5e1;
   --text-muted: #94a3b8;
   --text-disabled: #64748b;
+
+  --couleurLivreurs: #134BBE;
+  --couleurAgences: #391D9D;
+  --couleurCamions: #086184;
+  --couleurSecteurs: #146845;
+  --couleurPlannings: #93681D;
+  --couleurIncidents: #7A213A;
+  --couleurStatistiques: #87471C;
+  --couleurGestions: #3C4D6D;
 }
 
 .background {
@@ -241,8 +250,6 @@ input[type="date"]:valid::-webkit-datetime-edit {
   justify-content: center;
   align-items: center;
 }
-
-
 
 .button-primary-orange {
   background: rgba(245, 158, 11, 0.12);
