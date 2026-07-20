@@ -58,9 +58,9 @@ export const UserContextProvider = ({ children }) => {
 
       if (!stored) return "";
 
-      const resultat = JSON.parse(stored);
+      const resultat = localStorage.getItem("accessToken");
 
-      return resultat.accessToken ?? "";
+      return resultat ?? "";
     } catch {
       localStorage.removeItem("accessToken");
       return "";

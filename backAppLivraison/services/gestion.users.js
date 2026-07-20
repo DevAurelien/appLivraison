@@ -144,7 +144,8 @@ export const verifierRefreshToken = async (refreshToken) => {
       avatar: tokenVerifier.avatar,
     });
 
-    const user = {id: tokenVerifier.id,
+    const user = {
+      id: tokenVerifier.id,
       email: tokenVerifier.email,
       role: tokenVerifier.role,
       nom: tokenVerifier.nom,
@@ -152,9 +153,10 @@ export const verifierRefreshToken = async (refreshToken) => {
       birth: tokenVerifier.birth,
       phone: tokenVerifier.phone,
       creeLe: tokenVerifier.creeLe,
-      avatar: tokenVerifier.avatar}
+      avatar: tokenVerifier.avatar,
+    };
 
-    return ({ accessToken, user })
+    return { accessToken, user };
   } catch (e) {
     if (e.name === "TokenExpiredError") {
       const err = new Error("Refresh token expiré");
@@ -170,4 +172,16 @@ export const verifierRefreshToken = async (refreshToken) => {
 
     throw e;
   }
+};
+
+export const assignerPointages = async (heurePointages) => {
+  try {
+    const req = await sql.query(
+      `
+      UPDATE users
+   SET heures_pointages = $1
+   WHERE id = $2`,
+      [heuresPointages, id],
+    );
+  } catch {}
 };

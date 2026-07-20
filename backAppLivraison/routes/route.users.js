@@ -1,6 +1,6 @@
 import express from "express";
 import {ControlLoginUsers, ControlRegisterUsers, ControlRefreshUsers, controlImageProfil, ControlLogoutUsers, 
-   controlAfficherAvatar } from "../controllers/control.users.js"
+   controlAfficherAvatar, ControlPointages } from "../controllers/control.users.js"
 import multer from "multer";
 import { verifierAuthentification } from "../middlewares/middlewares.auth.js";
 import { sql } from "../database/db.js";
@@ -20,6 +20,7 @@ router.post("/auth/register", ControlRegisterUsers);
 router.post("/auth/login", ControlLoginUsers);
 router.post("/auth/refresh", ControlRefreshUsers);
 router.post("/auth/logout", ControlLogoutUsers);
+router.post("/pointages/:id",verifierAuthentification , ControlPointages);
 
 const uploadAvatar = multer({
   storage: multer.memoryStorage(),

@@ -31,6 +31,13 @@ const cookieOptionsClear = {
   path: "/",
 };
 
+export const ControlPointages = async (req, res) => {
+  const user = req.user;
+  console.log(user)
+  // TODO : reste a terminer ici
+};
+
+
 export const ControlLoginUsers = async (req, res) => {
   try {
     let { email, password } = req.body;

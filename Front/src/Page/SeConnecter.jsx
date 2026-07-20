@@ -8,13 +8,11 @@ import OeilBarre from "../components/componentsIcone/OeilBarre.jsx";
 import Pulse from "../components/Loading.jsx";
 
 export default function SeConnecter() {
-
   useEffect(() => {
-  const backendUrl = import.meta.env.VITE_BACKEND_URL;
+    const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
-  fetch(`${backendUrl}/health`).catch(() => {
-  });
-}, []);
+    fetch(`${backendUrl}/health`).catch(() => {});
+  }, []);
 
   const [formulaire, setFormulaire] = useState({
     email: "",
@@ -26,92 +24,93 @@ export default function SeConnecter() {
   const { setPage } = useContext(MenuContext);
   const { setUser } = useContext(UserContext);
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  setFormulaire((prev) => ({
-    ...prev,
-    loading: true,
-  }));
+    setFormulaire((prev) => ({
+      ...prev,
+      loading: true,
+    }));
 
-  try {
-    const res = await apiFetch("/auth/login", "POST", {
-      body: JSON.stringify({
-        email: formulaire.email,
-        password: formulaire.password,
-      }),
-    });
+    try {
+      const res = await apiFetch("/auth/login", "POST", {
+        body: JSON.stringify({
+          email: formulaire.email,
+          password: formulaire.password,
+        }),
+      });
 
-    const data = await res.json();
+      const data = await res.json();
 
-    if (!res.ok || !data.accessToken) {
+      if (!res.ok || !data.accessToken) {
+        setFormulaire((prev) => ({
+          ...prev,
+          reponse: data.message || "Identifiants incorrects",
+          couleur: "rouge",
+          loading: false,
+        }));
+        return;
+      }
+
+      localStorage.setItem("accessToken", data.accessToken);
+
+      setUser((prev) => ({
+        ...prev,
+        id: data.data.id ?? prev?.id,
+        nom: data.data.nom ?? prev?.nom,
+        prenom: data.data.prenom ?? prev?.prenom,
+        birth: data.data.birth ?? prev?.birth,
+        email: data.data.email ?? prev?.email,
+        accessToken:
+          data.accessToken ?? data.data.accessToken ?? prev?.accessToken,
+        role: data.data.role ?? prev?.role,
+        creeLe: data.data.creeLe ?? prev?.creeLe,
+        avatar: null,
+        avatarBlobUrl: data.data.avatar ?? prev?.avatarBlobUrl,
+      }));
+
       setFormulaire((prev) => ({
         ...prev,
-        reponse: data.message || "Identifiants incorrects",
+        email: "",
+        password: "",
+        loading: false,
+        reponse: data.message,
+        couleur: "vert",
+      }));
+
+      setPage("Accueil");
+
+      // L’avatar se charge
+      apiFetch("/users/avatar")
+        .then((resAvatar) => {
+          if (!resAvatar.ok) {
+            throw new Error("Avatar indisponible");
+          }
+
+          return resAvatar.blob();
+        })
+        .then((avatarBlob) => {
+          const avatarLocalUrl = URL.createObjectURL(avatarBlob);
+
+          setUser((prev) => ({
+            ...prev,
+            avatar: avatarLocalUrl,
+          }));
+        })
+        .catch((error) => {
+          console.warn("Chargement différé de l’avatar :", error.message);
+        });
+    } catch (error) {
+      console.error(error);
+
+      setFormulaire((prev) => ({
+        ...prev,
+        reponse: "Connexion échouée",
         couleur: "rouge",
         loading: false,
       }));
-      return;
     }
-
-    localStorage.setItem("accessToken", data.accessToken);
-
-    // const dateLisible = new Date(
-    //   data.data.created_at,
-    // ).toLocaleDateString("fr-FR");
-
-    setUser((prev) => ({
-      ...prev,
-      email: data.data.email,
-      accessToken: data.data.accessToken,
-      role: data.data.role,
-      creeLe: data.data.creeLe,
-      avatar: null,
-      avatarBlobUrl: data.data.avatar,
-    }));
-
-    setFormulaire((prev) => ({
-      ...prev,
-      email: "",
-      password: "",
-      loading: false,
-      reponse: data.message,
-      couleur: "vert",
-    }));
-
-    setPage("Accueil");
-
-    // L’avatar se charge
-    apiFetch("/users/avatar")
-      .then((resAvatar) => {
-        if (!resAvatar.ok) {
-          throw new Error("Avatar indisponible");
-        }
-
-        return resAvatar.blob();
-      })
-      .then((avatarBlob) => {
-        const avatarLocalUrl = URL.createObjectURL(avatarBlob);
-
-        setUser((prev) => ({
-          ...prev,
-          avatar: avatarLocalUrl,
-        }));
-      })
-      .catch((error) => {
-        console.warn("Chargement différé de l’avatar :", error.message);
-      });
-  } catch (error) {
-    console.error(error);
-
-    setFormulaire((prev) => ({
-      ...prev,
-      reponse: "Connexion échouée",
-      couleur: "rouge",
-      loading: false,
-    }));
-  }
-};
+  };
 
   return (
     <div className="flex flex-col background w-full h-full text-white justify-start items-center overflow-y-auto gap-2">
@@ -207,7 +206,11 @@ const handleSubmit = async (e) => {
               disabled={formulaire.loading}
               className="relative z-5 flex cursor-pointer justify-center items-center w-full rounded-xl text-black disabled:cursor-not-allowed"
             >
-              {formulaire.loading ? <Pulse className={"p-2"}/> : "Se connecter"}
+              {formulaire.loading ? (
+                <Pulse className={"p-2"} />
+              ) : (
+                "Se connecter"
+              )}
             </button>
           </div>
         </form>

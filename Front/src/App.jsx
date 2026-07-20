@@ -9,6 +9,7 @@ import { UserContext } from "./contexte/userContext.jsx";
 import HeaderLogo from "./Page/HeaderLogo.jsx";
 import Pulse from "./components/Loading.jsx";
 import AdminLivreurs from "./Page/pageAdmin/AdminLivreurs.jsx";
+import AdminGestions from "./Page/pageAdmin/AdminGestions.jsx";
 
 const chargerSeConnecter = () =>
   import("./Page/SeConnecter.jsx");
