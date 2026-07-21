@@ -174,14 +174,45 @@ export const verifierRefreshToken = async (refreshToken) => {
   }
 };
 
-export const assignerPointages = async (heurePointages) => {
+export const assignerPointages = async (heurePointages, id) => {
   try {
-    const req = await sql.query(
+    await sql.query(
       `
       UPDATE users
-   SET heures_pointages = $1
-   WHERE id = $2`,
-      [heuresPointages, id],
+      SET heures_pointages = $1
+      WHERE id = $2`,
+      [heurePointages, id],
     );
-  } catch {}
+
+    return true;
+  } catch (error) {
+    console.error("Erreur lors de l'enregistrement du pointage :", error);
+    throw error;
+  }
+};
+
+export const recupererPointages = async (id)=>{
+  const res = await sql.query(`
+    SELECT heures_pointages
+    FROM users
+    WHERE id = $1
+    `, [id] )
+  return res[0]?.heures_pointages ?? null;
+}
+
+export const assignPointed = async (id, dateJour, pointedAt) => {
+  const result = await sql.query(
+    `
+      INSERT INTO pointages (
+        user_id,
+        date_jour,
+        arrival_pointed_at
+      )
+      VALUES ($1, $2, $3)
+      RETURNING *
+    `,
+    [id, dateJour, pointedAt]
+  );
+
+  return result.rows[0];
 };

@@ -5,6 +5,9 @@ import {
   signRefreshToken,
   verifierRefreshToken,
   verifierAccessToken,
+  assignerPointages,
+  recupererPointages,
+  assignPointed
 } from "../services/gestion.users.js";
 import { put } from "@vercel/blob";
 import { get } from "@vercel/blob";
@@ -14,29 +17,56 @@ import { sql } from "../database/db.js";
 const cookieOptions = {
   httpOnly: true,
   secure: process.env.NODE_ENV === "production",
-  sameSite:
-    process.env.NODE_ENV === "production"
-      ? "none"
-      : "lax",
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
   path: "/",
   maxAge: 30 * 24 * 60 * 60 * 1000,
 };
 const cookieOptionsClear = {
   httpOnly: true,
   secure: process.env.NODE_ENV === "production",
-  sameSite:
-    process.env.NODE_ENV === "production"
-      ? "none"
-      : "lax",
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
   path: "/",
 };
 
-export const ControlPointages = async (req, res) => {
-  const user = req.user;
-  console.log(user)
-  // TODO : reste a terminer ici
+export const ControlRecupPointages = async (req, res) =>{
+  const id = req.params.id;
+  try {
+    const heure = await recupererPointages(id);
+    res.json({heurePointage : heure});
+  } catch (e) {
+    console.log(`${e} impossible de recuperer l'heure pointage`);
+  }
+}
+
+export const ControlAssignPointed = async (req, res) => {
+  try {
+    const id = req.user.id;
+    const pointedAt = new Date();
+    const dateJour = pointedAt.toISOString().split("T")[0];
+
+    const pointage = await assignPointed(id, dateJour, pointedAt);
+    return res.status(201).json(pointage);
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      erreur: "Impossible d'enregistrer le pointage",
+    });
+  }
 };
 
+
+export const ControlAssignerPointages = async (req, res) => {
+  const id = req.params.id;
+  const { datePointage, heurePointage } = req.body;
+  try {
+    await assignerPointages(heurePointage,id);
+    res.json(true);
+  } catch (e) {
+    console.error(e);
+    res.json(false)
+  }
+};
 
 export const ControlLoginUsers = async (req, res) => {
   try {
@@ -56,7 +86,7 @@ export const ControlLoginUsers = async (req, res) => {
     if (user) {
       const accessToken = await signAccessToken(user);
       const refreshToken = await signRefreshToken(user);
-      res.cookie("refreshToken", refreshToken, cookieOptions)
+      res.cookie("refreshToken", refreshToken, cookieOptions);
       return res.json({
         couleur: "vert",
         message: "Connection Réussie",
@@ -133,7 +163,7 @@ export const ControlRefreshUsers = async (req, res) => {
     const refreshTokenValide = await verifierRefreshToken(refreshToken);
     const accessToken = refreshTokenValide.accessToken;
     const user = refreshTokenValide.user;
-    return res.status(200).json({...user, accessToken});
+    return res.status(200).json({ ...user, accessToken });
   } catch (e) {
     res.clearCookie("refreshToken");
     return res.status(e.status || 401).json({ error: e.message });
