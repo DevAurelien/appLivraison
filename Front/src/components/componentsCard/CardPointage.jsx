@@ -14,7 +14,6 @@ export default function CardPointage() {
   });
 
   const [pointer, setPointer] = useState({
-    loading: false,
     aPointé: false,
     date_jour: null,
     date_bdd: null,
@@ -26,6 +25,8 @@ export default function CardPointage() {
     erreur: null,
   });
   const [moment, setMoment] = useState("du matin");
+  const [isLoading, setIsLoading] = useState(true)
+
   const { user, setUser } = useContext(UserContext);
   const [mesPointages, setMesPointages] = useState([]);
 
@@ -92,8 +93,9 @@ export default function CardPointage() {
   //   const heure = dateActuelle.toLocaleTimeString("fr-FR");
 
   const handlePointer = async () => {
+    setIsLoading(false);
     //  if (user?.heurePointage) return;
-    setPointer((prev) => ({ ...prev, loading: true, erreur: null }));
+    setPointer({});
     const dateActuelle = new Date();
 
     apiFetch(`/pointed/assign/`, "POST")
@@ -103,7 +105,6 @@ export default function CardPointage() {
           data = JSON.parse(data);
           setPointer((prev) => ({
             ...prev,
-            loading: false,
             id: data?.id,
             user_id: data?.user_id,
             date_jour: dateActuelle,
@@ -115,6 +116,7 @@ export default function CardPointage() {
             created_at: data?.created_at || null,
             erreur: data?.erreur || null,
           }));
+          setIsLoading(false);
         } catch (e) {
           console.error(e);
         }
@@ -136,7 +138,7 @@ export default function CardPointage() {
           </h1>
           {pointer.arrival_pointed_at ? (
             <p className="select-none text-[0.6rem]">
-              Pointage {fichePointage.moment} effectué a{" "}
+              Pointage {moment} effectué a{" "}
               {new Date(pointer.arrival_pointed_at).toLocaleTimeString("fr-FR")}
             </p>
           ) : (
@@ -169,7 +171,7 @@ export default function CardPointage() {
         onClick={handlePointer}
         className="text-black bg-(--yellow-zesteo) rounded-md self-center px-4 p-1 cursor-pointer"
       >
-        {pointer.aPointé ? <Pulse /> : <p>Pointer</p>}
+        {isLoading ? <Pulse className="flex w-10 px-2"/> : <p>Pointer</p>}
       </button>
     </div>
   );
