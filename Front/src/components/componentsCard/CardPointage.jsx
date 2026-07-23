@@ -93,27 +93,34 @@ export default function CardPointage() {
 
   const handlePointer = async () => {
     //  if (user?.heurePointage) return;
-    setPointer(prev =>({...prev,loading: true }));
+    setPointer((prev) => ({ ...prev, loading: true, erreur: null }));
     const dateActuelle = new Date();
 
     apiFetch(`/pointed/assign/`, "POST")
-      .then((res) => res.json())
+      .then((body) => body.text())
       .then((data) => {
-        setPointer((prev) => ({
-          ...prev,
-          loading: false,
-          id: data?.id,
-          user_id: data?.user_id,
-          date_jour: dateActuelle,
-          date_bdd: data?.date_jour,
-          arrival_pointed_at: data?.arrival_pointed_at || null,
-          start_pause_pointed_at: data?.start_pause_pointed_at || null,
-          end_pause_pointed_at: data?.end_pause_pointed_at || null,
-          departure_pointed_at: data?.departure_pointed_at || null,
-          created_at: data?.created_at || null,
-          erreur: data?.erreur || null,
-        }));
+        try {
+          data = JSON.parse(data);
+          setPointer((prev) => ({
+            ...prev,
+            loading: false,
+            id: data?.id,
+            user_id: data?.user_id,
+            date_jour: dateActuelle,
+            date_bdd: data?.date_jour,
+            arrival_pointed_at: data?.arrival_pointed_at || null,
+            start_pause_pointed_at: data?.start_pause_pointed_at || null,
+            end_pause_pointed_at: data?.end_pause_pointed_at || null,
+            departure_pointed_at: data?.departure_pointed_at || null,
+            created_at: data?.created_at || null,
+            erreur: data?.erreur || null,
+          }));
+        } catch (e) {
+          console.error(e);
+        }
       });
+    // .then((res) => res.json())
+    // .then((data) => {
   };
 
   return (
@@ -137,12 +144,24 @@ export default function CardPointage() {
               Pointage {moment} non effectué{" "}
             </p>
           )}
-          {pointer.arrival_pointed_at && <p>
-            {new Date(pointer.arrival_pointed_at).toLocaleTimeString("fr-FR")}<br/>
-            {new Date(pointer.start_pause_pointed_at).toLocaleTimeString("fr-FR")}<br/>
-            {new Date(pointer.end_pause_pointed_at).toLocaleTimeString("fr-FR")}<br/>
-            {new Date(pointer.departure_pointed_at).toLocaleTimeString("fr-FR")}<br/>
-          </p>}
+          {pointer.arrival_pointed_at && (
+            <p>
+              {new Date(pointer.arrival_pointed_at).toLocaleTimeString("fr-FR")}
+              <br />
+              {new Date(pointer.start_pause_pointed_at).toLocaleTimeString(
+                "fr-FR",
+              )}
+              <br />
+              {new Date(pointer.end_pause_pointed_at).toLocaleTimeString(
+                "fr-FR",
+              )}
+              <br />
+              {new Date(pointer.departure_pointed_at).toLocaleTimeString(
+                "fr-FR",
+              )}
+              <br />
+            </p>
+          )}
         </div>
       </div>
       <button
