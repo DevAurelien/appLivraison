@@ -43,7 +43,6 @@ export const ControlAssignPointed = async (req, res) => {
     const id = req.user.id;
     const pointedAt = new Date();
     const dateJour = pointedAt.toISOString().split("T")[0];
-
     const pointage = await assignPointed(id, dateJour, pointedAt);
     return res.status(201).json(pointage);
   } catch (error) {

@@ -13,11 +13,14 @@ export default function HeaderLogo({ children, bg, notif = 0 }) {
   const { user } = useContext(UserContext);
   const { role, prenom } = user;
   const { page } = useContext(MenuContext);
+  const displayPrenom = prenom
+  ? prenom.charAt(0).toUpperCase() + prenom.slice(1).toLowerCase()
+  : "";
 
   const content = {
     Accueil: (
       <CardMetierHeader className="px-4 flex justify-start items-start cursor-default text-[1rem]">
-        {prenom}, {role}
+        {displayPrenom}, {role}
       </CardMetierHeader>
     ),
     Livraisons: (<CardTitre>Livraisons</CardTitre>),

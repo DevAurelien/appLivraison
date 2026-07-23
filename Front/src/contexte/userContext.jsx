@@ -198,30 +198,30 @@ useEffect(() => {
 }, []);
 
 
-useEffect(()=>{
-  if (!user?.id) return;
-  const fetchPointage = async (id) => {
-    try {
-      const reponse = await apiFetch(`/pointages/recup/${id}`, "GET");
+// useEffect(()=>{
+//   if (!user?.id) return;
+//   const fetchPointage = async (id) => {
+//     try {
+//       const reponse = await apiFetch(`/pointages/recup/${id}`, "GET");
 
-      if (!reponse.ok) {
-        throw new Error("Erreur lors de la récupération du pointage");
-      }
+//       if (!reponse.ok) {
+//         throw new Error("Erreur lors de la récupération du pointage");
+//       }
 
-      const resultat = await reponse.json();
+//       const resultat = await reponse.json();
 
-      setUser((prev) =>
-  prev
-    ? { ...prev, heurePointage: resultat?.heurePointage ?? null }
-    : prev
-);
-    } catch (e) {
-      console.log(e);
-    }
-  };
+//       setUser((prev) =>
+//   prev
+//     ? { ...prev, heurePointage: resultat?.heurePointage ?? null }
+//     : prev
+// );
+//     } catch (e) {
+//       console.log(e);
+//     }
+//   };
 
-  fetchPointage(user.id);
-}, [user?.id])
+//   fetchPointage(user.id);
+// }, [user?.id])
 
   return (
     <UserContext.Provider

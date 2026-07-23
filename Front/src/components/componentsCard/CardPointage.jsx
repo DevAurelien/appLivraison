@@ -93,13 +93,12 @@ export default function CardPointage() {
 
   const handlePointer = async () => {
     //  if (user?.heurePointage) return;
-    setPointer((prev) => ({ ...prev, loading: true }));
+    setPointer(prev =>({...prev,loading: true }));
     const dateActuelle = new Date();
 
     apiFetch(`/pointed/assign/`, "POST")
       .then((res) => res.json())
       .then((data) => {
-        console.log(data)
         setPointer((prev) => ({
           ...prev,
           loading: false,
@@ -131,13 +130,19 @@ export default function CardPointage() {
           {pointer.arrival_pointed_at ? (
             <p className="select-none text-[0.6rem]">
               Pointage {fichePointage.moment} effectué a{" "}
-              {pointer.arrival_pointed_at}
+              {new Date(pointer.arrival_pointed_at).toLocaleTimeString("fr-FR")}
             </p>
           ) : (
             <p className="select-none text-[0.6rem]">
-              Pointage {fichePointage.moment} non effectué{" "}
+              Pointage {moment} non effectué{" "}
             </p>
           )}
+          {pointer.arrival_pointed_at && <p>
+            {new Date(pointer.arrival_pointed_at).toLocaleTimeString("fr-FR")}<br/>
+            {new Date(pointer.start_pause_pointed_at).toLocaleTimeString("fr-FR")}<br/>
+            {new Date(pointer.end_pause_pointed_at).toLocaleTimeString("fr-FR")}<br/>
+            {new Date(pointer.departure_pointed_at).toLocaleTimeString("fr-FR")}<br/>
+          </p>}
         </div>
       </div>
       <button

@@ -182,9 +182,7 @@ export default function Inscription() {
         .then((res) => res.json())
         .then((data) => {
           if (data.accessToken) {
-            const dateLisible = new Date(
-              data.data.created_at,
-            ).toLocaleDateString("fr-FR");
+            
 
             localStorage.setItem("accessToken", data.accessToken);
 
@@ -197,7 +195,7 @@ export default function Inscription() {
               nom: data.data.nom,
               prenom: data.data.prenom,
               phone: data.data.phone,
-              creeLe: dateLisible,
+              creeLe: data.data.creeLe,
               avatar: urlPreviewPicture,
               avatarBlobUrl: avatarUrl,
             }));

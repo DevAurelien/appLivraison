@@ -33,7 +33,19 @@ export const creerUser = async (
     [email, pass, role, nom, prenom, birth, phone, avatar_img_url],
   );
 
-  return userCree[0];
+  const user = userCree[0];
+
+  return {
+    id: user.id,
+    email: user.email,
+    role: user.role,
+    creeLe: user.created_at,
+    nom: user.nom,
+    prenom: user.prenom,
+    birth: user.birth,
+    phone: user.phone,
+    avatar: user.avatar_img_url,
+  };
 };
 
 export const loginUser = async (email, password) => {
@@ -191,18 +203,25 @@ export const assignerPointages = async (heurePointages, id) => {
   }
 };
 
-export const recupererPointages = async (id)=>{
-  const res = await sql.query(`
-    SELECT heures_pointages
-    FROM users
-    WHERE id = $1
-    `, [id] )
-  return res[0]?.heures_pointages ?? null;
-}
-
-export const assignPointed = async (id, dateJour, pointedAt) => {
+export const recupererPointages = async (userId, dateJour) => {
   const result = await sql.query(
     `
+    SELECT *
+    FROM pointages
+    WHERE user_id = $1 AND date_jour = $2
+    `,
+    [userId, dateJour],
+  );
+
+  return result[0] ?? null;
+};
+
+export const assignPointed = async (id, dateJour, pointedAt) => {
+  const pointage = await recupererPointages(id, dateJour);
+
+  if (!pointage) {
+    const result = await sql.query(
+      `
       INSERT INTO pointages (
         user_id,
         date_jour,
@@ -210,9 +229,63 @@ export const assignPointed = async (id, dateJour, pointedAt) => {
       )
       VALUES ($1, $2, $3)
       RETURNING *
-    `,
-    [id, dateJour, pointedAt]
-  );
+      `,
+      [id, dateJour, pointedAt],
+    );
+    return result[0];
+  }
 
-  return result.rows[0];
+  if (!pointage.arrival_pointed_at) {
+    const result = await sql.query(
+      `
+      UPDATE pointages
+      SET arrival_pointed_at = $1
+      WHERE user_id = $2 AND date_jour = $3
+      RETURNING *
+      `,
+      [pointedAt, id, dateJour],
+    );
+    return result[0];
+  }
+
+  if (!pointage.start_pause_pointed_at) {
+    const result = await sql.query(
+      `
+      UPDATE pointages
+      SET start_pause_pointed_at = $1
+      WHERE user_id = $2 AND date_jour = $3
+      RETURNING *
+      `,
+      [pointedAt, id, dateJour],
+    );
+    return result[0];
+  }
+
+  if (!pointage.end_pause_pointed_at) {
+    const result = await sql.query(
+      `
+      UPDATE pointages
+      SET end_pause_pointed_at = $1
+      WHERE user_id = $2 AND date_jour = $3
+      RETURNING *
+      `,
+      [pointedAt, id, dateJour],
+    );
+    return result[0];
+  }
+
+  if (!pointage.departure_pointed_at) {
+    const result = await sql.query(
+      `
+      UPDATE pointages
+      SET departure_pointed_at = $1
+      WHERE user_id = $2 AND date_jour = $3
+      RETURNING *
+      `,
+      [pointedAt, id, dateJour],
+    );
+    return result[0];
+  }
+
+  return pointage;
 };
