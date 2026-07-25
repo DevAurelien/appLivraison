@@ -5,11 +5,13 @@ import CardDocuments from "./CardDocuments.jsx";
 import { MenuContext } from "../../contexte/menuContext.jsx";
 import Fleche from "../../components/componentsIcone/Fleche.jsx";
 import { ContactContext } from "../../contexte/contactContext.jsx";
+import { PointageContext } from "../../contexte/pointageContext.jsx";
 
 export default function Profil() {
   const { user, setUser } = useContext(UserContext);
   const { email, creeLe, role, avatar } = user || {};
   const { setPage } = useContext(MenuContext);
+  const {setPointage} = useContext(PointageContext)
   const {setListeContacts} = useContext(ContactContext);
   const [imageAvatar, setImageAvatar] = useState(avatar)
   const documents = [
@@ -38,6 +40,7 @@ export default function Profil() {
     localStorage.removeItem("accessToken");
     setUser(null);
     setListeContacts([]);
+    setPointage({})
     setPage("connection");
   }
 };

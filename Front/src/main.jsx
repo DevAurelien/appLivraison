@@ -3,6 +3,7 @@ import App from "./App.jsx";
 import "./style.css";
 import { Routes, Route, BrowserRouter } from "react-router-dom";
 import { MenuContext, MenuContextProvider } from "./contexte/menuContext.jsx";
+import {PointageContextProvider} from "./contexte/pointageContext.jsx"
 import { NavContextProvider } from "./contexte/navContext.jsx";
 import { UserContextProvider } from "./contexte/userContext.jsx";
 import { ContactContextProvider } from "./contexte/contactContext.jsx";
@@ -27,11 +28,13 @@ createRoot(document.getElementById("root")).render(
     <UserContextProvider>
       <MenuContextProvider>
         <NavContextProvider>
-          <ContactContextProvider>
-            <Routes>
-              <Route path="/" element={<Layout />} />
-            </Routes>
-          </ContactContextProvider>
+          <PointageContextProvider>
+            <ContactContextProvider>
+              <Routes>
+                <Route path="/" element={<Layout />} />
+              </Routes>
+            </ContactContextProvider>
+          </PointageContextProvider>
         </NavContextProvider>
       </MenuContextProvider>
     </UserContextProvider>

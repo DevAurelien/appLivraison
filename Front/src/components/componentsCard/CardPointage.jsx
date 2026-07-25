@@ -3,125 +3,64 @@ import Radar from "../componentsIcone/Radar.jsx";
 import { UserContext } from "../../contexte/userContext.jsx";
 import apiFetch from "../../utils/apiFetch.jsx";
 import Pulse from "../Loading.jsx";
+import { PointageContext } from "../../contexte/pointageContext.jsx";
 
 export default function CardPointage() {
-  const [fichePointage, setFichePointage] = useState({
-    action: "non",
-    moment: "du matin",
-    isPointé: false,
-    heurePointage: "",
-    resPointageOk: false,
-  });
+  const { pointage, setPointage } = useContext(PointageContext);
 
-  const [pointer, setPointer] = useState({
-    aPointé: false,
-    date_jour: null,
-    date_bdd: null,
-    arrival_pointed_at: null,
-    start_pause_pointed_at: null,
-    end_pause_pointed_at: null,
-    departure_pointed_at: null,
-    created_at: null,
-    erreur: null,
-  });
   const [moment, setMoment] = useState("du matin");
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
 
   const { user, setUser } = useContext(UserContext);
-  const [mesPointages, setMesPointages] = useState([]);
+  // const [mesPointages, setMesPointages] = useState([]);
 
   useEffect(() => {
-    // moment de la journée
+    if (!pointage.arrival_pointed_at) {
+      setMoment("Je suis arrivé au travail à ");
+    } else if (!pointage.start_pause_pointed_at) {
+      setMoment("Je commence ma pause à ");
+    } else if (!pointage.end_pause_pointed_at) {
+      setMoment("Je finis ma pause à ");
+    } else if (!pointage.departure_pointed_at) {
+      setMoment("Je quitte le travail à ");
+    } else setMoment("Fin de la journée");
+  }, [pointage]);
 
-    const verifierMoment = () => {
-      const heureActuelle = new Date().getHours();
-
-      if (heureActuelle < 12) {
-        setMoment("du matin");
-      } else {
-        setMoment("de l'après-midi");
-      }
-    };
-
-    verifierMoment();
-
-    const interval = setInterval(verifierMoment, 60 * 1000);
-    // verification chaques minutes
-
-    return () => clearInterval(interval);
-  }, []);
-
-  //   useEffect(() => {
-  //   if (user?.heurePointage) {
-  //     setFichePointage((prev) => ({
-  //       ...prev,
-  //       isPointé: true,
-  //       heurePointage: user.heurePointage,
-  //       resPointageOk: true,
-  //       action: "",
-  //     }));
-  //   } else {
-  //     setFichePointage((prev) => ({
-  //       ...prev,
-  //       isPointé: false,
-  //       resPointageOk: false,
-  //       action: "non",
-  //     }));
-  //   }
-  // }, [user?.heurePointage]);
-
-  // const handlePointage = async () => {
-  //   if (user?.heurePointage) return;
-  //   const dateActuelle = new Date();
-  //   const date = dateActuelle.toLocaleDateString("fr-FR");
-  //   const heure = dateActuelle.toLocaleTimeString("fr-FR");
-  //   const res = await apiFetch(`/pointages/assigner/${user.id}`, "POST", {
-  //     body: JSON.stringify({ datePointage: date, heurePointage: heure }),
-  //   });
-  //   if (!res.ok) return;
-  //   const reponse = await res.json();
-  //   setFichePointage((prev) => ({
-  //     ...prev,
-  //     action: "",
-  //     isPointé: true,
-  //     heurePointage: heure,
-  //     resPointageOk: reponse === true,
-  //   }));
-  //   setUser((prev) => ({ ...prev, heurePointage: heure }));
-  // };
-  // const date = dateActuelle.toLocaleDateString("fr-FR");
-  //   const heure = dateActuelle.toLocaleTimeString("fr-FR");
+  const valeurPointage = [
+    {
+      lien: pointage.arrival_pointed_at,
+      moment: "Je suis arrivé au travail à ",
+    },
+    {
+      lien: pointage.start_pause_pointed_at,
+      moment: "Je commence ma pause à ",
+    },
+    { lien: pointage.end_pause_pointed_at, moment: "Je finis ma pause à " },
+    { lien: pointage.departure_pointed_at, moment: "Je quitte le travail à " },
+    { lien: "", moment: "Fin de la journée" },
+  ];
 
   const handlePointer = async () => {
     setIsLoading(true);
     //  if (user?.heurePointage) return;
-    setPointer({});
     const dateActuelle = new Date();
 
     apiFetch(`/pointed/assign/`, "POST")
-      .then((body) => body.text())
+      .then((res) => {
+        if (!res.ok) throw new Error("Erreur pointage");
+        return res.json();
+      })
       .then((data) => {
-        try {
-          setPointer((prev) => ({
-            ...prev,
-            id: data?.id,
-            user_id: data?.user_id,
-            date_jour: dateActuelle,
-            date_bdd: data?.date_jour,
-            arrival_pointed_at: data?.arrival_pointed_at || null,
-            start_pause_pointed_at: data?.start_pause_pointed_at || null,
-            end_pause_pointed_at: data?.end_pause_pointed_at || null,
-            departure_pointed_at: data?.departure_pointed_at || null,
-            created_at: data?.created_at || null,
-            erreur: data?.erreur || null,
-          }));
-          setIsLoading(false);
-        } catch (e) {
-          console.error(`${e} erreur pendant le pointage `);
-        }
-      });
-    // .then((res) => res.json())
-    // .then((data) => {
+        setPointage((prev) => ({
+          ...prev,
+          arrival_pointed_at: data?.arrival_pointed_at ?? null,
+          start_pause_pointed_at: data?.start_pause_pointed_at ?? null,
+          end_pause_pointed_at: data?.end_pause_pointed_at ?? null,
+          departure_pointed_at: data?.departure_pointed_at ?? null,
+          erreur: data?.erreur ?? null,
+        }));
+      })
+      .finally(() => setIsLoading(false));
   };
 
   return (
@@ -132,37 +71,22 @@ export default function CardPointage() {
         </div>
 
         <div className="flex flex-col">
-          <h1 className={`select-none ${pointer.erreur && "text-red-500"}`}>
-            {pointer.erreur ? pointer.erreur : "Pointer ma présence"}{" "}
+          <h1 className={`select-none ${pointage.erreur && "text-red-500"}`}>
+            {pointage.erreur ? pointage.erreur : "Pointer ma présence"}{" "}
           </h1>
-          {pointer.arrival_pointed_at ? (
-            <p className="select-none text-[0.6rem]">
-              Pointage {moment} effectué a{" "}
-              {new Date(pointer.arrival_pointed_at).toLocaleTimeString("fr-FR")}
+
+{/* TODO Recup */}
+          {/* <p className="select-none text-[0.6rem]">{moment}</p> */}
+          {valeurPointage.map((item, index) => (
+            <p key={index} className="select-none text-[0.6rem]">
+              {item.lien ? (
+                <span>
+                  {item.moment}{" "}
+                  {new Date(item.lien).toLocaleTimeString("fr-FR")}
+                </span>
+              ) : null}
             </p>
-          ) : (
-            <p className="select-none text-[0.6rem]">
-              Pointage {moment} non effectué{" "}
-            </p>
-          )}
-          {pointer.arrival_pointed_at && (
-            <p>
-              {new Date(pointer.arrival_pointed_at).toLocaleTimeString("fr-FR")}
-              <br />
-              {new Date(pointer.start_pause_pointed_at).toLocaleTimeString(
-                "fr-FR",
-              )}
-              <br />
-              {new Date(pointer.end_pause_pointed_at).toLocaleTimeString(
-                "fr-FR",
-              )}
-              <br />
-              {new Date(pointer.departure_pointed_at).toLocaleTimeString(
-                "fr-FR",
-              )}
-              <br />
-            </p>
-          )}
+          ))}
         </div>
       </div>
       <button
@@ -170,7 +94,7 @@ export default function CardPointage() {
         onClick={handlePointer}
         className="text-black bg-(--yellow-zesteo) rounded-md self-center px-4 p-1 cursor-pointer"
       >
-        {isLoading ? <Pulse className="flex w-10 px-2"/> : <p>Pointer</p>}
+        {isLoading ? <Pulse className="flex w-10 px-2" /> : <p>Pointer</p>}
       </button>
     </div>
   );
