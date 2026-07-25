@@ -25,7 +25,7 @@ export default function CardPointage() {
     erreur: null,
   });
   const [moment, setMoment] = useState("du matin");
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
 
   const { user, setUser } = useContext(UserContext);
   const [mesPointages, setMesPointages] = useState([]);
@@ -70,30 +70,30 @@ export default function CardPointage() {
   //   }
   // }, [user?.heurePointage]);
 
-  const handlePointage = async () => {
-    if (user?.heurePointage) return;
-    const dateActuelle = new Date();
-    const date = dateActuelle.toLocaleDateString("fr-FR");
-    const heure = dateActuelle.toLocaleTimeString("fr-FR");
-    const res = await apiFetch(`/pointages/assigner/${user.id}`, "POST", {
-      body: JSON.stringify({ datePointage: date, heurePointage: heure }),
-    });
-    if (!res.ok) return;
-    const reponse = await res.json();
-    setFichePointage((prev) => ({
-      ...prev,
-      action: "",
-      isPointé: true,
-      heurePointage: heure,
-      resPointageOk: reponse === true,
-    }));
-    setUser((prev) => ({ ...prev, heurePointage: heure }));
-  };
+  // const handlePointage = async () => {
+  //   if (user?.heurePointage) return;
+  //   const dateActuelle = new Date();
+  //   const date = dateActuelle.toLocaleDateString("fr-FR");
+  //   const heure = dateActuelle.toLocaleTimeString("fr-FR");
+  //   const res = await apiFetch(`/pointages/assigner/${user.id}`, "POST", {
+  //     body: JSON.stringify({ datePointage: date, heurePointage: heure }),
+  //   });
+  //   if (!res.ok) return;
+  //   const reponse = await res.json();
+  //   setFichePointage((prev) => ({
+  //     ...prev,
+  //     action: "",
+  //     isPointé: true,
+  //     heurePointage: heure,
+  //     resPointageOk: reponse === true,
+  //   }));
+  //   setUser((prev) => ({ ...prev, heurePointage: heure }));
+  // };
   // const date = dateActuelle.toLocaleDateString("fr-FR");
   //   const heure = dateActuelle.toLocaleTimeString("fr-FR");
 
   const handlePointer = async () => {
-    setIsLoading(false);
+    setIsLoading(true);
     //  if (user?.heurePointage) return;
     setPointer({});
     const dateActuelle = new Date();
@@ -102,7 +102,6 @@ export default function CardPointage() {
       .then((body) => body.text())
       .then((data) => {
         try {
-          data = JSON.parse(data);
           setPointer((prev) => ({
             ...prev,
             id: data?.id,
@@ -118,7 +117,7 @@ export default function CardPointage() {
           }));
           setIsLoading(false);
         } catch (e) {
-          console.error(e);
+          console.error(`${e} erreur pendant le pointage `);
         }
       });
     // .then((res) => res.json())
