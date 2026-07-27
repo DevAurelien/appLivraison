@@ -45,7 +45,7 @@ export default function CardPointage() {
     //  if (user?.heurePointage) return;
     const dateActuelle = new Date();
 
-    apiFetch(`/pointed/assign/`, "POST")
+    apiFetch(`/pointed/assign`, "POST")
       .then((res) => {
         if (!res.ok) throw new Error("Erreur pointage");
         return res.json();
