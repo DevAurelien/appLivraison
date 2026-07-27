@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser"
 import routeDeliveries from "./routes/route.deliveries.js"
 import routeUsers from "./routes/route.users.js"
 import routeSalaries from "./routes/route.salaries.js"
+import routeAgences from "./routes/route.agences.js"
 import dotenv from "dotenv";
 
 dotenv.config({
@@ -22,7 +23,8 @@ app.use(cookieParser())
 app.use(express.json())
 app.use("/", routeDeliveries );
 app.use("/", routeUsers);
-app.use("/", routeSalaries)
+app.use("/", routeSalaries);
+app.use("/", routeAgences);
 
 
 if (process.env.NODE_ENV !== "production") {

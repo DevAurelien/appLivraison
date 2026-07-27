@@ -23,7 +23,7 @@ export default function CardLivraisonsDash({
           {/* Titre */}
           <div className="flex w-full gap-2">
             <div className="flex h-10 w-10 bg-white/10 shrink-0 items-center justify-center rounded-full border border-white p-2 ">
-              <BoxLivraison color1="yellow" className="h-full w-full" />
+              <BoxLivraison color1="var(--yellow-zesteo)" className="h-full w-full" />
             </div>
             <div className="flex w-full">
               <h1 className="text-[0.8rem] w-full flex justify-between">

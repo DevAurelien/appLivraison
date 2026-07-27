@@ -1,45 +1,47 @@
 @import "tailwindcss";
 
+/* =========================================================
+   DOCUMENT ET APPLICATION
+   ========================================================= */
+
 #root,
 body,
 html {
-  height: 100%;
   width: 100%;
+  height: 100%;
   overflow: hidden;
+
   font-family: "Inter", system-ui, sans-serif;
+
   background: var(--bg-main);
+  color: var(--text-main);
 }
 
-input[type="date"]:focus::-webkit-datetime-edit,
-input[type="date"]:valid::-webkit-datetime-edit {
-  color: white;
-}
-
-.date-input::-webkit-datetime-edit {
-  color: transparent;
-}
-
-.date-input:focus::-webkit-datetime-edit,
-.date-input:valid::-webkit-datetime-edit {
-  color: white;
-}
+/* =========================================================
+   THÈME ZESTEO
+   ========================================================= */
 
 :root {
-  /* Background */
+  /* =======================================================
+     ANCIENNE PALETTE — CONSERVÉE POUR HISTORIQUE
+     ======================================================= */
+
+  /*
   --bg-main: #0b1220;
   --bg-secondary: #111827;
+
   --card-bg: #151f2e;
   --card-bg-soft: #1b2638;
+
   --border-soft: #2a364a;
+
   --yellow-zesteo: #fde047;
 
-  /* Base */
   --primary: #2563eb;
   --primary-hover: #1d4ed8;
   --primary-light: #60a5fa;
   --primary-soft: rgba(37, 99, 235, 0.14);
 
-  /* Etats */
   --success: #22c55e;
   --success-bg: rgba(34, 197, 94, 0.12);
 
@@ -49,47 +51,229 @@ input[type="date"]:valid::-webkit-datetime-edit {
   --danger: #ef4444;
   --danger-bg: rgba(239, 68, 68, 0.14);
 
-  /* Texte */
   --text-main: #f8fafc;
   --text-secondary: #cbd5e1;
   --text-muted: #94a3b8;
   --text-disabled: #64748b;
 
-  --couleurLivreurs: #134BBE;
-  --couleurAgences: #391D9D;
+  --couleurLivreurs: #134bbe;
+  --couleurAgences: #391d9d;
   --couleurCamions: #086184;
   --couleurSecteurs: #146845;
-  --couleurPlannings: #93681D;
-  --couleurIncidents: #7A213A;
-  --couleurStatistiques: #87471C;
-  --couleurGestions: #3C4D6D;
+  --couleurPlannings: #93681d;
+  --couleurIncidents: #7a213a;
+  --couleurStatistiques: #87471c;
+  --couleurGestions: #3c4d6d;
+  */
+
+  /* =======================================================
+     STRUCTURE GÉNÉRALE
+     ======================================================= */
+
+  --bg-main: #081222;
+  --bg-secondary: #0c1728;
+
+  --card-bg: #101a2a;
+  --card-bg-elevated: #142033;
+  --card-bg-soft: #17253a;
+  --card-bg-hover: #1a2a41;
+  --linearBar-bg : #e7e9efe6;
+  --linearBar-bg-transparent : transparent;  
+
+  --border-soft: #263a55;
+  --border-default: #315584;
+  --border-strong: #3d6090;
+
+  --separator: rgba(148, 163, 184, 0.16);
+
+  /* =======================================================
+     TEXTES
+     ======================================================= */
+
+  --text-main: #f8fafc;
+  --text-secondary: #b7c4d8;
+  --text-muted: #94a3b8;
+  --text-disabled: #64748b;
+
+  /* =======================================================
+     IDENTITÉ ZESTEO
+     ======================================================= */
+
+  --yellow-zesteo: #fde047;
+  --yellow-zesteo-hover: #facc15;
+
+  --yellow-zesteo-bg: rgba(253, 224, 71, 0.12);
+  --yellow-zesteo-border: rgba(253, 224, 71, 0.38);
+
+  /* =======================================================
+     COULEUR PRINCIPALE
+     ======================================================= */
+
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --primary-light: #60a5fa;
+
+  --primary-soft: rgba(37, 99, 235, 0.14);
+  --primary-border: rgba(37, 99, 235, 0.55);
+
+  /* =======================================================
+     ÉTATS
+     ======================================================= */
+
+  --success: #10d99a;
+  --success-bg: rgba(16, 217, 154, 0.12);
+  --success-border: rgba(16, 217, 154, 0.35);
+
+  --warning: #f59e0b;
+  --warning-bg: rgba(245, 158, 11, 0.14);
+  --warning-border: rgba(245, 158, 11, 0.4);
+
+  --danger: #f43f5e;
+  --danger-bg: rgba(244, 63, 94, 0.14);
+  --danger-border: rgba(244, 63, 94, 0.48);
+
+  /* =======================================================
+     CATÉGORIES DU PANNEAU D’ADMINISTRATION
+     ======================================================= */
+
+  /* Livreurs */
+
+  --couleurLivreurs: #2563eb;
+  --couleurLivreursBg: rgba(30, 64, 175, 0.2);
+  --couleurLivreursBorder: rgba(37, 99, 235, 0.72);
+
+  /* Agences */
+
+  --couleurAgences: #7c3aed;
+  --couleurAgencesBg: rgba(91, 33, 182, 0.18);
+  --couleurAgencesBorder: rgba(124, 58, 237, 0.65);
+
+  /* Camions */
+
+  --couleurCamions: #0891b2;
+  --couleurCamionsBg: rgba(8, 145, 178, 0.16);
+  --couleurCamionsBorder: rgba(8, 145, 178, 0.65);
+
+  /* Secteurs */
+
+  --couleurSecteurs: #059669;
+  --couleurSecteursBg: rgba(5, 150, 105, 0.16);
+  --couleurSecteursBorder: rgba(5, 150, 105, 0.62);
+
+  /* Plannings */
+
+  --couleurPlannings: #d97706;
+  --couleurPlanningsBg: rgba(180, 83, 9, 0.17);
+  --couleurPlanningsBorder: rgba(217, 119, 6, 0.62);
+
+  /* Incidents */
+
+  --couleurIncidents: #be123c;
+  --couleurIncidentsBg: rgba(159, 18, 57, 0.17);
+  --couleurIncidentsBorder: rgba(225, 29, 72, 0.58);
+
+  /* Statistiques */
+
+  --couleurStatistiques: #c2410c;
+  --couleurStatistiquesBg: rgba(194, 65, 12, 0.18);
+  --couleurStatistiquesBorder: rgba(234, 88, 12, 0.6);
+
+  /* Gestion */
+
+  --couleurGestions: #52678f;
+  --couleurGestionsBg: rgba(71, 85, 130, 0.2);
+  --couleurGestionsBorder: rgba(82, 103, 143, 0.65);
+
+  /* =======================================================
+     OMBRES ET LUEURS
+     ======================================================= */
+
+  --shadow-card:
+    0 10px 25px rgba(0, 0, 0, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.025);
+
+  --shadow-card-hover:
+    0 16px 32px rgba(0, 0, 0, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+
+  --shadow-elevated: 0 18px 40px rgba(0, 0, 0, 0.34);
+
+  --glow-yellow: 0 0 24px rgba(253, 224, 71, 0.2);
+  --glow-success: 0 0 14px rgba(16, 217, 154, 0.35);
 }
+
+/* =========================================================
+   INPUT DATE
+   ========================================================= */
+
+input[type="date"]:focus::-webkit-datetime-edit,
+input[type="date"]:valid::-webkit-datetime-edit {
+  color: var(--text-main);
+}
+
+.date-input::-webkit-datetime-edit {
+  color: transparent;
+}
+
+.date-input:focus::-webkit-datetime-edit,
+.date-input:valid::-webkit-datetime-edit {
+  color: var(--text-main);
+}
+
+/* =========================================================
+   ARRIÈRE-PLANS
+   ========================================================= */
 
 .background {
   background-image: url("/background.png");
+
+  /* Ancienne image de test */
   /* background-image: url("/template.png"); */
+
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
 }
 
 .fd {
+  /* Ancienne image */
   /* background-image: url("./bg.png"); */
+
   background-repeat: no-repeat;
+  background-position: center;
   background-size: cover;
 }
 
+.bg_test {
+  /* Image de référence Administration */
+  /* background-image: url("./assets/exempleAdmin.png"); */
+
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: auto 100%;
+  background-attachment: fixed;
+
+  overflow: hidden;
+}
+
+/* =========================================================
+   INDICATEUR ACTIF DE LA BARRE DE NAVIGATION
+   ========================================================= */
+
 .nav-active-blob {
   pointer-events: none;
+
   position: absolute;
-  left: 0;
   top: 50%;
+  left: 0;
   z-index: 10;
 
   width: 4.7rem;
   height: 4.7rem;
 
   transform: translateY(-50%);
+
+  border: 1px solid var(--yellow-zesteo-border);
   border-radius: 42% 58% 55% 45% / 48% 42% 58% 52%;
 
   background:
@@ -111,14 +295,12 @@ input[type="date"]:valid::-webkit-datetime-edit {
       rgba(161, 98, 7, 0.12)
     );
 
-  border: 1px solid rgba(253, 224, 71, 0.28);
-
   box-shadow:
     0 14px 34px rgba(0, 0, 0, 0.34),
     0 5px 14px rgba(0, 0, 0, 0.24),
     inset 0 1px 0 rgba(255, 255, 255, 0.22),
     inset 0 -10px 20px rgba(120, 74, 0, 0.12),
-    0 0 24px rgba(250, 204, 21, 0.14);
+    var(--glow-yellow);
 
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
@@ -135,8 +317,11 @@ input[type="date"]:valid::-webkit-datetime-edit {
 
 .nav-active-blob::before {
   content: "";
+
   position: absolute;
   inset: 0.4rem;
+
+  border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: inherit;
 
   background: radial-gradient(
@@ -144,15 +329,15 @@ input[type="date"]:valid::-webkit-datetime-edit {
     rgba(255, 255, 255, 0.14),
     transparent 42%
   );
-
-  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .nav-active-blob::after {
   content: "";
+
   position: absolute;
   inset: -0.45rem;
   z-index: -1;
+
   border-radius: inherit;
 
   background: rgba(250, 204, 21, 0.08);
@@ -181,95 +366,411 @@ input[type="date"]:valid::-webkit-datetime-edit {
   border-radius: 62% 38% 44% 56% / 46% 60% 40% 54%;
 }
 
+/* =========================================================
+   spinner input type number
+   ========================================================= */
+
+@layer utilities {
+  .number-no-spinner {
+    appearance: textfield;
+  }
+
+  .number-no-spinner::-webkit-inner-spin-button,
+  .number-no-spinner::-webkit-outer-spin-button {
+    appearance: none;
+    margin: 0;
+  }
+}
+
+
+
+/* =========================================================
+   CARTES GÉNÉRALES
+   ========================================================= */
+
 .card {
+  /*
+  ANCIENNES VERSIONS
+
+  Version 1 :
+  background: #1d2b40;
+  border: 2px solid #39506f;
+
+  Version 2 :
+  background: #1c2738;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+
+  Version 3 :
+  background: linear-gradient(
+    180deg,
+    #1d2a3d,
+    #182334
+  );
+  border: 1px solid #344862;
+
+  Version 4 :
+  background: #1f2d43;
+  border: 1px solid #465f80;
+
+  box-shadow:
+    0 8px 20px rgba(0, 0, 0, 0.25),
+    inset 0 1px rgba(255, 255, 255, 0.03);
+  */
+
+  background: linear-gradient(
+    145deg,
+    var(--card-bg-elevated),
+    var(--card-bg)
+  );
+
+  border: 1px solid var(--border-default);
+
+  color: var(--text-main);
+
+  box-shadow: var(--shadow-card);
+
+  transition:
+    background 250ms ease,
+    border-color 250ms ease,
+    box-shadow 250ms ease,
+    transform 250ms ease;
+}
+
+.card:hover {
+  border-color: var(--border-strong);
+
+  background: linear-gradient(
+    145deg,
+    var(--card-bg-soft),
+    var(--card-bg)
+  );
+
+  box-shadow: var(--shadow-card-hover);
+}
+
+/* Carte secondaire */
+
+.card2 {
+  /*
+  ANCIENNE VERSION
+
   background: #151f2e;
   border: 1px solid #2a364a;
+
+  VERSION INTERMÉDIAIRE
+
+  background: #1a2638;
+  border: 1px solid #31425d;
+  */
+
+  background: var(--card-bg);
+  border: 1px solid var(--border-soft);
+
+  color: var(--text-main);
+
+  box-shadow:
+    0 8px 18px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.02);
 }
+
+/* Carte livraison */
 
 .cardLiv {
+  /*
+  ANCIENNE VERSION
+
   background: #151f2e;
   border: 2px solid #233e6e;
+  */
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(37, 99, 235, 0.08),
+      transparent 55%
+    ),
+    var(--card-bg);
+
+  border: 1px solid var(--primary-border);
+
+  color: var(--text-main);
+
+  box-shadow: var(--shadow-card);
 }
 
-.bg_test {
-  /* background-image: url("./assets/exempleAdmin.png"); */
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-size: auto 100%;
-  background-attachment: fixed;
-  overflow: hidden;
-}
+/* =========================================================
+   CARTE STANDARD DU PANNEAU D’ADMINISTRATION
+   ========================================================= */
 
 .cardAdmin {
+  /*
+  ANCIENNE VERSION
+
   background: rgba(255, 255, 255, 0.035);
   border: 1px solid rgba(255, 255, 255, 0.06);
+
   box-shadow:
     0 10px 25px rgba(0, 0, 0, 0.18),
     inset 0 1px 0 rgba(255, 255, 255, 0.035);
+  */
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.035),
+      transparent 60%
+    ),
+    var(--card-bg);
+
+  border: 1px solid var(--border-soft);
+
+  color: var(--text-main);
+
+  box-shadow: var(--shadow-card);
+
+  transition:
+    transform 250ms ease,
+    background 250ms ease,
+    border-color 250ms ease,
+    box-shadow 250ms ease;
 }
+
 .cardAdmin:hover {
+  /*
+  ANCIEN HOVER
+
   border-color: rgba(250, 204, 21, 0.25);
   background: rgba(250, 204, 21, 0.045);
   transform: translateY(-2px);
+  */
+
+  transform: translateY(-2px);
+
+  border-color: var(--yellow-zesteo-border);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(253, 224, 71, 0.055),
+      transparent 62%
+    ),
+    var(--card-bg-elevated);
+
+  box-shadow:
+    var(--shadow-card-hover),
+    0 0 20px rgba(253, 224, 71, 0.055);
+}
+
+/* =========================================================
+   CARTES COLORÉES DU PANNEAU D’ADMINISTRATION
+   ========================================================= */
+
+.card-livreurs {
+  background:
+    linear-gradient(
+      135deg,
+      var(--couleurLivreursBg),
+      transparent 65%
+    ),
+    var(--card-bg);
+
+  border: 1px solid var(--couleurLivreursBorder);
+}
+
+.card-agences {
+  background:
+    linear-gradient(
+      135deg,
+      var(--couleurAgencesBg),
+      transparent 65%
+    ),
+    var(--card-bg);
+
+  border: 1px solid var(--couleurAgencesBorder);
+}
+
+.card-camions {
+  background:
+    linear-gradient(
+      135deg,
+      var(--couleurCamionsBg),
+      transparent 65%
+    ),
+    var(--card-bg);
+
+  border: 1px solid var(--couleurCamionsBorder);
+}
+
+.card-secteurs {
+  background:
+    linear-gradient(
+      135deg,
+      var(--couleurSecteursBg),
+      transparent 65%
+    ),
+    var(--card-bg);
+
+  border: 1px solid var(--couleurSecteursBorder);
+}
+
+.card-plannings {
+  background:
+    linear-gradient(
+      135deg,
+      var(--couleurPlanningsBg),
+      transparent 65%
+    ),
+    var(--card-bg);
+
+  border: 1px solid var(--couleurPlanningsBorder);
+}
+
+.card-incidents {
+  background:
+    linear-gradient(
+      135deg,
+      var(--couleurIncidentsBg),
+      transparent 65%
+    ),
+    var(--card-bg);
+
+  border: 1px solid var(--couleurIncidentsBorder);
+}
+
+.card-statistiques {
+  background:
+    linear-gradient(
+      135deg,
+      var(--couleurStatistiquesBg),
+      transparent 65%
+    ),
+    var(--card-bg);
+
+  border: 1px solid var(--couleurStatistiquesBorder);
+}
+
+.card-gestion {
+  background:
+    linear-gradient(
+      135deg,
+      var(--couleurGestionsBg),
+      transparent 65%
+    ),
+    var(--card-bg);
+
+  border: 1px solid var(--couleurGestionsBorder);
+}
+
+/* =========================================================
+   CARTE VUE D’ENSEMBLE ADMINISTRATION
+   ========================================================= */
+
+.admin-overview {
+  background: linear-gradient(
+    155deg,
+    #111d30 0%,
+    #0d1727 60%,
+    #0a1423 100%
+  );
+
+  border: 1px solid var(--primary-border);
+
+  color: var(--text-main);
+
+  box-shadow:
+    0 14px 30px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.025);
+}
+
+/* =========================================================
+   BOUTONS
+   ========================================================= */
+
+.button-primary,
+.button-primary-echec,
+.button-primary-success,
+.button-primary-orange,
+.button-primary-yellow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding-inline: var(--spacing);
+  border-radius: var(--radius-md);
 }
 
 .button-primary {
+  /*
+  ANCIENNES VALEURS
+
   background: rgba(42, 91, 196, 0.12);
   color: #2a5bc4;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: var(--radius-md);
-  padding-inline: var(--spacing);
+  */
+
+  background: var(--primary-soft);
+  color: var(--primary-light);
 }
+
 .button-primary-echec {
+  /*
+  ANCIENNES VALEURS
+
   background: rgba(239, 68, 68, 0.14);
   color: #ef4444;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: var(--radius-md);
-  padding-inline: var(--spacing);
+  */
+
+  background: var(--danger-bg);
+  color: var(--danger);
 }
 
 .button-primary-success {
+  /*
+  ANCIENNES VALEURS
+
   background: rgba(34, 197, 94, 0.12);
   color: #22c55e;
-  /* color: white; */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: var(--radius-md);
-  padding-inline: var(--spacing);
+  */
+
+  background: var(--success-bg);
+  color: var(--success);
 }
+
 .button_system_green {
-  background: rgba(34, 197, 94, 0.12);
-  color: #22c55e;
-  /* color: white; */
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+
+  background: var(--success-bg);
+  color: var(--success);
 }
 
 .button-primary-orange {
+  /*
+  ANCIENNES VALEURS
+
   background: rgba(245, 158, 11, 0.12);
   color: #f59e0b;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: var(--radius-md);
-  padding-inline: var(--spacing);
+  */
+
+  background: var(--warning-bg);
+  color: var(--warning);
 }
 
 .button-primary-yellow {
+  /*
+  ANCIENNES VALEURS
+
   background: rgba(253, 224, 71, 0.12);
   color: #fde047;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: var(--radius-md);
-  padding-inline: var(--spacing);
+  */
+
+  background: var(--yellow-zesteo-bg);
+  color: var(--yellow-zesteo);
 }
+
+/* =========================================================
+   POLICES
+   ========================================================= */
 
 .manrope {
   font-family: "Manrope", system-ui, sans-serif;
@@ -303,171 +804,213 @@ input[type="date"]:valid::-webkit-datetime-edit {
   font-style: normal;
 }
 
-/* bleu pour :
- boutons principaux
- onglet actif
-  icônes importantes
-liens élément sélectionné dans la navbar */
+/* =========================================================
+   SÉMANTIQUE DES COULEURS
+   ========================================================= */
 
-/* Vert  pour :
+/*
+  BLEU
 
-colis scanné
-tournée validée
-compte rendu envoyé
-action terminée */
-
-/* orange pour :
-prestation modifiée
-reprise non effectuée
-écart à valider
-retard
-attention chargement incomplet
+  - boutons principaux
+  - onglet actif
+  - icônes importantes
+  - liens
+  - élément sélectionné dans la barre de navigation
 */
 
-/* rouge pour : 
-livraison impossible
-client absent
-colis manquant
-incident camion
-erreur bloquante
+/*
+  VERT
+
+  - colis scanné
+  - tournée validée
+  - compte rendu envoyé
+  - action terminée
+  - système opérationnel
 */
+
+/*
+  ORANGE
+
+  - prestation modifiée
+  - reprise non effectuée
+  - écart à valider
+  - retard
+  - chargement incomplet
+*/
+
+/*
+  ROUGE
+
+  - livraison impossible
+  - client absent
+  - colis manquant
+  - incident camion
+  - erreur bloquante
+*/
+
+/* =========================================================
+   ANIMATION DE BORDURE LUMINEUSE
+   ========================================================= */
 
 .light-border {
+  pointer-events: none;
+
   position: absolute;
   z-index: 20;
-  pointer-events: none;
+
   background: white;
+
   box-shadow:
     0 0 6px white,
     0 0 12px white,
     0 0 18px rgba(255, 255, 255, 0.8);
 }
 
-/* côté haut */
+/* Côté haut */
+
 .light-top {
   top: 0;
   left: 0;
+
   width: 18px;
   height: 2px;
+
   border-radius: 9999px;
+
   animation: light-top 1.6s linear infinite;
 }
 
-/* côté droit */
+/* Côté droit */
+
 .light-right {
   top: 0;
   right: 0;
+
   width: 2px;
   height: 18px;
+
   border-radius: 9999px;
+
   animation: light-right 1.6s linear infinite;
 }
 
-/* côté bas */
+/* Côté bas */
+
 .light-bottom {
   right: 0;
   bottom: 0;
+
   width: 18px;
   height: 2px;
+
   border-radius: 9999px;
+
   animation: light-bottom 1.6s linear infinite;
 }
 
-/* côté gauche */
+/* Côté gauche */
+
 .light-left {
-  left: 0;
   bottom: 0;
+  left: 0;
+
   width: 2px;
   height: 18px;
+
   border-radius: 9999px;
+
   animation: light-left 1.6s linear infinite;
 }
 
+/* =========================================================
+   KEYFRAMES DE LA BORDURE LUMINEUSE
+   ========================================================= */
+
 @keyframes light-top {
   0% {
-    opacity: 1;
     left: 0;
+    opacity: 1;
   }
 
   24.9% {
-    opacity: 1;
     left: calc(100% - 18px);
+    opacity: 1;
   }
 
   25%,
   100% {
-    opacity: 0;
     left: calc(100% - 18px);
+    opacity: 0;
   }
 }
 
 @keyframes light-right {
   0%,
   24.9% {
-    opacity: 0;
     top: 0;
+    opacity: 0;
   }
 
   25% {
-    opacity: 1;
     top: 0;
+    opacity: 1;
   }
 
   49.9% {
-    opacity: 1;
     top: calc(100% - 18px);
+    opacity: 1;
   }
 
   50%,
   100% {
-    opacity: 0;
     top: calc(100% - 18px);
+    opacity: 0;
   }
 }
 
 @keyframes light-bottom {
   0%,
   49.9% {
-    opacity: 0;
     right: 0;
+    opacity: 0;
   }
 
   50% {
-    opacity: 1;
     right: 0;
+    opacity: 1;
   }
 
   74.9% {
-    opacity: 1;
     right: calc(100% - 18px);
+    opacity: 1;
   }
 
   75%,
   100% {
-    opacity: 0;
     right: calc(100% - 18px);
+    opacity: 0;
   }
 }
 
 @keyframes light-left {
   0%,
   74.9% {
-    opacity: 0;
     bottom: 0;
+    opacity: 0;
   }
 
   75% {
-    opacity: 1;
     bottom: 0;
+    opacity: 1;
   }
 
   99.9% {
-    opacity: 1;
     bottom: calc(100% - 18px);
+    opacity: 1;
   }
 
   100% {
-    opacity: 0;
     bottom: calc(100% - 18px);
+    opacity: 0;
   }
 }

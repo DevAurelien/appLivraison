@@ -1,3 +1,5 @@
+import { useContext, useState } from "react";
+
 import UserIcone from "../../components/componentsIcone/UserIcone.jsx";
 import ShopIcone from "../../components/componentsIcone/ShopIcone.jsx";
 import CamionIcone from "../../components/componentsIcone/CamionIcone.jsx";
@@ -8,83 +10,108 @@ import StatsIcone from "../../components/componentsIcone/StatsIcone.jsx";
 import GestionUsersIcone from "../../components/componentsIcone/GestionUsersIcone.jsx";
 import LoupeIcone from "../../components/componentsIcone/LoupeIcone.jsx";
 import DangerIcone from "../../components/componentsIcone/DangerIcone.jsx";
+
 import CardAdministration from "./CardAdministration.jsx";
 import PetiteCardAdmin from "./PetiteCardAdmin.jsx";
+
 import { UserContext } from "../../contexte/userContext.jsx";
-import { useContext, useState } from "react";
 import { MenuContext } from "../../contexte/menuContext.jsx";
 
 export default function Administration() {
   const { user } = useContext(UserContext);
-  const {setPage} = useContext(MenuContext)
+  const { setPage } = useContext(MenuContext);
+
   const [inputSearch, setInputSearch] = useState("");
+
   const listeIcones = [
     {
       titre: "Mes Livreurs",
-      description: "Gerer vos équipes",
+      description: "Gérer vos équipes",
       composant: UserIcone,
       statut: "12 actifs",
-      couleur: "#134BBE",
+      couleur: "var(--couleurLivreurs)",
+      couleurFond: "var(--couleurLivreursBg)",
+      couleurBordure: "var(--couleurLivreursBorder)",
       roleOk: ["Livreur"],
-      onclick:()=>setPage("AdminLivreurs")
+      onClick: () => setPage("AdminLivreurs"),
     },
     {
       titre: "Mes Agences",
       description: "Sites et dépôts",
       composant: ShopIcone,
       statut: "3 agences",
-      couleur: "#391D9D",
+      couleur: "var(--couleurAgences)",
+      couleurFond: "var(--couleurAgencesBg)",
+      couleurBordure: "var(--couleurAgencesBorder)",
       roleOk: ["Livreur"],
+      onClick: () => setPage("AdminAgences"),
     },
     {
       titre: "Mes Camions",
       description: "Suivi de la flotte",
       composant: CamionIcone,
       statut: "8 camions",
-      couleur: "#086184",
+      couleur: "var(--couleurCamions)",
+      couleurFond: "var(--couleurCamionsBg)",
+      couleurBordure: "var(--couleurCamionsBorder)",
       roleOk: ["Livreur"],
+      onClick: () => setPage("AdminCamions"),
     },
     {
       titre: "Mes Secteurs",
       description: "Zones d'intervention",
       composant: SecteurIcone,
       statut: "6 secteurs",
-      couleur: "#146845",
+      couleur: "var(--couleurSecteurs)",
+      couleurFond: "var(--couleurSecteursBg)",
+      couleurBordure: "var(--couleurSecteursBorder)",
       roleOk: ["Livreur"],
+      onClick: () => setPage("AdminSecteurs"),
     },
     {
       titre: "Plannings",
       description: "Tournées et affectations",
       composant: PlanningIcone,
       statut: "5 en cours",
-      couleur: "#93681D",
+      couleur: "var(--couleurPlannings)",
+      couleurFond: "var(--couleurPlanningsBg)",
+      couleurBordure: "var(--couleurPlanningsBorder)",
       roleOk: ["Livreur"],
+      onClick: () => setPage("AdminPlannings"),
     },
     {
       titre: "Incidents",
       description: "Signalements terrain",
       composant: IncidentsIcone,
       statut: "1 ouvert",
-      couleur: "#7A213A",
+      couleur: "var(--couleurIncidents)",
+      couleurFond: "var(--couleurIncidentsBg)",
+      couleurBordure: "var(--couleurIncidentsBorder)",
+      couleurStatut: "var(--danger)",
       roleOk: ["Livreur"],
+      onClick: () => setPage("AdminIncidents"),
     },
-
     {
       titre: "Statistiques",
       description: "Analyses et rapports",
       composant: StatsIcone,
-      statut: "A jour",
-      couleur: "#87471C",
+      statut: "À jour",
+      couleur: "var(--couleurStatistiques)",
+      couleurFond: "var(--couleurStatistiquesBg)",
+      couleurBordure: "var(--couleurStatistiquesBorder)",
       roleOk: ["Livreur"],
+      onClick: () => setPage("AdminStatistiques"),
     },
     {
       titre: "Gestion",
       description: "Paramètres et outils",
       composant: GestionUsersIcone,
-      statut: user.role,
-      couleur: "#3C4D6D",
+      statut: user?.role ?? null,
+      couleur: "var(--couleurGestions)",
+      couleurFond: "var(--couleurGestionsBg)",
+      couleurBordure: "var(--couleurGestionsBorder)",
       roleOk: ["Livreur"],
-      onclick:()=>setPage("AdminGestions")
+      onClick: () => setPage("AdminGestions"),
     },
   ];
 
@@ -92,14 +119,12 @@ export default function Administration() {
     item.roleOk?.includes(user?.role),
   );
 
-  // Mes livreurs · Mes agences · Mes camions · Mes secteurs · Planning · Incidents · Statistiques · Comptes utilisateurs
-
   return (
-    <div className="flex flex-col gap-4 w-full px-4 text-[0.8rem] overflow-y-scroll overflow-x-hidden pb-25">
-      <div className="w-full border border-(--primary)/50 shadow-md shadow-black/80 rounded-2xl flex">
-        <div className="flex flex-col w-full pb-2">
+    <div className="flex w-full flex-col gap-4 overflow-x-hidden overflow-y-scroll px-4 pb-25 text-[0.8rem]">
+      <div className="admin-overview flex w-full rounded-2xl">
+        <div className="flex w-full flex-col pb-2">
           <div className="flex justify-between px-4 py-2">
-            <h1 className="font-bold text-[1rem] flex items-center justify-center gap-2">
+            <h1 className="flex items-center justify-center gap-2 text-[1rem] font-bold">
               <StatsIcone
                 color1="var(--yellow-zesteo)"
                 height={15}
@@ -107,18 +132,21 @@ export default function Administration() {
               />
               Vue d'ensemble
             </h1>
-            <p className="text-[0.6rem] button_system_green px-2 rounded-xl gap-1">
-              <span className="rounded-full m-1 bg-green-500 size-2" /> Systeme
-              operationnel
+
+            <p className="button_system_green gap-1 rounded-xl px-2 text-[0.6rem]">
+              <span className="m-1 size-2 rounded-full bg-(--success)" />
+              Système opérationnel
             </p>
           </div>
-          <div className="grid grid-cols-3 w-full px-2 gap-2 pb-1 pointer-events-none">
+
+          <div className="pointer-events-none grid w-full grid-cols-3 gap-2 px-2 pb-1">
             <PetiteCardAdmin
               icone={UserIcone}
               max={3}
               detail="Livreurs actifs"
               afficherLivreur
             />
+
             <PetiteCardAdmin
               icone={CamionIcone}
               statut="couleurCamions"
@@ -127,56 +155,74 @@ export default function Administration() {
               max={3}
               afficherBarre
             />
+
             <PetiteCardAdmin
               icone={DangerIcone}
               statut="danger"
               nb={0}
-              detail={"Incidents en cours"}
+              detail="Incidents en cours"
             />
           </div>
         </div>
       </div>
-      <div className="w-full flex justify-between">
-        <div className="w-full flex gap-2">
-          <span className="w-[1vw] bg-(--yellow-zesteo) "></span>{" "}
+
+      {/* Titre et recherche */}
+      <div className="flex w-full justify-between gap-3">
+        <div className="flex w-full gap-2">
+          <span className="w-[1vw] shrink-0 bg-(--yellow-zesteo)" />
+
           <h1 className="text-xl font-bold">Gestion</h1>
-        </div>{" "}
+        </div>
+
         <div className="relative h-full">
           {inputSearch === "" && (
             <LoupeIcone
-              className="px-2 absolute left-0 top-1/2 -translate-y-1/2"
+              className="absolute left-0 top-1/2 px-2 -translate-y-1/2"
               height={12}
               width={12}
             />
-          )}{" "}
+          )}
+
           <input
             type="text"
             value={inputSearch}
-            onChange={(e) => {
-              setInputSearch(e.target.value);
-            }}
+            onChange={(event) => setInputSearch(event.target.value)}
             placeholder="Rechercher un paramètre"
-            className="placeholder:text-[0.6rem] h-8 placeholder:text-white/25 text-right border-2 border-(--card-bg-soft) rounded-2xl outline-none px-2 bg-black/25"
+            className="
+              h-8
+              rounded-2xl
+              border-2
+              border-(--border-soft)
+              bg-black/25
+              px-2
+              text-right
+              text-(--text-main)
+              outline-none
+              placeholder:text-[0.6rem]
+              placeholder:text-(--text-disabled)
+              focus:border-(--border-default)
+            "
           />
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-2 ">
-        {iconesAutorisees.map((item, index) => {
+
+      {/* Cartes d’administration */}
+      <div className="grid grid-cols-2 gap-2">
+        {iconesAutorisees.map((item) => {
           const Icone = item.composant;
+
           return (
             <CardAdministration
-              key={index}
-              icone={<Icone color1="white" height={25} width={25} />}
+              key={item.titre}
+              icone={<Icone color1="currentColor" height={25} width={25} />}
               titre={item.titre}
               description={item.description}
-              statut={(item.statut && item.statut) || null}
-              // couleur="#e11d48"
+              statut={item.statut ?? null}
               couleur={item.couleur}
-              // couleurFond={item.couleur}
-              couleurFond="#160d24"
-              onClick={item.onclick || null}
-              // couleurStatut="#f43f5e"
-              // onClick={() => setPage("incidents")}
+              couleurFond={item.couleurFond}
+              couleurBordure={item.couleurBordure}
+              couleurStatut={item.couleurStatut ?? "var(--success)"}
+              onClick={item.onClick}
             />
           );
         })}
@@ -184,4 +230,3 @@ export default function Administration() {
     </div>
   );
 }
-

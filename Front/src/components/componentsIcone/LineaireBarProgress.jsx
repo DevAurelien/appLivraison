@@ -7,6 +7,7 @@ export default function LinearBarProgress({
   className = "flex flex-col w-full",
   info = false,
   colorBar = "--primary",
+  colorFond = "--linearBar-bg-transparent"
 }) {
   const maxValue = max ?? 100;
   const percent = Math.min(Math.max((progress / maxValue) * 100, 0), 100);
@@ -24,27 +25,27 @@ export default function LinearBarProgress({
       {info && (
         <div
           data-testid="progress-bar-text"
-          className="
+          className={`
           mb-4
           w-full
           text-center
           font-bold
           tracking-wide
-          text-[hsla(225,23%,62%,1)]
-        "
+          text-(${colorFond})
+        `}
         >
           {percent}%
         </div>
       )}
 
       <div
-        className="
+        className={`
           h-3
           w-full
           overflow-hidden
           rounded-lg
-          bg-[hsla(225,20%,92%,0.9)]
-        "
+          bg-(${colorFond})
+        `}
       >
         <div
           data-testid="progress-bar-bar"

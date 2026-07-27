@@ -1,6 +1,14 @@
 import express from "express";
-import {ControlLoginUsers, ControlRegisterUsers, ControlRefreshUsers, controlImageProfil, ControlLogoutUsers, 
-   controlAfficherAvatar, ControlAssignerPointages, ControlRecupPointages, ControlAssignPointed } from "../controllers/control.users.js"
+import {
+  ControlLoginUsers,
+  ControlRegisterUsers,
+  ControlRefreshUsers,
+  controlImageProfil,
+  ControlLogoutUsers,
+  controlAfficherAvatar,
+  ControlAssignPointed,
+  ControlRecupPointed,
+} from "../controllers/control.users.js";
 import multer from "multer";
 import { verifierAuthentification } from "../middlewares/middlewares.auth.js";
 import { sql } from "../database/db.js";
@@ -20,10 +28,10 @@ router.post("/auth/register", ControlRegisterUsers);
 router.post("/auth/login", ControlLoginUsers);
 router.post("/auth/refresh", ControlRefreshUsers);
 router.post("/auth/logout", ControlLogoutUsers);
-router.post("/pointages/assigner/:id",verifierAuthentification , ControlAssignerPointages);
-router.get("/pointages/recup/:id",verifierAuthentification , ControlRecupPointages);
 
+router.get("/recup/pointages", verifierAuthentification, ControlRecupPointed);
 router.post("/pointed/assign", verifierAuthentification, ControlAssignPointed);
+
 
 const uploadAvatar = multer({
   storage: multer.memoryStorage(),
@@ -38,10 +46,6 @@ router.post(
   controlImageProfil,
 );
 
-router.get(
-  "/users/avatar",
-  verifierAuthentification,
-  controlAfficherAvatar,
-);
+router.get("/users/avatar", verifierAuthentification, controlAfficherAvatar);
 
 export default router;

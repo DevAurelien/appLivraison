@@ -222,16 +222,25 @@ export const assignPointed = async (id, dateJour, pointedAt) => {
   if (!pointage) {
     const result = await sql.query(
       `
-      INSERT INTO pointages (
-        user_id,
-        date_jour,
-        arrival_pointed_at
-      )
-      VALUES ($1, $2, $3)
-      RETURNING *
-      `,
+  INSERT INTO pointages (
+    user_id,
+    date_jour,
+    arrival_pointed_at
+  )
+  VALUES ($1, $2, $3)
+
+  ON CONFLICT (user_id, date_jour)
+  DO UPDATE SET
+    arrival_pointed_at = COALESCE(
+      pointages.arrival_pointed_at,
+      EXCLUDED.arrival_pointed_at
+    )
+
+  RETURNING *
+  `,
       [id, dateJour, pointedAt],
     );
+
     return result[0];
   }
 
@@ -288,4 +297,16 @@ export const assignPointed = async (id, dateJour, pointedAt) => {
   }
 
   return pointage;
+};
+
+export const recupPointages = async (id, dateJour) => {
+  const recup = await sql.query(
+    `
+    SELECT * 
+    FROM pointages
+    WHERE user_id = $1 AND date_jour = $2
+    `,
+    [id, dateJour],
+  );
+  return recup[0];
 };

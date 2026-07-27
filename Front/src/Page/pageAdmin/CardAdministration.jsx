@@ -1,60 +1,73 @@
 import { useContext } from "react";
 import { MenuContext } from "../../contexte/menuContext";
+
 export default function CardAdministration({
   icone,
   titre,
   description,
   statut,
-  couleur = "#2563eb",
-  couleurFond = "#07152f",
-  couleurStatut = "#10b981",
+  couleur = "var(--primary)",
+  couleurFond = "var(--primary-soft)",
+  couleurBordure = "var(--primary-border)",
+  couleurStatut = "var(--success)",
   onClick,
   className = "",
 }) {
   const { setPage } = useContext(MenuContext);
+
   return (
     <button
       type="button"
       onClick={onClick}
       style={{
         "--couleur-card": couleur,
-        "--fond-card": couleurFond,
+        "--fond-accent-card": couleurFond,
+        "--bordure-card": couleurBordure,
         "--couleur-statut": couleurStatut,
       }}
       className={`
+        cardAdmin
+        group
         relative
         flex
         min-h-10
         w-full
         overflow-hidden
         rounded-3xl
-        border
-        border-(--couleur-card)
-        bg-(--fond-card)
         p-2
         text-left
-        shadow-[0_0_18px_color-mix(in_srgb,var(--couleur-card)_20%,transparent)]
         transition
         duration-300
         hover:-translate-y-1
-        hover:shadow-[0_0_28px_color-mix(in_srgb,var(--couleur-card)_35%,transparent)]
         active:scale-[0.98]
         ${className}
       `}
     >
-      {/* Halo coloré de fond */}
+      {/* Accent coloré de la catégorie */}
       <div
         className="
           pointer-events-none
           absolute
           inset-0
-          bg-[radial-gradient(circle_at_top_left,color-mix(in_srgb,var(--couleur-card)_65%,transparent),transparent_80%)]
+          bg-[radial-gradient(circle_at_top_left,var(--fond-accent-card),transparent_72%)]
+        "
+      />
+
+      {/* Liseré coloré discret */}
+      <div
+        className="
+          pointer-events-none
+          absolute
+          inset-0
+          rounded-[inherit]
+          border
+          border-(--bordure-card)
         "
       />
 
       <div className="relative z-10 flex w-full flex-col">
         <div className="flex items-start gap-2">
-          {/* Conteneur de l’icône */}
+          {/* Icône */}
           <div
             className="
               flex
@@ -64,9 +77,10 @@ export default function CardAdministration({
               justify-center
               rounded-2xl
               border
-              border-(--couleur-card)
-              bg-[color-mix(in_srgb,var(--couleur-card)_25%,transparent)]
-              shadow-[inset_0_0_18px_color-mix(in_srgb,var(--couleur-card)_20%,transparent)]
+              border-(--bordure-card)
+              bg-(--fond-accent-card)
+              text-(--couleur-card)
+              shadow-[inset_0_0_18px_color-mix(in_srgb,var(--couleur-card)_18%,transparent)]
             "
           >
             {icone}
@@ -74,44 +88,54 @@ export default function CardAdministration({
 
           {/* Textes */}
           <div className="min-w-0 flex-1">
-            <h2 className="truncate text-[0.8rem] font-semibold text-white">
+            <h2 className="truncate text-[0.8rem] font-semibold text-(--text-main)">
               {titre}
             </h2>
 
-            <p className="mt-1 line-clamp-2 text-[0.6rem] text-slate-400">
+            <p className="mt-1 line-clamp-2 text-[0.6rem] text-(--text-muted)">
               {description}
             </p>
           </div>
         </div>
 
-        <div className={`mt-auto flex items-end ${statut ? "justify-between" : "justify-end"} pt-2`}>
+        <div
+          className={`
+            mt-auto
+            flex
+            items-end
+            pt-2
+            ${statut ? "justify-between" : "justify-end"}
+          `}
+        >
           {/* Badge */}
-          {statut && <div
-            className="
-              flex
-              items-center
-              gap-2
-              rounded-full
-              border
-              border-white/10
-              bg-black/15
-              px-3
-              py-1.5
-              text-[0.6rem]
-              text-slate-300
-            "
-          >
-            <span
+          {statut && (
+            <div
               className="
-                size-2
+                flex
+                items-center
+                gap-2
                 rounded-full
-                bg-(--couleur-statut)
-                shadow-[0_0_8px_var(--couleur-statut)]
+                border
+                border-white/10
+                bg-black/15
+                px-3
+                py-1.5
+                text-[0.6rem]
+                text-(--text-secondary)
               "
-            />
+            >
+              <span
+                className="
+                  size-2
+                  rounded-full
+                  bg-(--couleur-statut)
+                  shadow-[0_0_8px_var(--couleur-statut)]
+                "
+              />
 
-             <span>{statut}</span>
-          </div>}
+              <span>{statut}</span>
+            </div>
+          )}
 
           {/* Flèche */}
           <span
@@ -119,10 +143,11 @@ export default function CardAdministration({
               text-3xl
               font-light
               leading-none
-              text-slate-400
+              text-(--text-muted)
               transition-transform
               duration-300
               group-hover:translate-x-1
+              group-hover:text-(--text-main)
             "
           >
             ›

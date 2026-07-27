@@ -4,6 +4,11 @@ import { UserContext } from "../../contexte/userContext.jsx";
 import apiFetch from "../../utils/apiFetch.jsx";
 import Pulse from "../Loading.jsx";
 import { PointageContext } from "../../contexte/pointageContext.jsx";
+import Coffee from "../componentsIcone/Coffee.jsx"
+import CoffeeBared from "../componentsIcone/CoffeeBared.jsx"
+import Sun from "../componentsIcone/Sun.jsx"
+import Moon from "../componentsIcone/Moon.jsx"
+import LinearBarProgress from "../componentsIcone/LineaireBarProgress.jsx";
 
 export default function CardPointage() {
   const { pointage, setPointage } = useContext(PointageContext);
@@ -30,28 +35,23 @@ export default function CardPointage() {
     {
       lien: pointage.arrival_pointed_at,
       moment: "Je suis arrivé au travail à ",
+      icone:Sun,
     },
     {
       lien: pointage.start_pause_pointed_at,
       moment: "Je commence ma pause à ",
+      icone:Coffee,
     },
-    { lien: pointage.end_pause_pointed_at, moment: "Je finis ma pause à " },
-    { lien: pointage.departure_pointed_at, moment: "Je quitte le travail à " },
-    { lien: "", moment: "Fin de la journée" },
+    { lien: pointage.end_pause_pointed_at, moment: "Je finis ma pause à ",
+      icone:CoffeeBared, },
+    { lien: pointage.departure_pointed_at, moment: "Je quitte le travail à ",
+      icone:Moon, },
   ];
 
-  const handlePointer = async () => {
-    setIsLoading(true);
-    //  if (user?.heurePointage) return;
-    const dateActuelle = new Date();
-
-    apiFetch(`/pointed/assign`, "POST")
-      .then((res) => {
-        if (!res.ok) throw new Error("Erreur pointage");
-        return res.json();
-      })
-      .then((data) => {
-        setPointage((prev) => ({
+useEffect(()=>{
+  setIsLoading(true);
+  apiFetch("/recup/pointages", "GET").then(res => res.json()).then((data)=>{
+    setPointage((prev) => ({
           ...prev,
           arrival_pointed_at: data?.arrival_pointed_at ?? null,
           start_pause_pointed_at: data?.start_pause_pointed_at ?? null,
@@ -59,24 +59,60 @@ export default function CardPointage() {
           departure_pointed_at: data?.departure_pointed_at ?? null,
           erreur: data?.erreur ?? null,
         }));
-      })
-      .finally(() => setIsLoading(false));
-  };
+  }).finally(() => {
+      setIsLoading(false);
+    });
+  
+},[])
+
+  const handlePointer = async () => {
+  try {
+    setIsLoading(true);
+
+    const res = await apiFetch("/pointed/assign", "POST");
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data?.erreur || "Erreur pointage");
+    }
+
+    setPointage((prev) => ({
+      ...prev,
+      arrival_pointed_at: data?.arrival_pointed_at ?? null,
+      start_pause_pointed_at: data?.start_pause_pointed_at ?? null,
+      end_pause_pointed_at: data?.end_pause_pointed_at ?? null,
+      departure_pointed_at: data?.departure_pointed_at ?? null,
+      erreur: null,
+    }));
+  } catch (error) {
+    console.error(error);
+
+    setPointage((prev) => ({
+      ...prev,
+      erreur: error.message,
+    }));
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   return (
     <div className="w-full flex p-2 text-[0.8rem] card rounded-xl opacity-[0.8] justify-between">
-      <div className="flex w-full gap-4 ">
+      <div className="flex w-full gap-4">
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/70 p-1">
           <Radar color1="green" className="size-5" />
         </div>
 
-        <div className="flex flex-col">
+        <div className="flex flex-col w-full">
           <h1 className={`select-none ${pointage.erreur && "text-red-500"}`}>
             {pointage.erreur ? pointage.erreur : "Pointer ma présence"}{" "}
           </h1>
-
-{/* TODO Recup */}
+          {(!pointage.arrival_pointed_at) && <p className="text-[0.6rem]">Veuillez pointer votre journée...</p>}
           {/* <p className="select-none text-[0.6rem]">{moment}</p> */}
+
+          <div></div>
+          <LinearBarProgress className="w-full pr-4 py-2" progress={2} max={8}></LinearBarProgress>
+
           {valeurPointage.map((item, index) => (
             <p key={index} className="select-none text-[0.6rem]">
               {item.lien ? (
@@ -89,13 +125,13 @@ export default function CardPointage() {
           ))}
         </div>
       </div>
-      <button
-        // disabled={fichePointage.isPointé}
+      {(pointage.departure_pointed_at === null) &&  <button
+        disabled={isLoading || pointage.departure_pointed_at !== null}
         onClick={handlePointer}
-        className="text-black bg-(--yellow-zesteo) rounded-md self-center px-4 p-1 cursor-pointer"
+        className="border text-black bg-(--yellow-zesteo) rounded-md self-center px-4 p-1 cursor-pointer"
       >
         {isLoading ? <Pulse className="flex w-10 px-2" /> : <p>Pointer</p>}
-      </button>
+      </button>}
     </div>
   );
 }

@@ -5,9 +5,8 @@ import {
   signRefreshToken,
   verifierRefreshToken,
   verifierAccessToken,
-  assignerPointages,
-  recupererPointages,
-  assignPointed
+  assignPointed,
+  recupPointages
 } from "../services/gestion.users.js";
 import { put } from "@vercel/blob";
 import { get } from "@vercel/blob";
@@ -28,16 +27,6 @@ const cookieOptionsClear = {
   path: "/",
 };
 
-export const ControlRecupPointages = async (req, res) =>{
-  const id = req.params.id;
-  try {
-    const heure = await recupererPointages(id);
-    res.json({heurePointage : heure});
-  } catch (e) {
-    console.log(`${e} impossible de recuperer l'heure pointage`);
-  }
-}
-
 export const ControlAssignPointed = async (req, res) => {
   try {
     const id = req.user.id;
@@ -45,27 +34,28 @@ export const ControlAssignPointed = async (req, res) => {
     const dateJour = pointedAt.toISOString().split("T")[0];
     const pointage = await assignPointed(id, dateJour, pointedAt);
     return res.status(201).json(pointage);
-  } catch (error) {
-    console.error(error);
+  }catch (error) {
+  console.error("Erreur assignPointed :", error);
 
-    return res.status(500).json({
-      erreur: "Impossible d'enregistrer le pointage",
-    });
-  }
+  return res.status(500).json({
+    erreur: error.message,
+    code: error.code,
+  });
+}
 };
 
-
-export const ControlAssignerPointages = async (req, res) => {
-  const id = req.params.id;
-  const { datePointage, heurePointage } = req.body;
+export const ControlRecupPointed = async(req, res)=>{
   try {
-    await assignerPointages(heurePointage,id);
-    res.json(true);
-  } catch (e) {
-    console.error(e);
-    res.json(false)
+    const id = req.user.id;
+    const date = new Date();
+    const dateJour = date.toISOString().split("T")[0];
+    const pointages = await recupPointages(id, dateJour);
+    if(!pointages) return res.status(404).json({données:"Aucun pointage effectué aujourdhui"})
+    return res.status(201).json(pointages)
+  }catch(error){
+    console.log(error)
   }
-};
+}
 
 export const ControlLoginUsers = async (req, res) => {
   try {
