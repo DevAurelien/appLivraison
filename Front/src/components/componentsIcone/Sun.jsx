@@ -1,5 +1,5 @@
 export default function Sun({
-  color1 = "#fff",
+  color1 = "#000",
   color2,
   color3 = "none",
   width = 30,

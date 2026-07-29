@@ -266,6 +266,19 @@ export const assignPointed = async (id, dateJour, pointedAt) => {
   return pointage;
 };
 
+export const recupererPointages = async (userId, dateJour) => {
+  const result = await sql.query(
+    `
+    SELECT *
+    FROM pointages
+    WHERE user_id = $1 AND date_jour = $2
+    `,
+    [userId, dateJour],
+  );
+
+  return result[0] ?? null;
+};
+
 export const recupPointages = async (id, dateJour) => {
   const recup = await sql.query(
     `
