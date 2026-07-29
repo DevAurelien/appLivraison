@@ -13,23 +13,11 @@ import LinearBarProgress from "../componentsIcone/LineaireBarProgress.jsx";
 export default function CardPointage() {
   const { pointage, setPointage } = useContext(PointageContext);
 
-  const [moment, setMoment] = useState("du matin");
+  const [moment, setMoment] = useState("Je suis arrivé au travail à ");
   const [isLoading, setIsLoading] = useState(false);
 
   const { user, setUser } = useContext(UserContext);
-  // const [mesPointages, setMesPointages] = useState([]);
 
-  useEffect(() => {
-    if (!pointage.arrival_pointed_at) {
-      setMoment("Je suis arrivé au travail à ");
-    } else if (!pointage.start_pause_pointed_at) {
-      setMoment("Je commence ma pause à ");
-    } else if (!pointage.end_pause_pointed_at) {
-      setMoment("Je finis ma pause à ");
-    } else if (!pointage.departure_pointed_at) {
-      setMoment("Je quitte le travail à ");
-    } else setMoment("Fin de la journée");
-  }, [pointage]);
 
   const valeurPointage = [
     {
@@ -104,6 +92,9 @@ export default function CardPointage() {
     }
   };
 
+  const prochainPointage = valeurPointage.find((item) => !item.lien);
+  const Icone = prochainPointage?.icone;
+
   return (
     <div className="w-full flex p-2 text-[0.8rem] card rounded-xl opacity-[0.8] justify-between">
       <div className="flex w-full gap-4">
@@ -126,16 +117,25 @@ export default function CardPointage() {
             max={8}
           ></LinearBarProgress>
 
-          {valeurPointage.map((item, index) => (
-            <p key={index} className="select-none text-[0.6rem]">
-              {item.lien ? (
-                <span>
-                  {item.moment}{" "}
-                  {new Date(item.lien).toLocaleTimeString("fr-FR")}
-                </span>
-              ) : null}
-            </p>
-          ))}
+          {valeurPointage.map((item, index) => {
+            const IconeItem = item.icone;
+
+            return (
+              <p
+                key={index}
+                className="flex select-none items-center gap-2 text-[0.6rem]"
+              >
+                {item.lien && (
+                  <>
+                    <span>
+                      {item.moment}{" "}
+                      {new Date(item.lien).toLocaleTimeString("fr-FR")}
+                    </span>
+                  </>
+                )}
+              </p>
+            );
+          })}
         </div>
       </div>
       {pointage.departure_pointed_at === null && (
@@ -147,9 +147,9 @@ export default function CardPointage() {
           {isLoading ? (
             <Pulse className="flex w-10 px-2" />
           ) : (
-            <p  className="flex items-center gap-2" color1="black">
-              Pointer
-            </p>
+            <div className="flex items-center gap-2" color1="black">
+              Pointer {Icone && <Icone color1="black" className="size-4 flex items-center" />}
+            </div>
           )}
         </button>
       )}

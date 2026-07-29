@@ -291,6 +291,14 @@ export const recupPointages = async (id, dateJour) => {
   return recup[0];
 };
 
+export const recupHeureEmbauche = async (agence_id)=>{
+  const recup = await sql.query(`
+    SELECT heure_embauche
+    FROM agences
+    WHERE 
+    `,[])
+}
+
 export const recupererUtilisateurPourAutorisation = async (id) => {
   const result = await sql.query(
     `
@@ -303,3 +311,5 @@ export const recupererUtilisateurPourAutorisation = async (id) => {
 
   return result[0] ?? null;
 };
+
+// TODO fetch if agence recup heureEmbauche dans le setPointages du Front

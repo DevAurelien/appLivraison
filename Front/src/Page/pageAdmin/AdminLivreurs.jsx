@@ -19,9 +19,6 @@ export default function AdminLivreurs({
     minutesEmbauche: 30,
   });
   const [error, setError] = useState("");
-  // const [heures, minutes, secondes = 0] = heureEmbauche.split(":");
-  // const heureaRespecter = new Date();
-  // heureaRespecter.setHours(regleHeures.heuresEmbauche, regleHeures.minutesEmbauche, secondes, 0);
 
 const handleCalculPointage = (heuresValue, minutesValue) => {
   if (heuresValue === "" || minutesValue === "") {
@@ -50,7 +47,6 @@ const handleCalculPointage = (heuresValue, minutesValue) => {
   const heureARespecter = new Date();
   heureARespecter.setHours(heures, minutes, 0, 0);
 
-  console.log(heureARespecter);
 };
 
 useEffect(() => {

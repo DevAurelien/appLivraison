@@ -1,21 +1,10 @@
+import { affilierAgenceSalaries } from "../services/gestion.gestion.js";
+
 export const controlGestionSalaries = async (req, res) =>{
+    const agence_id = 3 // villeneuve
+    const user = req.user;
 
-    const role = req.user.role;
-
-    if(role === "Livreur"){
-        
-    }
-    else if(role === "Coordinateur") {
-
-    }
-    else if(role === "Chef d'Agence"){
-
-    }
-    else if(role === "Admin"){
-
-    }
-    else if(role === "superAdmin"){
-
-    }
-
+    const ok = affilierAgenceSalaries(user.id, agence_id);
+    
+    console.log(ok)
 }
