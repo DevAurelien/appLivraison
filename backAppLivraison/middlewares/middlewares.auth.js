@@ -1,6 +1,7 @@
 import { verifierAccessToken } from "../services/gestion.users.js";
+import { recupererUtilisateurPourAutorisation } from "../services/gestion.users.js";
 
-export const verifierAuthentification = async (req, res, next) => {
+export const verifierAuthentification = (req, res, next) => {
   try {
     const authorization = req.headers.authorization;
 
@@ -10,11 +11,20 @@ export const verifierAuthentification = async (req, res, next) => {
       });
     }
 
-    const accessToken = authorization.split(" ")[1];
+    const accessToken = authorization.slice(7);
 
-    const tokenValide = await verifierAccessToken(accessToken);
+    const payload = verifierAccessToken(accessToken);
 
-    req.user = tokenValide;
+    if (!payload?.id) {
+      return res.status(401).json({
+        message: "Access token incomplet",
+      });
+    }
+
+    req.user = {
+      id: payload.id,
+      role: payload.role,
+    };
 
     next();
   } catch (error) {
@@ -22,4 +32,44 @@ export const verifierAuthentification = async (req, res, next) => {
       message: "Access token invalide ou expiré",
     });
   }
+};
+
+export const actualiserUtilisateurAuthentifie = async (req, res, next) => {
+  try {
+    const utilisateur = await recupererUtilisateurPourAutorisation(req.user.id);
+
+    if (!utilisateur) {
+      return res.status(401).json({
+        message: "Utilisateur inexistant",
+      });
+    }
+
+    req.user = utilisateur;
+
+    next();
+  } catch (error) {
+    console.error("Erreur autorisation :", error);
+
+    return res.status(500).json({
+      message: "Erreur pendant la vérification des autorisations",
+    });
+  }
+};
+
+export const autoriserRoles = (...rolesAutorises) => {
+  return (req, res, next) => {
+    if (!req.user?.role) {
+      return res.status(401).json({
+        message: "Utilisateur non authentifié",
+      });
+    }
+
+    if (!rolesAutorises.includes(req.user.role)) {
+      return res.status(403).json({
+        message: "Vous n'avez pas l'autorisation d'effectuer cette action",
+      });
+    }
+
+    next();
+  };
 };

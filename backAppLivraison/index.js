@@ -7,6 +7,7 @@ import routeUsers from "./routes/route.users.js"
 import routeSalaries from "./routes/route.salaries.js"
 import routeAgences from "./routes/route.agences.js"
 import dotenv from "dotenv";
+import routerGestion from "./routes/route.gestion.js"
 
 dotenv.config({
   path: ".env.local",
@@ -25,6 +26,7 @@ app.use("/", routeDeliveries );
 app.use("/", routeUsers);
 app.use("/", routeSalaries);
 app.use("/", routeAgences);
+app.use("/", routerGestion);
 
 
 if (process.env.NODE_ENV !== "production") {

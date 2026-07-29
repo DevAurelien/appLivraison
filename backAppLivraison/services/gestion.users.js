@@ -6,7 +6,7 @@ import "dotenv/config";
 import { roles } from "../models/role.js";
 import { sql } from "../database/db.js";
 
-const USERS_FILE = "./users.json";
+// const USERS_FILE = "./users.json";
 
 export const creerUser = async (
   email,
@@ -131,13 +131,10 @@ export const signRefreshToken = (userTrouver) => {
   return sign(data, process.env.SECRETREFRESH, { expiresIn: "12h" });
 };
 
-export const verifierAccessToken = async (accessToken) => {
-  try {
-    const tokenValide = verify(accessToken, process.env.SECRET);
-    return tokenValide;
-  } catch (e) {
-    throw e;
-  }
+export const verifierAccessToken = (accessToken) => {
+  return verify(accessToken, process.env.SECRET, {
+    algorithms: ["HS256"],
+  });
 };
 
 export const verifierRefreshToken = async (refreshToken) => {
@@ -184,36 +181,6 @@ export const verifierRefreshToken = async (refreshToken) => {
 
     throw e;
   }
-};
-
-export const assignerPointages = async (heurePointages, id) => {
-  try {
-    await sql.query(
-      `
-      UPDATE users
-      SET heures_pointages = $1
-      WHERE id = $2`,
-      [heurePointages, id],
-    );
-
-    return true;
-  } catch (error) {
-    console.error("Erreur lors de l'enregistrement du pointage :", error);
-    throw error;
-  }
-};
-
-export const recupererPointages = async (userId, dateJour) => {
-  const result = await sql.query(
-    `
-    SELECT *
-    FROM pointages
-    WHERE user_id = $1 AND date_jour = $2
-    `,
-    [userId, dateJour],
-  );
-
-  return result[0] ?? null;
 };
 
 export const assignPointed = async (id, dateJour, pointedAt) => {
@@ -309,4 +276,17 @@ export const recupPointages = async (id, dateJour) => {
     [id, dateJour],
   );
   return recup[0];
+};
+
+export const recupererUtilisateurPourAutorisation = async (id) => {
+  const result = await sql.query(
+    `
+      SELECT id, role
+      FROM users
+      WHERE id = $1
+    `,
+    [id],
+  );
+
+  return result[0] ?? null;
 };
