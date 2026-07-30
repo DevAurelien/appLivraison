@@ -11,6 +11,7 @@ import Pulse from "./components/Loading.jsx";
 import AdminLivreurs from "./Page/pageAdmin/AdminLivreurs.jsx";
 import AdminGestions from "./Page/pageAdmin/AdminGestions.jsx";
 import AdminAgences from "./Page/pageAdmin/AdminAgences.jsx";
+import AdminCamions from "./Page/pageAdmin/AdminCamions.jsx";
 
 const chargerSeConnecter = () =>
   import("./Page/SeConnecter.jsx");
@@ -158,10 +159,10 @@ export default function App() {
          {page === "AdminAgences" && (
           <AdminAgences />
         )}
-        {/*{page === "AdminCamions" && (
+        {page === "AdminCamions" && (
           <AdminCamions />
         )}
-        {page === "AdminSecteurs" && (
+        {/*{page === "AdminSecteurs" && (
           <AdminSecteurs />
         )}
         {page === "AdminPlannings" && (
