@@ -22,50 +22,7 @@ html {
    ========================================================= */
 
 :root {
-  /* =======================================================
-     ANCIENNE PALETTE — CONSERVÉE POUR HISTORIQUE
-     ======================================================= */
-
-  /*
-  --bg-main: #0b1220;
-  --bg-secondary: #111827;
-
-  --card-bg: #151f2e;
-  --card-bg-soft: #1b2638;
-
-  --border-soft: #2a364a;
-
-  --yellow-zesteo: #fde047;
-
-  --primary: #2563eb;
-  --primary-hover: #1d4ed8;
-  --primary-light: #60a5fa;
-  --primary-soft: rgba(37, 99, 235, 0.14);
-
-  --success: #22c55e;
-  --success-bg: rgba(34, 197, 94, 0.12);
-
-  --warning: #f59e0b;
-  --warning-bg: rgba(245, 158, 11, 0.14);
-
-  --danger: #ef4444;
-  --danger-bg: rgba(239, 68, 68, 0.14);
-
-  --text-main: #f8fafc;
-  --text-secondary: #cbd5e1;
-  --text-muted: #94a3b8;
-  --text-disabled: #64748b;
-
-  --couleurLivreurs: #134bbe;
-  --couleurAgences: #391d9d;
-  --couleurCamions: #086184;
-  --couleurSecteurs: #146845;
-  --couleurPlannings: #93681d;
-  --couleurIncidents: #7a213a;
-  --couleurStatistiques: #87471c;
-  --couleurGestions: #3c4d6d;
-  */
-
+ 
   /* =======================================================
      STRUCTURE GÉNÉRALE
      ======================================================= */
@@ -225,14 +182,23 @@ input[type="date"]:valid::-webkit-datetime-edit {
    ========================================================= */
 
 .background {
-  background-image: url("/background.png");
+  position: relative;
+  min-height: 100dvh;
+}
 
-  /* Ancienne image de test */
-  /* background-image: url("/template.png"); */
+.background::before {
+  content: "";
+  position: fixed;
+  inset: 0;
 
+  /* background-image: url("assets/menuCamion.png"); */
   background-repeat: no-repeat;
-  background-position: center;
-  background-size: cover;
+  background-position: top center;
+  background-size: 100% 100%;
+
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.5;
 }
 
 .fd {
