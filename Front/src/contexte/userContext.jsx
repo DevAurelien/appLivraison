@@ -27,137 +27,154 @@ export const UserContextProvider = ({ children }) => {
     }
   });
 
-  useEffect(() => {
-    const restaurerSession = async () => {
+ useEffect(() => {
+  const restaurerSession = async () => {
+    try {
+      const reponse = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/auth/refresh`,
+        {
+          method: "POST",
+          credentials: "include",
+        },
+      );
+
+      const resultat = await reponse.json();
+
+      if (!reponse.ok || !resultat.accessToken) {
+        throw new Error(
+          resultat.message || "Session expirée",
+        );
+      }
+
+      /*
+       * Ton backend renvoie actuellement l'utilisateur
+       * dans resultat.data.
+       *
+       * Le fallback resultat.user permet aussi de rester
+       * compatible si tu renommes cette propriété plus tard.
+       */
+      const utilisateur =
+        resultat.data ?? resultat.user;
+
+      if (!utilisateur) {
+        throw new Error(
+          "Utilisateur absent de la réponse du refresh",
+        );
+      }
+
+      localStorage.setItem(
+        "accessToken",
+        resultat.accessToken,
+      );
+
+      setAccessToken(resultat.accessToken);
+
+      setUser({
+        ...utilisateur,
+
+        accessToken: resultat.accessToken,
+
+        permissions: Array.isArray(
+          utilisateur.permissions,
+        )
+          ? utilisateur.permissions
+          : [],
+
+        avatarBlobUrl:
+          utilisateur.avatar ??
+          utilisateur.avatar_img_url ??
+          null,
+
+        avatar: null,
+      });
+
+      /*
+       * Pas d’avatar enregistré :
+       * aucune requête supplémentaire nécessaire.
+       */
+      const avatarExiste =
+        utilisateur.avatar ??
+        utilisateur.avatar_img_url;
+
+      if (!avatarExiste) {
+        return;
+      }
+
       try {
-        const reponse = await fetch(
-          `${import.meta.env.VITE_BACKEND_URL}/auth/refresh`,
+        const reponseAvatar = await fetch(
+          `${import.meta.env.VITE_BACKEND_URL}/users/avatar`,
           {
-            method: "POST",
+            method: "GET",
             credentials: "include",
+            headers: {
+              Authorization: `Bearer ${resultat.accessToken}`,
+            },
           },
         );
 
-        if (!reponse.ok) {
-          throw new Error("Session expirée");
+        if (!reponseAvatar.ok) {
+          throw new Error(
+            `Avatar indisponible : ${reponseAvatar.status}`,
+          );
         }
 
-        const resultat = await reponse.json();
+        const avatarBlob =
+          await reponseAvatar.blob();
 
-        if (!resultat.accessToken) {
-          throw new Error("Access token absent");
+        if (avatarLocalUrlRef.current) {
+          URL.revokeObjectURL(
+            avatarLocalUrlRef.current,
+          );
         }
 
-        if (!resultat.user) {
-          throw new Error("Utilisateur absent de la réponse");
-        }
+        const avatarLocalUrl =
+          URL.createObjectURL(avatarBlob);
 
-        const utilisateur = resultat.user;
+        avatarLocalUrlRef.current =
+          avatarLocalUrl;
 
-        localStorage.setItem(
-          "accessToken",
-          resultat.accessToken,
-        );
+        setUser((utilisateurActuel) => {
+          if (!utilisateurActuel) {
+            return null;
+          }
 
-        setAccessToken(resultat.accessToken);
-
-        setUser({
-          ...utilisateur,
-
-          accessToken: resultat.accessToken,
-
-          // L’URL enregistrée dans la BDD
-          avatarBlobUrl: utilisateur.avatar ?? null,
-
-          // L’URL locale qui sera créée après le fetch
-          avatar: null,
-
-          // Sécurité si aucune permission n’est renvoyée
-          permissions: utilisateur.permissions ?? [],
+          return {
+            ...utilisateurActuel,
+            avatar: avatarLocalUrl,
+          };
         });
-
-        /*
-         * Aucun avatar enregistré :
-         * inutile d’appeler la route /users/avatar.
-         */
-        if (!utilisateur.avatar) {
-          return;
-        }
-
-        try {
-          const reponseAvatar = await fetch(
-            `${import.meta.env.VITE_BACKEND_URL}/users/avatar`,
-            {
-              method: "GET",
-              credentials: "include",
-              headers: {
-                Authorization: `Bearer ${resultat.accessToken}`,
-              },
-            },
-          );
-
-          if (!reponseAvatar.ok) {
-            throw new Error(
-              `Avatar indisponible : ${reponseAvatar.status}`,
-            );
-          }
-
-          const avatarBlob = await reponseAvatar.blob();
-
-          if (avatarLocalUrlRef.current) {
-            URL.revokeObjectURL(
-              avatarLocalUrlRef.current,
-            );
-          }
-
-          const avatarLocalUrl =
-            URL.createObjectURL(avatarBlob);
-
-          avatarLocalUrlRef.current = avatarLocalUrl;
-
-          setUser((utilisateurActuel) => {
-            if (!utilisateurActuel) {
-              return null;
-            }
-
-            return {
-              ...utilisateurActuel,
-              avatar: avatarLocalUrl,
-            };
-          });
-        } catch (erreurAvatar) {
-          console.warn(
-            "Chargement de l’avatar impossible :",
-            erreurAvatar.message,
-          );
-        }
-      } catch (erreur) {
-        setUser(null);
-        setAccessToken("");
-
-        localStorage.removeItem("accessToken");
-
-        console.log(
-          "Aucune session valide :",
-          erreur.message,
+      } catch (erreurAvatar) {
+        console.warn(
+          "Chargement de l’avatar impossible :",
+          erreurAvatar.message,
         );
-      } finally {
-        setAuthLoading(false);
       }
-    };
+    } catch (erreur) {
+      console.log(
+        "Aucune session valide :",
+        erreur.message,
+      );
 
-    restaurerSession();
+      setUser(null);
+      setAccessToken("");
+      localStorage.removeItem("accessToken");
+    } finally {
+      setAuthLoading(false);
+    }
+  };
 
-    return () => {
-      if (avatarLocalUrlRef.current) {
-        URL.revokeObjectURL(
-          avatarLocalUrlRef.current,
-        );
+  restaurerSession();
 
-        avatarLocalUrlRef.current = null;
-      }
-    };
-  }, []);
+  return () => {
+    if (avatarLocalUrlRef.current) {
+      URL.revokeObjectURL(
+        avatarLocalUrlRef.current,
+      );
+
+      avatarLocalUrlRef.current = null;
+    }
+  };
+}, []);
 
   useEffect(() => {
     const deconnecterUtilisateur = () => {
