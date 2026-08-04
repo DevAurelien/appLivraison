@@ -1,9 +1,7 @@
-import fs from "fs/promises";
 import { hash, compare } from "bcrypt";
 import pkg from "jsonwebtoken";
-const { sign, decode, verify } = pkg;
+const { sign, verify } = pkg;
 import "dotenv/config";
-import { roles } from "../models/role.js";
 import { sql } from "../database/db.js";
 
 // const USERS_FILE = "./users.json";
@@ -24,59 +22,69 @@ export const creerUser = async (
   }
 
   const pass = await hash(password, 10);
-  const role = "Client";
 
   const userCree = await sql.query(
-    `INSERT INTO users (email, password, role, nom, prenom, birth, phone, avatar_img_url)
-   VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-   RETURNING id, email, role, created_at, nom, prenom, birth, phone, avatar_img_url`,
-    [email, pass, role, nom, prenom, birth, phone, avatar_img_url],
+    `
+      INSERT INTO users (
+        email,
+        password,
+        role_id,
+        nom,
+        prenom,
+        birth,
+        phone,
+        avatar_img_url
+      )
+
+      SELECT
+        $1,
+        $2,
+        roles.id,
+        $3,
+        $4,
+        $5,
+        $6,
+        $7
+
+      FROM roles
+      WHERE roles.code = 'CLIENT'
+
+      RETURNING id
+    `,
+    [email, pass, nom, prenom, birth, phone, avatar_img_url],
   );
 
-  const user = userCree[0];
+  if (!userCree[0]) {
+    throw new Error("Le rôle CLIENT est introuvable");
+  }
 
-  return {
-    id: user.id,
-    email: user.email,
-    role: user.role,
-    creeLe: user.created_at,
-    nom: user.nom,
-    prenom: user.prenom,
-    birth: user.birth,
-    phone: user.phone,
-    avatar: user.avatar_img_url,
-  };
+  return await recupererUtilisateurPourAutorisation(userCree[0].id);
 };
 
 export const loginUser = async (email, password) => {
   const resultat = await sql.query(
-    `SELECT id, email, password, role, created_at, nom, prenom, birth, phone, avatar_img_url FROM users WHERE email = $1`,
+    `
+      SELECT
+        id,
+        password
+      FROM users
+      WHERE email = $1
+    `,
     [email],
   );
 
-  if (resultat.length === 0) {
+  // console.log("RÉPONSE LOGIN :", resultat);
+  if (!resultat[0]) {
     throw new Error("Identifiants incorrects");
   }
 
-  const user = resultat[0];
-
-  const passwordOk = await compare(password, user.password);
+  const passwordOk = await compare(password, resultat[0].password);
 
   if (!passwordOk) {
     throw new Error("Identifiants incorrects");
   }
 
-  return {
-    id: user.id,
-    email: user.email,
-    role: user.role,
-    creeLe: user.created_at,
-    nom: user.nom,
-    prenom: user.prenom,
-    birth: user.birth,
-    phone: user.phone,
-    avatar: user.avatar_img_url,
-  };
+  return await recupererUtilisateurPourAutorisation(resultat[0].id);
 };
 
 export const verifierUserExistantRegister = async (email) => {
@@ -99,36 +107,30 @@ export const verifierUserExistantLogin = async (email, password) => {
   return await compare(password, passBdd);
 };
 
-export const signAccessToken = (userTrouver) => {
-  const data = {
-    id: userTrouver.id,
-    email: userTrouver.email,
-    role: userTrouver.role ?? "Client",
-    nom: userTrouver.nom,
-    prenom: userTrouver.prenom,
-    birth: userTrouver.birth,
-    phone: userTrouver.phone,
-    creeLe: userTrouver.creeLe,
-    avatar: userTrouver.avatar,
-  };
-
-  return sign(data, process.env.SECRET, { expiresIn: "15m" });
+export const signAccessToken = (utilisateur) => {
+  return sign(
+    {
+      id: utilisateur.id,
+    },
+    process.env.SECRET,
+    {
+      expiresIn: "15m",
+      algorithm: "HS256",
+    },
+  );
 };
 
-export const signRefreshToken = (userTrouver) => {
-  const data = {
-    id: userTrouver.id,
-    email: userTrouver.email,
-    role: userTrouver.role,
-    nom: userTrouver.nom,
-    prenom: userTrouver.prenom,
-    birth: userTrouver.birth,
-    phone: userTrouver.phone,
-    creeLe: userTrouver.creeLe,
-    avatar: userTrouver.avatar,
-  };
-
-  return sign(data, process.env.SECRETREFRESH, { expiresIn: "12h" });
+export const signRefreshToken = (utilisateur) => {
+  return sign(
+    {
+      id: utilisateur.id,
+    },
+    process.env.SECRETREFRESH,
+    {
+      expiresIn: "12h",
+      algorithm: "HS256",
+    },
+  );
 };
 
 export const verifierAccessToken = (accessToken) => {
@@ -139,34 +141,30 @@ export const verifierAccessToken = (accessToken) => {
 
 export const verifierRefreshToken = async (refreshToken) => {
   try {
-    const tokenVerifier = verify(refreshToken, process.env.SECRETREFRESH);
-
-    const accessToken = await signAccessToken({
-      id: tokenVerifier.id,
-      email: tokenVerifier.email,
-      role: tokenVerifier.role,
-      nom: tokenVerifier.nom,
-      prenom: tokenVerifier.prenom,
-      birth: tokenVerifier.birth,
-      phone: tokenVerifier.phone,
-      creeLe: tokenVerifier.creeLe,
-      avatar: tokenVerifier.avatar,
+    const payload = verify(refreshToken, process.env.SECRETREFRESH, {
+      algorithms: ["HS256"],
     });
 
-    const user = {
-      id: tokenVerifier.id,
-      email: tokenVerifier.email,
-      role: tokenVerifier.role,
-      nom: tokenVerifier.nom,
-      prenom: tokenVerifier.prenom,
-      birth: tokenVerifier.birth,
-      phone: tokenVerifier.phone,
-      creeLe: tokenVerifier.creeLe,
-      avatar: tokenVerifier.avatar,
-    };
+    const utilisateur = await recupererUtilisateurPourAutorisation(payload.id);
+    // console.log("UTILISATEUR REFRESH :", utilisateur);
 
-    return { accessToken, user };
+    if (!utilisateur) {
+      const err = new Error("Utilisateur inexistant");
+      err.status = 401;
+      throw err;
+    }
+
+    const accessToken = signAccessToken(utilisateur);
+
+    return {
+      accessToken,
+      user: utilisateur,
+    };
   } catch (e) {
+    if (e.status === 401) {
+      throw e;
+    }
+
     if (e.name === "TokenExpiredError") {
       const err = new Error("Refresh token expiré");
       err.status = 401;
@@ -291,25 +289,85 @@ export const recupPointages = async (id, dateJour) => {
   return recup[0];
 };
 
-export const recupHeureEmbauche = async (agence_id)=>{
-  const recup = await sql.query(`
-    SELECT heure_embauche
-    FROM agences
-    WHERE 
-    `,[])
-}
-
+// export const recupHeureEmbauche = async (agence_id)=>{
+//   const recup = await sql.query(`
+//     SELECT heure_embauche
+//     FROM agences
+//     WHERE
+//     `,[])
+// }
 export const recupererUtilisateurPourAutorisation = async (id) => {
   const result = await sql.query(
     `
-      SELECT id, role
+      SELECT
+        users.id,
+        users.email,
+        users.role_id,
+        users.nom,
+        users.prenom,
+        users.birth,
+        users.phone,
+        users.created_at,
+        users.avatar_img_url,
+
+        roles.libelle AS role_libelle,
+
+        agences.id AS agence_id,
+        agences.nom AS agence_nom,
+        agences.nom_complet AS agence_nom_complet,
+
+        permissions.code AS permission_code
+
       FROM users
-      WHERE id = $1
+
+      LEFT JOIN roles
+        ON roles.id = users.role_id
+
+      LEFT JOIN users_agences
+        ON users_agences.user_id = users.id
+        AND users_agences.est_principale = TRUE
+
+      LEFT JOIN agences
+        ON agences.id = users_agences.agence_id
+
+      LEFT JOIN role_permissions
+        ON role_permissions.role_id = roles.id
+
+      LEFT JOIN permissions
+        ON permissions.id = role_permissions.permission_id
+        AND permissions.actif = TRUE
+
+      WHERE users.id = $1
     `,
     [id],
   );
 
-  return result[0] ?? null;
-};
+  if (!result[0]) {
+    return null;
+  }
 
-// TODO fetch if agence recup heureEmbauche dans le setPointages du Front
+  const user = result[0];
+
+  return {
+    id: user.id,
+    email: user.email,
+
+    role_id: user.role_id,
+    role: user.role_libelle,
+
+    agence_id: user.agence_id,
+    agence_nom: user.agence_nom,
+    agence_nom_complet: user.agence_nom_complet,
+
+    nom: user.nom,
+    prenom: user.prenom,
+    birth: user.birth,
+    phone: user.phone,
+    creeLe: user.created_at,
+    avatar: user.avatar_img_url,
+
+    permissions: [
+      ...new Set(result.map((ligne) => ligne.permission_code).filter(Boolean)),
+    ],
+  };
+};

@@ -23,6 +23,10 @@ export default function Administration() {
 
   const [inputSearch, setInputSearch] = useState("");
 
+  const permissionsUtilisateur = Array.isArray(user?.permissions)
+    ? user.permissions
+    : [];
+
   const listeIcones = [
     {
       titre: "Mes Livreurs",
@@ -32,7 +36,12 @@ export default function Administration() {
       couleur: "var(--couleurLivreurs)",
       couleurFond: "var(--couleurLivreursBg)",
       couleurBordure: "var(--couleurLivreursBorder)",
-      roleOk: ["Livreur"],
+
+      permissionsRequises: [
+        "UTILISATEURS_LIRE",
+        "UTILISATEURS_MODIFIER",
+      ],
+
       onClick: () => setPage("AdminLivreurs"),
     },
     {
@@ -43,7 +52,14 @@ export default function Administration() {
       couleur: "var(--couleurAgences)",
       couleurFond: "var(--couleurAgencesBg)",
       couleurBordure: "var(--couleurAgencesBorder)",
-      roleOk: ["Livreur"],
+
+      permissionsRequises: [
+        "AGENCES_LIRE",
+        "AGENCES_CREER",
+        "AGENCES_MODIFIER",
+        "AGENCES_SUPPRIMER",
+      ],
+
       onClick: () => setPage("AdminAgences"),
     },
     {
@@ -54,7 +70,15 @@ export default function Administration() {
       couleur: "var(--couleurCamions)",
       couleurFond: "var(--couleurCamionsBg)",
       couleurBordure: "var(--couleurCamionsBorder)",
-      roleOk: ["Livreur"],
+
+      permissionsRequises: [
+        "CAMIONS_LIRE",
+        "CAMIONS_CREER",
+        "CAMIONS_MODIFIER",
+        "CAMIONS_SUPPRIMER",
+        "CAMIONS_AFFECTER_EQUIPAGE",
+      ],
+
       onClick: () => setPage("AdminCamions"),
     },
     {
@@ -65,7 +89,14 @@ export default function Administration() {
       couleur: "var(--couleurSecteurs)",
       couleurFond: "var(--couleurSecteursBg)",
       couleurBordure: "var(--couleurSecteursBorder)",
-      roleOk: ["Livreur"],
+
+      permissionsRequises: [
+        "SECTEURS_LIRE",
+        "SECTEURS_CREER",
+        "SECTEURS_MODIFIER",
+        "SECTEURS_SUPPRIMER",
+      ],
+
       onClick: () => setPage("AdminSecteurs"),
     },
     {
@@ -76,7 +107,15 @@ export default function Administration() {
       couleur: "var(--couleurPlannings)",
       couleurFond: "var(--couleurPlanningsBg)",
       couleurBordure: "var(--couleurPlanningsBorder)",
-      roleOk: ["Livreur"],
+
+      permissionsRequises: [
+        "PLANNING_LIRE",
+        "PLANNING_CREER",
+        "PLANNING_MODIFIER",
+        "PLANNING_REPLANIFIER",
+        "PLANNING_SUPPRIMER",
+      ],
+
       onClick: () => setPage("AdminPlannings"),
     },
     {
@@ -88,7 +127,14 @@ export default function Administration() {
       couleurFond: "var(--couleurIncidentsBg)",
       couleurBordure: "var(--couleurIncidentsBorder)",
       couleurStatut: "var(--danger)",
-      roleOk: ["Livreur"],
+
+      permissionsRequises: [
+        "INCIDENTS_LIRE",
+        "INCIDENTS_CREER",
+        "INCIDENTS_MODIFIER",
+        "INCIDENTS_CLOTURER",
+      ],
+
       onClick: () => setPage("AdminIncidents"),
     },
     {
@@ -99,7 +145,19 @@ export default function Administration() {
       couleur: "var(--couleurStatistiques)",
       couleurFond: "var(--couleurStatistiquesBg)",
       couleurBordure: "var(--couleurStatistiquesBorder)",
-      roleOk: ["Livreur"],
+
+      /*
+       * Tu n’as pas encore de permission STATISTIQUES_LIRE.
+       * Ces permissions permettent temporairement l’accès
+       * aux profils ayant une vision globale.
+       */
+      permissionsRequises: [
+        "LIVRAISONS_LIRE_TOUTES",
+        "POINTAGES_LIRE_TOUS",
+        "FACTURES_LIRE",
+        "COMPTABILITE_LIRE",
+      ],
+
       onClick: () => setPage("AdminStatistiques"),
     },
     {
@@ -110,14 +168,37 @@ export default function Administration() {
       couleur: "var(--couleurGestions)",
       couleurFond: "var(--couleurGestionsBg)",
       couleurBordure: "var(--couleurGestionsBorder)",
-      roleOk: ["Livreur"],
+
+      permissionsRequises: [
+        "ROLES_LIRE",
+        "ROLES_MODIFIER",
+        "ROLES_GERER_PERMISSIONS",
+        "UTILISATEURS_MODIFIER_ROLE",
+        "SYSTEME_ADMINISTRER",
+      ],
+
       onClick: () => setPage("AdminGestions"),
     },
   ];
 
-  const iconesAutorisees = listeIcones.filter((item) =>
-    item.roleOk?.includes(user?.role),
-  );
+  const iconesAutorisees = listeIcones
+    .filter((item) =>
+      item.permissionsRequises.some((permission) =>
+        permissionsUtilisateur.includes(permission),
+      ),
+    )
+    .filter((item) => {
+      const recherche = inputSearch.trim().toLowerCase();
+
+      if (!recherche) {
+        return true;
+      }
+
+      return (
+        item.titre.toLowerCase().includes(recherche) ||
+        item.description.toLowerCase().includes(recherche)
+      );
+    });
 
   return (
     <div className="flex w-full flex-col gap-4 overflow-x-hidden overflow-y-scroll px-4 pb-25 text-[0.8rem]">
@@ -130,6 +211,7 @@ export default function Administration() {
                 height={15}
                 width={15}
               />
+
               Vue d'ensemble
             </h1>
 
@@ -166,7 +248,6 @@ export default function Administration() {
         </div>
       </div>
 
-      {/* Titre et recherche */}
       <div className="flex w-full justify-between gap-3">
         <div className="flex w-full gap-2">
           <span className="w-[1vw] shrink-0 bg-(--yellow-zesteo)" />
@@ -177,7 +258,7 @@ export default function Administration() {
         <div className="relative h-full">
           {inputSearch === "" && (
             <LoupeIcone
-              className="absolute left-0 top-1/2 px-2 -translate-y-1/2"
+              className="absolute top-1/2 left-0 -translate-y-1/2 px-2"
               height={12}
               width={12}
             />
@@ -206,7 +287,6 @@ export default function Administration() {
         </div>
       </div>
 
-      {/* Cartes d’administration */}
       <div className="grid grid-cols-2 gap-2">
         {iconesAutorisees.map((item) => {
           const Icone = item.composant;
@@ -214,19 +294,33 @@ export default function Administration() {
           return (
             <CardAdministration
               key={item.titre}
-              icone={<Icone color1="currentColor" height={25} width={25} />}
+              icone={
+                <Icone
+                  color1="currentColor"
+                  height={25}
+                  width={25}
+                />
+              }
               titre={item.titre}
               description={item.description}
               statut={item.statut ?? null}
               couleur={item.couleur}
               couleurFond={item.couleurFond}
               couleurBordure={item.couleurBordure}
-              couleurStatut={item.couleurStatut ?? "var(--success)"}
+              couleurStatut={
+                item.couleurStatut ?? "var(--success)"
+              }
               onClick={item.onClick}
             />
           );
         })}
       </div>
+
+      {iconesAutorisees.length === 0 && (
+        <p className="py-6 text-center text-(--text-disabled)">
+          Aucun outil d’administration disponible.
+        </p>
+      )}
     </div>
   );
 }

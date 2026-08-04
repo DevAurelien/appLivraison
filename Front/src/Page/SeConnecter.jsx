@@ -22,95 +22,116 @@ export default function SeConnecter() {
   });
   const [passwordVisible, setPasswordVisible] = useState(false);
   const { setPage } = useContext(MenuContext);
-  const { setUser } = useContext(UserContext);
+  const { setUser, setAccessToken } = useContext(UserContext);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    setFormulaire((prev) => ({
-      ...prev,
-      loading: true,
-    }));
+  setFormulaire((prev) => ({
+    ...prev,
+    loading: true,
+    reponse: null,
+  }));
 
-    try {
-      const res = await apiFetch("/auth/login", "POST", {
-        body: JSON.stringify({
-          email: formulaire.email,
-          password: formulaire.password,
-        }),
-      });
+  try {
+    const res = await apiFetch("/auth/login", "POST", {
+      body: JSON.stringify({
+        email: formulaire.email,
+        password: formulaire.password,
+      }),
+    });
 
-      const data = await res.json();
+    const data = await res.json();
 
-      if (!res.ok || !data.accessToken) {
-        setFormulaire((prev) => ({
-          ...prev,
-          reponse: data.message || "Identifiants incorrects",
-          couleur: "rouge",
-          loading: false,
-        }));
-        return;
-      }
 
-      localStorage.setItem("accessToken", data.accessToken);
-
-      setUser((prev) => ({
-        ...prev,
-        id: data.data.id ?? prev?.id,
-        nom: data.data.nom ?? prev?.nom,
-        prenom: data.data.prenom ?? prev?.prenom,
-        birth: data.data.birth ?? prev?.birth,
-        email: data.data.email ?? prev?.email,
-        accessToken:
-          data.accessToken ?? data.data.accessToken ?? prev?.accessToken,
-        role: data.data.role ?? prev?.role,
-        creeLe: data.data.creeLe ?? prev?.creeLe,
-        avatar: null,
-        avatarBlobUrl: data.data.avatar ?? prev?.avatarBlobUrl,
-      }));
-
+    if (!res.ok || !data.accessToken || !data.data) {
       setFormulaire((prev) => ({
         ...prev,
-        email: "",
-        password: "",
-        loading: false,
-        reponse: data.message,
-        couleur: "vert",
-      }));
-
-      setPage("Accueil");
-
-      // L’avatar se charge
-      apiFetch("/users/avatar")
-        .then((resAvatar) => {
-          if (!resAvatar.ok) {
-            throw new Error("Avatar indisponible");
-          }
-
-          return resAvatar.blob();
-        })
-        .then((avatarBlob) => {
-          const avatarLocalUrl = URL.createObjectURL(avatarBlob);
-
-          setUser((prev) => ({
-            ...prev,
-            avatar: avatarLocalUrl,
-          }));
-        })
-        .catch((error) => {
-          console.warn("Chargement différé de l’avatar :", error.message);
-        });
-    } catch (error) {
-      console.error(error);
-
-      setFormulaire((prev) => ({
-        ...prev,
-        reponse: "Connexion échouée",
+        reponse: data.message || "Identifiants incorrects",
         couleur: "rouge",
         loading: false,
       }));
+
+      return;
     }
-  };
+
+    localStorage.setItem("accessToken", data.accessToken);
+
+    setAccessToken(data.accessToken);
+
+    setUser({
+      ...data.data,
+
+      accessToken: data.accessToken,
+
+      permissions: Array.isArray(data.data.permissions)
+        ? data.data.permissions
+        : [],
+
+      avatarBlobUrl: data.data.avatar ?? null,
+
+      // Sera remplacé par l’URL locale du Blob.
+      avatar: null,
+    });
+
+    setFormulaire((prev) => ({
+      ...prev,
+      email: "",
+      password: "",
+      loading: false,
+      reponse: data.message,
+      couleur: "vert",
+    }));
+
+    setPage("Accueil");
+
+    /*
+     * Aucun avatar enregistré :
+     * inutile d’appeler la route.
+     */
+    if (!data.data.avatar) {
+      return;
+    }
+
+    try {
+      const resAvatar = await apiFetch("/users/avatar", "GET");
+
+      if (!resAvatar.ok) {
+        throw new Error(
+          `Avatar indisponible : ${resAvatar.status}`,
+        );
+      }
+
+      const avatarBlob = await resAvatar.blob();
+      const avatarLocalUrl = URL.createObjectURL(avatarBlob);
+
+      setUser((prev) => {
+        if (!prev) {
+          return null;
+        }
+
+        return {
+          ...prev,
+          avatar: avatarLocalUrl,
+        };
+      });
+    } catch (errorAvatar) {
+      console.warn(
+        "Chargement différé de l’avatar :",
+        errorAvatar.message,
+      );
+    }
+  } catch (error) {
+    console.error(error);
+
+    setFormulaire((prev) => ({
+      ...prev,
+      reponse: "Connexion échouée",
+      couleur: "rouge",
+      loading: false,
+    }));
+  }
+};
 
   return (
     <div className="flex flex-col background w-full h-full text-white justify-start items-center overflow-y-auto gap-2">

@@ -11,7 +11,7 @@ import PlusIcone from "../../components/componentsIcone/PlusIcone.jsx"
 export default function AdminCamions() {
   const salaries = [{ driver: "Theo" }, { rippeur: "Gaetan" }];
   return (
-    <div className="w-full h-full flex flex-col gap-4 items-center background p-4">
+    <div className="w-full h-full flex flex-col gap-4 items-center p-4">
       <h1 className="text-xl">Mes camions</h1>
       <div className="w-full flex size-fit rounded-2xl card">
         <div className="w-2/5 relative pt-4">

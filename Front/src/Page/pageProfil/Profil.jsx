@@ -49,8 +49,7 @@ export default function Profil() {
 //   imgAvatar 
 // },[user])
   
-  console.log(creeLe)
-  console.log(typeof(creeLe))
+
   return (
     <div className="h-full w-full flex justify-start overflow-x-hidden overflow-y-auto mb-20">
       <div className="relative bg-(--bg-main) h-full w-full flex flex-col items-center gap-4 p-4">

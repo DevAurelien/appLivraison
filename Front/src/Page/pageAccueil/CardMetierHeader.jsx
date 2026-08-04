@@ -2,6 +2,6 @@ export default function CardMetierHeader({children, bg="none", fond="none", bord
 
 
   return (
-    <div className={`${className} ${bg} ${fond} ${border} rounded-xl card`}><div className="w-full h-full flex justify-center items-center">{children}</div></div>
+    <div className={`${className} ${bg} ${fond} ${border} rounded-xl card`}><div className="w-full h-full flex flex-col">{children}</div></div>
   )
 }

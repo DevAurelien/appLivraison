@@ -1,7 +1,7 @@
 import { verifierAccessToken } from "../services/gestion.users.js";
 import { recupererUtilisateurPourAutorisation } from "../services/gestion.users.js";
 
-export const verifierAuthentification = (req, res, next) => {
+export const verifierAuthentification = async (req, res, next) => {
   try {
     const authorization = req.headers.authorization;
 
@@ -21,22 +21,7 @@ export const verifierAuthentification = (req, res, next) => {
       });
     }
 
-    req.user = {
-      id: payload.id,
-      role: payload.role,
-    };
-
-    next();
-  } catch (error) {
-    return res.status(401).json({
-      message: "Access token invalide ou expiré",
-    });
-  }
-};
-
-export const actualiserUtilisateurAuthentifie = async (req, res, next) => {
-  try {
-    const utilisateur = await recupererUtilisateurPourAutorisation(req.user.id);
+    const utilisateur = await recupererUtilisateurPourAutorisation(payload?.id);
 
     if (!utilisateur) {
       return res.status(401).json({
@@ -48,13 +33,33 @@ export const actualiserUtilisateurAuthentifie = async (req, res, next) => {
 
     next();
   } catch (error) {
-    console.error("Erreur autorisation :", error);
-
     return res.status(500).json({
-      message: "Erreur pendant la vérification des autorisations",
+      message: "Erreur de base de données",
     });
   }
 };
+
+// export const actualiserUtilisateurAuthentifie = async (req, res, next) => {
+//   try {
+//     const utilisateur = await recupererUtilisateurPourAutorisation(req.user.id);
+
+//     if (!utilisateur) {
+//       return res.status(401).json({
+//         message: "Utilisateur inexistant",
+//       });
+//     }
+
+//     req.user = utilisateur;
+
+//     next();
+//   } catch (error) {
+//     console.error("Erreur autorisation :", error);
+
+//     return res.status(500).json({
+//       message: "Erreur pendant la vérification des autorisations",
+//     });
+//   }
+// };
 
 export const autoriserRoles = (...rolesAutorises) => {
   return (req, res, next) => {

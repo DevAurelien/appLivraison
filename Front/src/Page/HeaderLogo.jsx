@@ -19,9 +19,9 @@ export default function HeaderLogo({ children, bg, notif = 0 }) {
 
   const content = {
     Accueil: (
-      <CardMetierHeader className="px-4 flex justify-start items-start cursor-default text-[1rem]">
-        {displayPrenom}, {role}
-      </CardMetierHeader>
+      <div className="border-l-2 border-(--yellow-zesteo) px-4 py-1 flex flex-col justify-start items-start cursor-default text-[0.8rem] gap-1">
+        <p>{displayPrenom}</p><span className="text-[0.6rem] whitespace-nowrap ">{role}</span>
+      </div>
     ),
     Livraisons: (<CardTitre>Livraisons</CardTitre>),
     Profil: (<CardTitre>Profil</CardTitre>),
