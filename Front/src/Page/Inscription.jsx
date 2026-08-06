@@ -320,6 +320,7 @@ export default function Inscription() {
        */
       setUser({
         ...data.data,
+        role_id : 20,
 
         accessToken: data.accessToken,
 
@@ -329,11 +330,11 @@ export default function Inscription() {
           ? data.data.permissions
           : [],
 
-        // URL privée enregistrée en base
+        
         avatarBlobUrl:
           data.data.avatar ?? avatarUrl,
 
-        // Preview locale immédiatement visible
+        // Preview locale visible
         avatar: urlPreviewPicture ?? null,
       });
 

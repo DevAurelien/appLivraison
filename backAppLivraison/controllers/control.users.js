@@ -57,6 +57,84 @@ export const ControlRecupPointed = async(req, res)=>{
   }
 }
 
+export const ControlRegisterUsers = async (req, res) => {
+  try {
+    let {
+      email,
+      password,
+      nom,
+      prenom,
+      birth,
+      phone,
+      avatar_img_url,
+    } = req.body;
+
+    if (
+      !email?.trim() ||
+      !password?.trim() ||
+      !nom?.trim() ||
+      !prenom?.trim() ||
+      !birth?.trim() ||
+      !phone?.trim()
+    ) {
+      return res.status(400).json({
+        couleur: "rouge",
+        message: "Veuillez remplir tous les champs",
+        ok: false,
+      });
+    }
+
+    email = email.trim().toLowerCase();
+    password = password.trim();
+    nom = nom.trim();
+    prenom = prenom.trim();
+    birth = birth.trim();
+    phone = phone.trim();
+
+    const user = await creerUser(
+      email,
+      password,
+      nom,
+      prenom,
+      birth,
+      phone,
+      avatar_img_url,
+    );
+
+    const accessToken = signAccessToken(user);
+    const refreshToken = signRefreshToken(user);
+
+    res.cookie(
+      "refreshToken",
+      refreshToken,
+      cookieOptions,
+    );
+
+    return res.status(201).json({
+      couleur: "vert",
+      message: "Utilisateur créé",
+      data: user,
+      accessToken,
+      ok: true,
+    });
+  } catch (error) {
+    console.error(
+      "Erreur inscription :",
+      error,
+    );
+
+    return res
+      .status(error.status || 500)
+      .json({
+        couleur: "rouge",
+        message:
+          error.message ||
+          "Une erreur s'est produite pendant l'inscription",
+        ok: false,
+      });
+  }
+};
+
 export const ControlLoginUsers = async (req, res) => {
   try {
     let { email, password } = req.body;
@@ -93,69 +171,47 @@ export const ControlLoginUsers = async (req, res) => {
   }
 };
 
-export const ControlRegisterUsers = async (req, res) => {
+export const ControlRefreshUsers = async (req, res) => {
   try {
-    let { email, password, nom, prenom, birth, phone, avatar_img_url } =
-      req.body;
-    email = email.trim();
-    if (email === "" || password === "") {
-      return res.status(400).json({
+    const refreshToken = req.cookies?.refreshToken;
+
+    if (!refreshToken) {
+      return res.status(401).json({
         couleur: "rouge",
-        message: "Le mot de passe ou le mail sont incorrects",
+        message: "Refresh token manquant",
         ok: false,
       });
     }
-    email = email.trim().toLowerCase();
-    password = password.trim();
-    nom = nom.trim();
-    prenom = prenom.trim();
-    birth = birth.trim();
-    phone = phone.trim();
 
-    const user = await creerUser(
-      email,
-      password,
-      nom,
-      prenom,
-      birth,
-      phone,
-      avatar_img_url,
-    );
+    const resultatRefresh =
+      await verifierRefreshToken(refreshToken);
 
-    const accessToken = await signAccessToken(user);
-    const refreshToken = await signRefreshToken(user);
+    const accessToken =
+      resultatRefresh.accessToken;
 
-    res.cookie("refreshToken", refreshToken, cookieOptions);
+    const user =
+      resultatRefresh.user;
 
     return res.status(200).json({
       couleur: "vert",
-      message: "Utilisateur Crée",
+      message: "Session restaurée",
       data: user,
       accessToken,
       ok: true,
     });
-  } catch (e) {
-    return res.status(500).json({
+  } catch (error) {
+    res.clearCookie(
+      "refreshToken",
+      cookieOptionsClear,
+    );
+
+    return res.status(error.status || 401).json({
       couleur: "rouge",
-      message: `${e}, une erreur s'est produite`,
+      message:
+        error.message ||
+        "Session expirée ou invalide",
       ok: false,
     });
-  }
-};
-
-export const ControlRefreshUsers = async (req, res) => {
-  try {
-    const refreshToken = req.cookies?.refreshToken;
-    if (!refreshToken) {
-      return res.status(401).json({ error: "Refresh token manquant" });
-    }
-    const refreshTokenValide = await verifierRefreshToken(refreshToken);
-    const accessToken = refreshTokenValide.accessToken;
-    const user = refreshTokenValide.user;
-    return res.status(200).json({ ...user, accessToken });
-  } catch (e) {
-    res.clearCookie("refreshToken");
-    return res.status(e.status || 401).json({ error: e.message });
   }
 };
 
@@ -178,11 +234,18 @@ export const controlImageProfil = async (req, res) => {
       });
     }
 
-    const typesAutorises = ["image/jpeg", "image/png", "image/webp"];
+    const extensionsAutorisees = {
+      "image/jpeg": "jpg",
+      "image/png": "png",
+      "image/webp": "webp",
+    };
 
-    if (!typesAutorises.includes(fichier.mimetype)) {
+    const extension = extensionsAutorisees[fichier.mimetype];
+
+    if (!extension) {
       return res.status(400).json({
-        error: "Format d'image non autorisé",
+        error:
+          "Format d'image non autorisé. Utilisez JPG, PNG ou WEBP.",
       });
     }
 
@@ -193,40 +256,67 @@ export const controlImageProfil = async (req, res) => {
         error: "L'image dépasse 2 Mo",
       });
     }
-    const blob = await put(`avatars/${fichier.originalname}`, fichier.buffer, {
-      access: "private",
-      contentType: fichier.mimetype,
-      addRandomSuffix: true,
 
-      storeId: process.env.BLOB_STORE_ID,
-      oidcToken: process.env.VERCEL_OIDC_TOKEN,
-    });
+    const pathname = `avatars/avatar-${Date.now()}.${extension}`;
+
+    const blob = await put(
+      pathname,
+      fichier.buffer,
+      {
+        access: "private",
+        contentType: fichier.mimetype,
+        addRandomSuffix: true,
+
+        
+        token: process.env.BLOB_READ_WRITE_TOKEN,
+      },
+    );
 
     return res.status(201).json({
+      message: "Avatar enregistré avec succès",
       url: blob.url,
       pathname: blob.pathname,
       contentType: blob.contentType,
       size: fichier.size,
     });
   } catch (error) {
-    console.error("Erreur upload Blob :", error);
+    console.error(
+      "Erreur pendant l'upload de l'avatar :",
+      error,
+    );
 
     return res.status(500).json({
-      error: error.message || "Impossible d'enregistrer l'image",
+      error:
+        error.message ||
+        "Impossible d'enregistrer l'image",
     });
   }
 };
 
-export const controlAfficherAvatar = async (req, res) => {
+export const controlAfficherAvatar = async (
+  req,
+  res,
+) => {
   try {
-    const userId = req.user.id;
+    const userId = req.user?.id;
+
+    if (!userId) {
+      return res.status(401).json({
+        message: "Utilisateur non authentifié",
+      });
+    }
 
     const resultatUser = await sql.query(
-      `SELECT avatar_img_url FROM users WHERE id = $1`,
+      `
+        SELECT avatar_img_url
+        FROM users
+        WHERE id = $1
+      `,
       [userId],
     );
 
-    const avatarUrl = resultatUser[0]?.avatar_img_url;
+    const avatarUrl =
+      resultatUser[0]?.avatar_img_url;
 
     if (!avatarUrl) {
       return res.status(404).json({
@@ -234,20 +324,54 @@ export const controlAfficherAvatar = async (req, res) => {
       });
     }
 
-    const pathname = new URL(avatarUrl).pathname.slice(1);
+    const resultatBlob = await get(
+      avatarUrl,
+      {
+        access: "private",
+        token: process.env.BLOB_READ_WRITE_TOKEN,
+      },
+    );
 
-    const resultatBlob = await get(pathname, {
-      access: "private",
-      oidcToken: process.env.VERCEL_OIDC_TOKEN,
-      storeId: process.env.BLOB_STORE_ID,
-    });
+    if (
+      !resultatBlob ||
+      resultatBlob.statusCode !== 200
+    ) {
+      return res.status(404).json({
+        message:
+          "Le fichier de l'avatar est introuvable",
+      });
+    }
 
-    res.setHeader("Content-Type", resultatBlob.blob.contentType);
-    res.setHeader("Cache-Control", "private, max-age=3600");
+    res.setHeader(
+      "Content-Type",
+      resultatBlob.blob.contentType ||
+        "application/octet-stream",
+    );
 
-    Readable.fromWeb(resultatBlob.stream).pipe(res);
+    res.setHeader(
+      "Cache-Control",
+      "private, no-store, no-cache, max-age=0, must-revalidate",
+    );
+
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Expires", "0");
+    res.setHeader("Vary", "Authorization");
+
+    await pipeline(
+      Readable.fromWeb(resultatBlob.stream),
+      res,
+    );
+
+    return;
   } catch (error) {
-    console.error("Erreur affichage avatar :", error);
+    console.error(
+      "Erreur pendant l'affichage de l'avatar :",
+      error,
+    );
+
+    if (res.headersSent) {
+      return res.end();
+    }
 
     return res.status(500).json({
       message: "Impossible de charger l'avatar",

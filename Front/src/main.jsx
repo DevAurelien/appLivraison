@@ -3,7 +3,7 @@ import App from "./App.jsx";
 import "./style.css";
 import { Routes, Route, BrowserRouter } from "react-router-dom";
 import { MenuContext, MenuContextProvider } from "./contexte/menuContext.jsx";
-import {PointageContextProvider} from "./contexte/pointageContext.jsx"
+import { PointageContextProvider } from "./contexte/pointageContext.jsx";
 import { NavContextProvider } from "./contexte/navContext.jsx";
 import { UserContextProvider } from "./contexte/userContext.jsx";
 import { ContactContextProvider } from "./contexte/contactContext.jsx";
@@ -12,7 +12,6 @@ import { useContext } from "react";
 
 function Layout() {
   const { page } = useContext(MenuContext);
-
   const cacherNav = page === "connection" || page === "inscription";
 
   return (
@@ -23,7 +22,16 @@ function Layout() {
   );
 }
 
-createRoot(document.getElementById("root")).render(
+const container = document.getElementById("root");
+
+if (!container) {
+  throw new Error("Conteneur #root introuvable");
+}
+
+const root = container.__reactRoot ?? createRoot(container);
+container.__reactRoot = root;
+
+root.render(
   <BrowserRouter>
     <UserContextProvider>
       <MenuContextProvider>
@@ -38,5 +46,5 @@ createRoot(document.getElementById("root")).render(
         </NavContextProvider>
       </MenuContextProvider>
     </UserContextProvider>
-  </BrowserRouter>,
+  </BrowserRouter>
 );

@@ -1,9 +1,4 @@
-import {
-  createContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { createContext, useEffect, useRef, useState } from "react";
 
 export const UserContext = createContext({
   user: null,
@@ -27,7 +22,7 @@ export const UserContextProvider = ({ children }) => {
     }
   });
 
- useEffect(() => {
+  useEffect(() => {
   const restaurerSession = async () => {
     try {
       const reponse = await fetch(
@@ -35,6 +30,7 @@ export const UserContextProvider = ({ children }) => {
         {
           method: "POST",
           credentials: "include",
+          cache: "no-store",
         },
       );
 
@@ -42,21 +38,24 @@ export const UserContextProvider = ({ children }) => {
 
       if (!reponse.ok || !resultat.accessToken) {
         throw new Error(
-          resultat.message || "Session expirée",
+          resultat.message ||
+            resultat.error ||
+            "Session expirée",
         );
       }
 
       /*
-       * Ton backend renvoie actuellement l'utilisateur
-       * dans resultat.data.
+       * Ton refresh renvoie actuellement :
+       * { ...user, accessToken }
        *
-       * Le fallback resultat.user permet aussi de rester
-       * compatible si tu renommes cette propriété plus tard.
+       * Le dernier fallback "resultat" est donc indispensable.
        */
       const utilisateur =
-        resultat.data ?? resultat.user;
+        resultat.data ??
+        resultat.user ??
+        resultat;
 
-      if (!utilisateur) {
+      if (!utilisateur?.id) {
         throw new Error(
           "Utilisateur absent de la réponse du refresh",
         );
@@ -88,10 +87,6 @@ export const UserContextProvider = ({ children }) => {
         avatar: null,
       });
 
-      /*
-       * Pas d’avatar enregistré :
-       * aucune requête supplémentaire nécessaire.
-       */
       const avatarExiste =
         utilisateur.avatar ??
         utilisateur.avatar_img_url;
@@ -106,6 +101,7 @@ export const UserContextProvider = ({ children }) => {
           {
             method: "GET",
             credentials: "include",
+            cache: "no-store",
             headers: {
               Authorization: `Bearer ${resultat.accessToken}`,
             },
@@ -179,9 +175,7 @@ export const UserContextProvider = ({ children }) => {
   useEffect(() => {
     const deconnecterUtilisateur = () => {
       if (avatarLocalUrlRef.current) {
-        URL.revokeObjectURL(
-          avatarLocalUrlRef.current,
-        );
+        URL.revokeObjectURL(avatarLocalUrlRef.current);
 
         avatarLocalUrlRef.current = null;
       }
@@ -192,16 +186,10 @@ export const UserContextProvider = ({ children }) => {
       localStorage.removeItem("accessToken");
     };
 
-    window.addEventListener(
-      "session-expiree",
-      deconnecterUtilisateur,
-    );
+    window.addEventListener("session-expiree", deconnecterUtilisateur);
 
     return () => {
-      window.removeEventListener(
-        "session-expiree",
-        deconnecterUtilisateur,
-      );
+      window.removeEventListener("session-expiree", deconnecterUtilisateur);
     };
   }, []);
 

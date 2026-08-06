@@ -198,10 +198,7 @@ export default function BarreNavigation() {
     });
   }, [listeIcones, permissions, user?.id]);
 
-  /*
-   * Pour une page comme AdminCamions,
-   * pageNavigationActive vaut Administration.
-   */
+  
   const activeIndex = iconesAutorisees.findIndex(
     (item) => item.page === pageNavigationActive,
   );

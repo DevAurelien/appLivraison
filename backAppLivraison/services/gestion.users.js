@@ -15,7 +15,8 @@ export const creerUser = async (
   phone,
   avatar_img_url,
 ) => {
-  const userExiste = await verifierUserExistantRegister(email);
+  const userExiste =
+    await verifierUserExistantRegister(email);
 
   if (userExiste) {
     throw new Error("Utilisateur déjà existant");
@@ -28,37 +29,43 @@ export const creerUser = async (
       INSERT INTO users (
         email,
         password,
-        role_id,
         nom,
         prenom,
         birth,
         phone,
         avatar_img_url
       )
-
-      SELECT
+      VALUES (
         $1,
         $2,
-        roles.id,
         $3,
         $4,
         $5,
         $6,
         $7
-
-      FROM roles
-      WHERE roles.code = 'CLIENT'
-
+      )
       RETURNING id
     `,
-    [email, pass, nom, prenom, birth, phone, avatar_img_url],
+    [
+      email,
+      pass,
+      nom,
+      prenom,
+      birth,
+      phone,
+      avatar_img_url,
+    ],
   );
 
   if (!userCree[0]) {
-    throw new Error("Le rôle CLIENT est introuvable");
+    throw new Error(
+      "Impossible de créer l’utilisateur",
+    );
   }
 
-  return await recupererUtilisateurPourAutorisation(userCree[0].id);
+  return recupererUtilisateurPourAutorisation(
+    userCree[0].id,
+  );
 };
 
 export const loginUser = async (email, password) => {
@@ -127,7 +134,7 @@ export const signRefreshToken = (utilisateur) => {
     },
     process.env.SECRETREFRESH,
     {
-      expiresIn: "12h",
+      expiresIn: "30d",
       algorithm: "HS256",
     },
   );
@@ -141,43 +148,68 @@ export const verifierAccessToken = (accessToken) => {
 
 export const verifierRefreshToken = async (refreshToken) => {
   try {
-    const payload = verify(refreshToken, process.env.SECRETREFRESH, {
-      algorithms: ["HS256"],
-    });
+    const payload = verify(
+      refreshToken,
+      process.env.SECRETREFRESH,
+      {
+        algorithms: ["HS256"],
+      },
+    );
 
-    const utilisateur = await recupererUtilisateurPourAutorisation(payload.id);
-    // console.log("UTILISATEUR REFRESH :", utilisateur);
+    if (!payload?.id) {
+      const erreur = new Error(
+        "Identifiant utilisateur absent du refresh token",
+      );
 
-    if (!utilisateur) {
-      const err = new Error("Utilisateur inexistant");
-      err.status = 401;
-      throw err;
+      erreur.status = 401;
+      throw erreur;
     }
 
-    const accessToken = signAccessToken(utilisateur);
+    const utilisateur =
+      await recupererUtilisateurPourAutorisation(
+        payload.id,
+      );
+
+    if (!utilisateur) {
+      const erreur = new Error(
+        "Utilisateur inexistant",
+      );
+
+      erreur.status = 401;
+      throw erreur;
+    }
+
+    const accessToken =
+      signAccessToken(utilisateur);
 
     return {
       accessToken,
       user: utilisateur,
     };
-  } catch (e) {
-    if (e.status === 401) {
-      throw e;
+  } catch (error) {
+    if (error.status === 401) {
+      throw error;
     }
 
-    if (e.name === "TokenExpiredError") {
-      const err = new Error("Refresh token expiré");
-      err.status = 401;
-      throw err;
+    if (error.name === "TokenExpiredError") {
+      const erreur = new Error(
+        "Refresh token expiré",
+      );
+
+      erreur.status = 401;
+      throw erreur;
     }
 
-    if (e.name === "JsonWebTokenError") {
-      const err = new Error("Refresh token invalide");
-      err.status = 401;
-      throw err;
+    if (error.name === "JsonWebTokenError") {
+      const erreur = new Error(
+        "Refresh token invalide",
+      );
+
+      erreur.status = 401;
+      throw erreur;
     }
 
-    throw e;
+    throw error;
   }
 };
 
