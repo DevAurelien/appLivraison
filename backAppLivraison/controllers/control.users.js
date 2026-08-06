@@ -11,6 +11,7 @@ import {
 import { put } from "@vercel/blob";
 import { get } from "@vercel/blob";
 import { Readable } from "node:stream";
+import { pipeline } from "node:stream/promises";
 import { sql } from "../database/db.js";
 
 const cookieOptions = {
@@ -293,30 +294,15 @@ export const controlImageProfil = async (req, res) => {
   }
 };
 
-export const controlAfficherAvatar = async (
-  req,
-  res,
-) => {
+export const controlAfficherAvatar = async (req, res) => {
   try {
-    const userId = req.user?.id;
-
-    if (!userId) {
-      return res.status(401).json({
-        message: "Utilisateur non authentifié",
-      });
-    }
-
-    const resultatUser = await sql.query(
-      `
-        SELECT avatar_img_url
-        FROM users
-        WHERE id = $1
-      `,
-      [userId],
-    );
-
+    /*
+     * Ton middleware a déjà récupéré l’utilisateur complet.
+     * On évite donc une nouvelle requête PostgreSQL.
+     */
     const avatarUrl =
-      resultatUser[0]?.avatar_img_url;
+      req.user?.avatar ??
+      req.user?.avatar_img_url;
 
     if (!avatarUrl) {
       return res.status(404).json({
@@ -324,21 +310,62 @@ export const controlAfficherAvatar = async (
       });
     }
 
-    const resultatBlob = await get(
-      avatarUrl,
-      {
-        access: "private",
-        token: process.env.BLOB_READ_WRITE_TOKEN,
-      },
+    /*
+     * Le navigateur envoie l’ETag de l’image qu’il possède déjà.
+     */
+    const etagNavigateur =
+      req.headers["if-none-match"];
+
+    const resultatBlob = await get(avatarUrl, {
+      access: "private",
+      token: process.env.BLOB_READ_WRITE_TOKEN,
+
+      ifNoneMatch:
+        typeof etagNavigateur === "string"
+          ? etagNavigateur
+          : undefined,
+    });
+
+    if (!resultatBlob) {
+      return res.status(404).json({
+        message: "Le fichier de l’avatar est introuvable",
+      });
+    }
+
+    res.setHeader(
+      "Cache-Control",
+      "private, no-cache",
     );
 
+    res.setHeader(
+      "ETag",
+      resultatBlob.blob.etag,
+    );
+
+    res.setHeader(
+      "Vary",
+      "Authorization",
+    );
+
+    res.setHeader(
+      "X-Content-Type-Options",
+      "nosniff",
+    );
+
+    /*
+     * L’image n’a pas changé :
+     * le navigateur réutilise immédiatement sa copie.
+     */
+    if (resultatBlob.statusCode === 304) {
+      return res.status(304).end();
+    }
+
     if (
-      !resultatBlob ||
-      resultatBlob.statusCode !== 200
+      resultatBlob.statusCode !== 200 ||
+      !resultatBlob.stream
     ) {
       return res.status(404).json({
-        message:
-          "Le fichier de l'avatar est introuvable",
+        message: "Avatar indisponible",
       });
     }
 
@@ -348,24 +375,13 @@ export const controlAfficherAvatar = async (
         "application/octet-stream",
     );
 
-    res.setHeader(
-      "Cache-Control",
-      "private, no-store, no-cache, max-age=0, must-revalidate",
-    );
-
-    res.setHeader("Pragma", "no-cache");
-    res.setHeader("Expires", "0");
-    res.setHeader("Vary", "Authorization");
-
     await pipeline(
       Readable.fromWeb(resultatBlob.stream),
       res,
     );
-
-    return;
   } catch (error) {
     console.error(
-      "Erreur pendant l'affichage de l'avatar :",
+      "Erreur pendant l’affichage de l’avatar :",
       error,
     );
 
@@ -374,7 +390,7 @@ export const controlAfficherAvatar = async (
     }
 
     return res.status(500).json({
-      message: "Impossible de charger l'avatar",
+      message: "Impossible de charger l’avatar",
     });
   }
 };

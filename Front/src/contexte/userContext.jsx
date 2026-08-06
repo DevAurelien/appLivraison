@@ -30,7 +30,6 @@ export const UserContextProvider = ({ children }) => {
         {
           method: "POST",
           credentials: "include",
-          cache: "no-store",
         },
       );
 
@@ -44,12 +43,7 @@ export const UserContextProvider = ({ children }) => {
         );
       }
 
-      /*
-       * Ton refresh renvoie actuellement :
-       * { ...user, accessToken }
-       *
-       * Le dernier fallback "resultat" est donc indispensable.
-       */
+      
       const utilisateur =
         resultat.data ??
         resultat.user ??
