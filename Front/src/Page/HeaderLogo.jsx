@@ -11,10 +11,10 @@ export const CardTitre = ({children})=>{
 
 export default function HeaderLogo({ children, bg, notif = 0 }) {
   const { user } = useContext(UserContext);
-  const { role, prenom } = user;
+  const { role, prenom, nom } = user;
   const { page } = useContext(MenuContext);
   const displayPrenom = prenom
-  ? prenom.charAt(0).toUpperCase() + prenom.slice(1).toLowerCase()
+  ? prenom.charAt(0).toUpperCase() + prenom.slice(1).toLowerCase() + " " + nom.charAt(0).toUpperCase() + nom.slice(1).toLowerCase() 
   : "";
 
   const content = {

@@ -7,6 +7,7 @@ import { PointageContextProvider } from "./contexte/pointageContext.jsx";
 import { NavContextProvider } from "./contexte/navContext.jsx";
 import { UserContextProvider } from "./contexte/userContext.jsx";
 import { ContactContextProvider } from "./contexte/contactContext.jsx";
+import { LivraisonsContextProvider } from "./contexte/livraisonsContext.jsx";
 import BarreNavigation from "./Navigation.jsx";
 import { useContext } from "react";
 
@@ -38,13 +39,15 @@ root.render(
         <NavContextProvider>
           <PointageContextProvider>
             <ContactContextProvider>
-              <Routes>
-                <Route path="/" element={<Layout />} />
-              </Routes>
+              <LivraisonsContextProvider>
+                <Routes>
+                  <Route path="/" element={<Layout />} />
+                </Routes>
+              </LivraisonsContextProvider>
             </ContactContextProvider>
           </PointageContextProvider>
         </NavContextProvider>
       </MenuContextProvider>
     </UserContextProvider>
-  </BrowserRouter>
+  </BrowserRouter>,
 );

@@ -1,9 +1,10 @@
 import express from "express";
 import {controlRecupDeliveries} from "../controllers/control.deliveries.js"
+import {verifierAuthentification} from "../middlewares/middlewares.auth.js"
 
 const router = express.Router();
 
-router.get("/livraisonsJour", controlRecupDeliveries)
+router.get("/livraisonsJour", verifierAuthentification, controlRecupDeliveries)
 
 router.get("/deliveries/:id", controlRecupDeliveries)
 

@@ -1,68 +1,175 @@
+import {
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+
 import CardLivraisons from "./CardLivraisons.jsx";
-import HeaderLogo from "../HeaderLogo.jsx";
 import CardLivReduit from "./CardLivReduit.jsx";
-import { useEffect, useState } from "react";
-import apifetch from "../../utils/apiFetch.jsx";
 import Pulse from "../../components/Loading.jsx";
-import { UserContext } from "../../contexte/userContext.jsx";
-import { useContext } from "react";
+
+import apiFetch from "../../utils/apiFetch.jsx";
+
+import {
+  UserContext,
+} from "../../contexte/userContext.jsx";
+
+import {
+  LivraisonsContext,
+} from "../../contexte/livraisonsContext.jsx";
 
 export default function Livraisons() {
-  const [liv, setLiv] = useState({
-    loading: true,
-    error: "",
-    data: [],
-  });
+  const { user } = useContext(UserContext);
+
+  const {
+    livraisons,
+    setLivraisons,
+
+    livraisonsLoading,
+    setLivraisonsLoading,
+
+    livraisonsError,
+    setLivraisonsError,
+
+    livraisonsChargees,
+    setLivraisonsChargees,
+
+    utilisateurChargeId,
+    setUtilisateurChargeId,
+  } = useContext(LivraisonsContext);
+
   const [livActif, setLivActif] = useState(0);
-  const {user} = useContext(UserContext)
 
   useEffect(() => {
-    try {
-      apifetch("/livraisonsJour")
-        .then((res) => {
-          return res.json();
-        })
-        .then((datas) => {
-          setLiv((prev) => ({
-            ...prev,
-            data: datas.livraisons,
-            loading: false,
-          }));
+    const recupererLivraisons = async () => {
+      if (!user?.id) {
+        return;
+      }
 
-          // liv.data.length > 0 && console.log(liv.data);
-        });
-    } catch {
-      setLiv((prev) => ({
-        ...prev,
-        error: "Une erreur est survenue",
-        loading: false,
-      }));
-    }
-  }, []);
+      if (
+        livraisonsChargees &&
+        utilisateurChargeId === user.id
+      ) {
+        return;
+      }
+
+      if (user.role_id === 20) {
+        setLivraisons([]);
+        setLivraisonsError("");
+        setLivraisonsLoading(false);
+        setLivraisonsChargees(true);
+        setUtilisateurChargeId(user.id);
+
+        return;
+      }
+
+      try {
+        setLivraisonsLoading(true);
+        setLivraisonsError("");
+
+        const res = await apiFetch(
+          "/livraisonsJour",
+          "GET",
+        );
+
+        const datas = await res.json();
+
+        if (!res.ok) {
+          throw new Error(
+            datas.message ||
+              datas.error ||
+              "Impossible de récupérer les livraisons",
+          );
+        }
+
+        const nouvellesLivraisons =
+          Array.isArray(datas)
+            ? datas
+            : Array.isArray(datas.livraisons)
+              ? datas.livraisons
+              : [];
+
+        setLivraisons(nouvellesLivraisons);
+        setLivraisonsChargees(true);
+        setUtilisateurChargeId(user.id);
+      } catch (error) {
+        console.error(
+          "Erreur récupération livraisons :",
+          error,
+        );
+
+        setLivraisonsError(
+          error.message ||
+            "Une erreur est survenue",
+        );
+      } finally {
+        setLivraisonsLoading(false);
+      }
+    };
+
+    recupererLivraisons();
+  }, [
+    user?.id,
+    user?.role_id,
+    livraisonsChargees,
+    utilisateurChargeId,
+    setLivraisons,
+    setLivraisonsLoading,
+    setLivraisonsError,
+    setLivraisonsChargees,
+    setUtilisateurChargeId,
+  ]);
 
   const handleActif = (index) => {
     setLivActif(index);
   };
 
   return (
-    <div className="flex w-full h-full flex-col items-center px-4 gap-2 mb-25 overflow-y-scroll overflow-x-hidden">
-      {liv.loading? <Pulse className={"pt-10"} /> : ""}
-      {liv?.data?.length > 0 &&
-        liv.data.map((livraison, index) =>
-          index === livActif ? (
-            <CardLivraisons
-              onClick={() => handleActif(index)}
-              key={index}
-              {...livraison}
-            />
-          ) : (
-            <CardLivReduit
-              onClick={() => handleActif(index)}
-              key={index}
-              {...livraison}
-            />
-          ),
+    <div className="mb-25 flex h-full w-full flex-col items-center gap-2 overflow-x-hidden overflow-y-scroll px-4">
+      {livraisonsLoading && (
+        <Pulse className="pt-10" />
+      )}
+
+      {!livraisonsLoading &&
+        livraisonsError && (
+          <p className="pt-10 text-center text-red-500">
+            {livraisonsError}
+          </p>
         )}
+
+      {!livraisonsLoading &&
+        !livraisonsError &&
+        livraisons.length === 0 && (
+          <p className="pt-10 text-center text-white/60">
+            Aucune livraison disponible.
+          </p>
+        )}
+
+      {livraisons.map((livraison, index) =>
+        index === livActif ? (
+          <CardLivraisons
+            key={
+              livraison.numeroDeLivraison ??
+              index
+            }
+            onClick={() =>
+              handleActif(index)
+            }
+            {...livraison}
+          />
+        ) : (
+          <CardLivReduit
+            key={
+              livraison.numeroDeLivraison ??
+              index
+            }
+            onClick={() =>
+              handleActif(index)
+            }
+            {...livraison}
+          />
+        ),
+      )}
     </div>
   );
 }
