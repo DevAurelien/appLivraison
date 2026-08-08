@@ -7,9 +7,11 @@ import truck from "../../assets/truck.png";
 import StatutCard from "../../components/componentsCard/StatutCard.jsx";
 import { Location } from "../../components/componentsIcone/IconeStartEnd.jsx";
 import PlusIcone from "../../components/componentsIcone/PlusIcone.jsx";
+import camion from "/camion.png";
 
 export default function AdminCamions() {
   const [openForm, setOpenForm] = useState(false);
+  const [immatriculation, setImmatriculation] = useState("");
 
   const salaries = [{ driver: "Theo" }, { rippeur: "Gaetan" }];
   return (
@@ -66,10 +68,54 @@ export default function AdminCamions() {
             camion
           </button>
         )}
-        {openForm && 
-          <div className=" w-full flex flex-col h-full gap-2">
-            <div className="relative w-full aspect-16/10 flex rounded-xl p-2 shrink-0 bgCreaCamion" ><div className=""><h1 className="p-2 absolute top-2 left-0">Créer<br/> un camion</h1></div> </div>
-          </div>}
+        {openForm && (
+          <div className="bgCreaCamion relative rounded-xl aspect-video p-2 flex w-full overflow-visible">
+            <h1 className="absolute left-4 top-6 z-20 font-bold shadow-4xl">
+              Créer
+              <br />
+              <span className="text-yellow-300">un camion</span>
+            </h1>
+            <img
+              src={camion}
+              alt="Camion"
+              className="
+      absolute
+    right-[2%]
+    top-[-42%]
+    w-[85%]
+    h-auto
+    object-contain
+    max-w-none
+    z-10
+  "
+            />
+
+            <input
+              type="text"
+              value={immatriculation}
+              onChange={(e) => setImmatriculation(e.target.value.toUpperCase())}
+              maxLength={9}
+              className="
+        absolute
+        left-[28.5%]
+        top-[42.5%]
+        w-[14%]
+        h-3
+        rotate-2
+       
+        text-black
+        text-center
+        font-bold
+        text-[0.5rem]
+        px-1
+        cursor-text
+        rounded
+        outline-none
+        z-20
+      "
+            />
+          </div>
+        )}
       </form>
     </div>
   );

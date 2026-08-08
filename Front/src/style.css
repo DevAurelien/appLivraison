@@ -181,18 +181,32 @@ input[type="date"]:valid::-webkit-datetime-edit {
    ARRIÈRE-PLANS
    ========================================================= */
 
-.bgCreaCamion{
-  /* background-image: url("creaCamion.png");
+/* .bgCreaCamion {
+  border-left: 1px solid var(--border-default);
+  border-right: 1px solid var(--border-default);
+  border-bottom: 1px solid var(--border-default);
+  background-image: url("fdCrea.png");
   background-repeat: no-repeat;
   background-position: top center;
-  background-size: cover; */
-  /* background-size: contain; */
-  border: 1px solid var(--border-default);
+  background-size: 100% 100%;
 
   color: var(--text-main);
-
   box-shadow: var(--shadow-card);
-  pointer-events: none;
+
+  
+} */
+
+.bgCreaCamion {
+  background-image: url("fdCrea.png");
+  background-repeat: no-repeat;
+  background-position: bottom;
+  background-size: cover;
+
+  min-height: 320px;
+
+  border: 1px solid var(--border-default);
+  color: var(--text-main);
+  box-shadow: var(--shadow-card);
 }
 
 .background {
