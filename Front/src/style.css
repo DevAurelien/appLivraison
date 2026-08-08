@@ -181,6 +181,20 @@ input[type="date"]:valid::-webkit-datetime-edit {
    ARRIÈRE-PLANS
    ========================================================= */
 
+.bgCreaCamion{
+  /* background-image: url("creaCamion.png");
+  background-repeat: no-repeat;
+  background-position: top center;
+  background-size: cover; */
+  /* background-size: contain; */
+  border: 1px solid var(--border-default);
+
+  color: var(--text-main);
+
+  box-shadow: var(--shadow-card);
+  pointer-events: none;
+}
+
 .background {
   position: relative;
   min-height: 100dvh;
