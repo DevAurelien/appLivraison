@@ -98,7 +98,7 @@ export default function AdminCamions() {
               className="
         absolute
         left-[28.5%]
-        top-[42.5%]
+        top-[43%]
         w-[14%]
         h-3
         rotate-2

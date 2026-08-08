@@ -197,7 +197,7 @@ input[type="date"]:valid::-webkit-datetime-edit {
 } */
 
 .bgCreaCamion {
-  background-image: url("fdCrea.png");
+  background-image: url("/fdCrea.png");
   background-repeat: no-repeat;
   background-position: bottom;
   background-size: cover;
@@ -219,7 +219,7 @@ input[type="date"]:valid::-webkit-datetime-edit {
   position: fixed;
   inset: 0;
 
-  background-image: url("background.png");
+  background-image: url("/background.png");
   background-repeat: no-repeat;
   background-position: top center;
   background-size: 100% 100%;
