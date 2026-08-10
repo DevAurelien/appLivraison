@@ -89,7 +89,7 @@ export default function AdminCamions() {
   };
 
   return (
-    <div className="w-full h-full flex flex-col gap-4 items-center p-4 overflow-y-auto overflow-x-hidden pb-25">
+    <div className="w-full h-full flex flex-col gap-4 items-center p-4 overflow-y-auto overflow-x-hidden pb-50">
 
       {!openForm && (
         <div className="flex flex-col items-center gap-2">
@@ -287,7 +287,7 @@ export default function AdminCamions() {
 
               {/* INFORMATIONS RAPIDES */}
 
-              <div className="absolute bottom-0 left-0 h-25 bg-transparent blur-2xl flex justify-evenly w-full z-20">
+              <div className="absolute bottom-0 left-0 h-25 bg-transparent flex justify-evenly w-full z-20">
 
                 <h1 className="bg-linear-to-t from-transparent/70 to-black/30 w-full flex justify-center items-start text-[0.6rem]">
                   Cliquez sur la plaque pour modifier l'immatriculation
@@ -454,7 +454,8 @@ export default function AdminCamions() {
         )}
         
       </form>
-<div className="flex w-full gap-2 text-[0.8rem]"><div className="hover:scale-[1.02] flex justify-center items-center w-3/5 h-10 bg-(--yellow-zesteo) text-black rounded-xl gap-2 cursor-pointer"><DriverIcone className="size-4"/> Creer le camion</div><div className="flex justify-center items-center w-2/5 h-10 card rounded-xl cursor-pointer">Annuler</div>
-   </div> </div>
+{openForm && <div className="flex w-full gap-2 text-[0.8rem]"><div className="hover:scale-[1.02] flex justify-center items-center w-3/5 h-10 bg-(--yellow-zesteo) text-black rounded-xl gap-2 cursor-pointer"><DriverIcone className="size-4"/> Creer le camion</div><div className="flex justify-center items-center w-2/5 h-10 card rounded-xl cursor-pointer">Annuler</div>
+   </div> }
+   </div>
   );
 }
