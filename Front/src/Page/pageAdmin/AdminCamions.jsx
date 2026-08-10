@@ -14,6 +14,27 @@ export default function AdminCamions() {
   const [immatriculation, setImmatriculation] = useState("");
 
   const salaries = [{ driver: "Theo" }, { rippeur: "Gaetan" }];
+
+  const handleImmat = (e) => {
+    const raw = e.target.value.toUpperCase().replace(/-/g, "");
+
+    let lettres1 = raw.slice(0, 2).replace(/[^A-Z]/g, "");
+    let chiffres = raw.slice(2, 5).replace(/[^0-9]/g, "");
+    let lettres2 = raw.slice(5, 7).replace(/[^A-Z]/g, "");
+
+    let value = lettres1;
+
+    if (lettres1.length === 2 && raw.length > 2) {
+      value += `-${chiffres}`;
+    }
+
+    if (chiffres.length === 3 && raw.length > 5) {
+      value += `-${lettres2}`;
+    }
+
+    setImmatriculation(value);
+  };
+
   return (
     <div className="w-full h-full flex flex-col gap-4 items-center p-4">
       {!openForm && (
@@ -69,51 +90,54 @@ export default function AdminCamions() {
           </button>
         )}
         {openForm && (
-          <div className="bgCreaCamion relative rounded-xl aspect-video p-2 flex w-full overflow-visible">
-            <h1 className="absolute left-4 top-6 z-20 font-bold shadow-4xl">
-              Créer
-              <br />
-              <span className="text-yellow-300">un camion</span>
-            </h1>
-            <img
-              src={camion}
-              alt="Camion"
-              className="
-      absolute
-    right-[2%]
-    top-[-42%]
-    w-[85%]
-    h-auto
-    object-contain
-    max-w-none
-    z-10
-  "
-            />
+          <div className="flex flex-col w-full h-full">
+            <div className="bgCreaCamion relative rounded-xl aspect-video p-2 flex w-full overflow-visible">
+              <div className="absolute left-1 top-1 z-15 blur-xl bg-white border-white/20"></div><h1 className="absolute left-2 top-2 z-20 font-bold shadow-4xl">
+                Créer
+                <br />
+                <span>un camion</span>
+              </h1>
+              <img
+                src={camion}
+                alt="Camion"
+                className="scale-[1.2]
+                absolute
+                right-[8%]
+                top-[-36%]
+                w-[85%]
+                h-auto
+                object-contain
+                max-w-none
+                z-10
+                "
+              />
 
-            <input
-              type="text"
-              value={immatriculation}
-              onChange={(e) => setImmatriculation(e.target.value.toUpperCase())}
-              maxLength={9}
-              className="
-        absolute
-        left-[28.5%]
-        top-[43%]
-        w-[14%]
-        h-3
-        rotate-2
-       
-        text-black
-        text-center
-        font-bold
-        text-[0.5rem]
-        px-1
-        cursor-text
-        rounded
-        outline-none
-        z-20
-      "
-            />
+              <input
+                type="text"
+                value={immatriculation}
+                onChange={handleImmat}
+                maxLength={9}
+                className="
+                absolute
+                left-[17%]
+                top-[51%]
+                w-[16%]
+                h-4
+                rotate-2       
+                text-black
+                text-center
+                font-bold
+                text-[0.6rem]
+                cursor-text
+                rounded
+                outline-none
+                z-20
+              "
+              />
+              <div className="card absolute bottom-0 left-0 bg-white flex w-full z-20">
+
+              </div>
+            </div>
           </div>
         )}
       </form>
