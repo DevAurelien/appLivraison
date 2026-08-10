@@ -335,7 +335,7 @@ export default function AdminCamions() {
 
                   {/* AGENCE */}
 
-                  <div className="flex flex-col justify-center items-end border-r border-white/20 gap-1 p-4">
+                  <div className="flex flex-col justify-center items-end border-r border-white/20 gap-1 p-4 whitespace-nowrap">
 
                     <div className="flex text-white/50 gap-1">
 
