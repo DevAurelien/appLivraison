@@ -10,9 +10,9 @@ import CocheIcone from "../../components/componentAdminCamion/CocheIcone.jsx";
 import EclairIcone from "../../components/componentAdminCamion/EclairIcone.jsx";
 import KmIcone from "../../components/componentAdminCamion/KmIcone.jsx";
 import ModeleIcone from "../../components/componentAdminCamion/ModeleIcone.jsx";
-import CalendrierIcone from "../../components/componentAdminCamion/CalendrierIcone.jsx"
-import CarburantIcone from "../../components/componentAdminCamion/CarburantIcone.jsx"
-import PoidsIcone from "../../components/componentAdminCamion/PoidsIcone.jsx"
+import CalendrierIcone from "../../components/componentAdminCamion/CalendrierIcone.jsx";
+import CarburantIcone from "../../components/componentAdminCamion/CarburantIcone.jsx";
+import PoidsIcone from "../../components/componentAdminCamion/PoidsIcone.jsx";
 
 import StatutCard from "../../components/componentsCard/StatutCard.jsx";
 import SelectCustom from "../../components/componentsCard/SelectCustom.jsx";
@@ -51,29 +51,18 @@ export default function AdminCamions() {
 
   const modeles = vehicules[marque] || [];
 
-  const années = [2023,2024,2025,2026,2027,2028,2029];
+  const années = [2023, 2024, 2025, 2026, 2027, 2028, 2029];
 
-  const salaries = [
-    { driver: "Theo" },
-    { rippeur: "Gaetan" },
-  ];
+  const salaries = [{ driver: "Theo" }, { rippeur: "Gaetan" }];
 
   const handleImmat = (e) => {
-    const raw = e.target.value
-      .toUpperCase()
-      .replace(/-/g, "");
+    const raw = e.target.value.toUpperCase().replace(/-/g, "");
 
-    let lettres1 = raw
-      .slice(0, 2)
-      .replace(/[^A-Z]/g, "");
+    let lettres1 = raw.slice(0, 2).replace(/[^A-Z]/g, "");
 
-    let chiffres = raw
-      .slice(2, 5)
-      .replace(/[^0-9]/g, "");
+    let chiffres = raw.slice(2, 5).replace(/[^0-9]/g, "");
 
-    let lettres2 = raw
-      .slice(5, 7)
-      .replace(/[^A-Z]/g, "");
+    let lettres2 = raw.slice(5, 7).replace(/[^A-Z]/g, "");
 
     let value = lettres1;
 
@@ -90,38 +79,23 @@ export default function AdminCamions() {
 
   return (
     <div className="w-full h-full flex flex-col gap-4 items-center p-4 overflow-y-auto overflow-x-hidden pb-50">
-
       {!openForm && (
         <div className="flex flex-col items-center gap-2">
-
-          <h1 className="text-xl">
-            Mes camions
-          </h1>
+          <h1 className="text-xl">Mes camions</h1>
 
           <div className="w-full flex size-fit rounded-2xl card">
-
             <div className="w-2/5 relative pt-4">
-
               <div className="card2 absolute m-2 px-1 rounded-md top-0 left-0">
                 <h1 className="text-(--yellow-zesteo) text-[0.6rem] border-(--yellow-zesteo-border)">
                   Equipe 1
                 </h1>
               </div>
 
-              <img
-                src={truck}
-                alt="Camion"
-                className="scale-[1.5]"
-              />
-
+              <img src={truck} alt="Camion" className="scale-[1.5]" />
             </div>
 
             <div className="h-full flex flex-col w-3/5 px-4 p-2">
-
-              <StatutCard
-                couleurFond="var(--success)"
-                statut="Pret"
-              />
+              <StatutCard couleurFond="var(--success)" statut="Pret" />
 
               <PlaqueImmatriculation
                 className="w-full h-4/5"
@@ -129,49 +103,31 @@ export default function AdminCamions() {
               />
 
               <div className="flex gap-2 text-[0.8rem] py-1 border-b border-(--border-default)">
-
                 {salaries.map((sal, index) => (
-                  <p
-                    className="flex gap-2"
-                    key={index}
-                  >
-
+                  <p className="flex gap-2" key={index}>
                     {sal.driver ? (
                       <DriverIcone className="size-4 flex" />
                     ) : null}
-
                     {sal.driver}
-
                     {sal.rippeur}{" "}
-
                     {sal.rippeur ? (
                       <RippeurIcone className="size-4 flex" />
                     ) : null}
-
                   </p>
                 ))}
-
               </div>
 
               <div className="flex pt-1 gap-2">
-
                 <Location className="size-4" />
 
-                <h1 className="text-[0.8rem]">
-                  Toulouse, 31
-                </h1>
-
+                <h1 className="text-[0.8rem]">Toulouse, 31</h1>
               </div>
-
             </div>
-
           </div>
-
         </div>
       )}
 
       <form className="relative flex justify-center w-full">
-
         {!openForm && (
           <button
             type="button"
@@ -192,26 +148,18 @@ export default function AdminCamions() {
               disabled:cursor-not-allowed
             "
           >
-
-            <PlusIcone
-              className="size-6 p-1"
-              color1="black"
-            />
-
+            <PlusIcone className="size-6 p-1" color1="black" />
             Ajouter un camion
-
           </button>
         )}
 
         {openForm && (
           <div className="flex flex-col w-full h-full gap-2">
-
             {/* ============================== */}
             {/* PREVISUALISATION DU CAMION */}
             {/* ============================== */}
 
             <div className="bgCreaCamion relative rounded-xl aspect-video p-2 flex w-full overflow-visible">
-
               {/* TITRE */}
 
               <div
@@ -230,16 +178,11 @@ export default function AdminCamions() {
                   border
                 "
               >
-
                 <h1 className="font-bold leading-none drop-shadow-md">
                   Créer
                   <br />
-
-                  <span className="text-yellow-300">
-                    un camion
-                  </span>
+                  <span className="text-yellow-300">un camion</span>
                 </h1>
-
               </div>
 
               {/* IMAGE CAMION */}
@@ -288,93 +231,67 @@ export default function AdminCamions() {
               {/* INFORMATIONS RAPIDES */}
 
               <div className="absolute bottom-0 left-0 h-25 bg-transparent flex justify-evenly w-full z-20">
-
                 <h1 className="bg-linear-to-t from-transparent/70 to-black/30 w-full flex justify-center items-start text-[0.6rem]">
                   Cliquez sur la plaque pour modifier l'immatriculation
                 </h1>
 
                 <div className="card absolute bottom-0 left-0 rounded-b-xl h-20 flex items-center justify-around w-full z-20 text-[0.6rem]">
-
                   {/* STATUT */}
 
                   <div className="flex flex-col justify-center items-end border-r border-white/20 p-4">
-
                     <div className="flex text-white/50 gap-1">
-
                       <CocheIcone
                         className="size-4"
                         color1="var(--yellow-zesteo)"
                       />
-
                       Statut
-
                     </div>
 
                     {statut}
-
                   </div>
 
                   {/* ENERGIE */}
 
                   <div className="flex flex-col justify-center items-end border-r border-white/20 p-4">
-
                     <div className="flex text-white/50 gap-1">
-
                       <EclairIcone
                         className="size-4"
                         color1="var(--yellow-zesteo)"
                       />
-
                       Energie
-
                     </div>
 
                     {energie}
-
                   </div>
 
                   {/* AGENCE */}
 
                   <div className="flex flex-col justify-center items-end border-r border-white/20 gap-1 p-4 whitespace-nowrap">
-
                     <div className="flex text-white/50 gap-1">
-
                       <Location
                         className="size-4"
                         color1="var(--yellow-zesteo)"
                       />
-
                       Agence
-
                     </div>
 
                     {agence}
-
                   </div>
 
                   {/* KILOMETRAGE */}
 
                   <div className="flex flex-col justify-center items-end p-4">
-
                     <div className="flex text-white/50 gap-1">
-
                       <KmIcone
                         className="size-4"
                         color1="var(--yellow-zesteo)"
                       />
-
                       Kilométrage
-
                     </div>
-
                     {km} km
-
                   </div>
-
                 </div>
-
               </div>
-
             </div>
 
             {/* ============================== */}
@@ -382,13 +299,9 @@ export default function AdminCamions() {
             {/* ============================== */}
 
             <div className="card rounded-xl flex justify-center flex-col text-[0.8rem] p-2 gap-2">
-
-              <h1>
-                Informations du camion
-              </h1>
+              <h1>Informations du camion</h1>
 
               <div className="grid grid-cols-2 gap-2">
-
                 {/* MARQUE */}
 
                 <SelectCustom
@@ -398,7 +311,6 @@ export default function AdminCamions() {
                   onChange={(nouvelleMarque) => {
                     setMarque(nouvelleMarque);
 
-                 
                     setModele("");
                   }}
                   Icone={CamionIcone}
@@ -418,44 +330,56 @@ export default function AdminCamions() {
                   required
                 />
 
-                <SelectCustom 
-                label="Année"
-                liste={années}
-                onChange={setAnnee}
-                value={annee}
-                Icone={CalendrierIcone}
-                disabled={!annee}
-                required
+                <SelectCustom
+                  label="Année"
+                  liste={années}
+                  onChange={setAnnee}
+                  value={annee}
+                  Icone={CalendrierIcone}
+                  disabled={!annee}
+                  required
                 />
-                <SelectCustom 
-                label="PTAC (kg)"
-                onChange={setPoids}
-                value={poids}
-                Icone={PoidsIcone}
-                disabled={!poids}
-                required
+                <SelectCustom
+                  label="PTAC (kg)"
+                  onChange={setPoids}
+                  value={poids}
+                  Icone={PoidsIcone}
+                  disabled={!poids}
+                  required
                 />
-                <SelectCustom 
-                label="Energie"
-                liste={carburants}
-                onChange={setEnergie}
-                value={energie}
-                Icone={CarburantIcone}
-                disabled={!energie}
-                required
+                <SelectCustom
+                  label="Energie"
+                  liste={carburants}
+                  onChange={setEnergie}
+                  value={energie}
+                  Icone={CarburantIcone}
+                  disabled={!energie}
+                  required
                 />
-
               </div>
-
             </div>
-            
 
+            <div className="card rounded-xl p-2 flex flex-col">
+              <h1 className="text-[0.8rem] whitespace-nowrap">
+                Déclaration kilométrique initiale
+              </h1>
+              <div className="flex w-full gap-2"><input type="number" className="outline-red-400 border w-1/2" /><input type="date" className=" border w-1/2 " /></div>
+            </div>
           </div>
         )}
-        
       </form>
-{openForm && <div className="flex w-full gap-2 text-[0.8rem]"><div className="hover:scale-[1.02] flex justify-center items-center w-3/5 h-10 bg-(--yellow-zesteo) text-black rounded-xl gap-2 cursor-pointer"><DriverIcone className="size-4"/> Creer le camion</div><div className="flex justify-center items-center w-2/5 h-10 card rounded-xl cursor-pointer">Annuler</div>
-   </div> }
-   </div>
+      {openForm && (
+        <div className="flex w-full gap-2 text-[0.8rem]">
+          <div className="hover:scale-[1.02] flex justify-center items-center w-3/5 h-10 bg-(--yellow-zesteo) text-black rounded-xl gap-2 cursor-pointer">
+            <DriverIcone className="size-4" /> Creer le camion
+          </div>
+          <div className="flex justify-center items-center w-2/5 h-10 card rounded-xl cursor-pointer">
+            Annuler
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
+
+
