@@ -4,7 +4,6 @@ export const controlCreaAgences = async (req, res) => {
   try {
     const user = req.user;
     const { nom, nomComplet, heure_embauche } = req.body;
-    console.log(req.body)
     const reponse = await creeAgence(
       nom,
       nomComplet,

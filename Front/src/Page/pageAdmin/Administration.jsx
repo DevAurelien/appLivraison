@@ -146,11 +146,7 @@ export default function Administration() {
       couleurFond: "var(--couleurStatistiquesBg)",
       couleurBordure: "var(--couleurStatistiquesBorder)",
 
-      /*
-       * Tu n’as pas encore de permission STATISTIQUES_LIRE.
-       * Ces permissions permettent temporairement l’accès
-       * aux profils ayant une vision globale.
-       */
+     
       permissionsRequises: [
         "LIVRAISONS_LIRE_TOUTES",
         "POINTAGES_LIRE_TOUS",

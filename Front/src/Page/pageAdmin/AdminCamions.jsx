@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 
 import CamionIcone from "../../components/componentsIcone/CamionIcone.jsx";
 import PlaqueImmatriculation from "../../components/componentsIcone/ImmatPlaque.jsx";
@@ -21,21 +21,33 @@ import { Location } from "../../components/componentsIcone/IconeStartEnd.jsx";
 
 import truck from "../../assets/truck.png";
 import camion from "/camion.png";
+import { MenuContext } from "../../contexte/menuContext.jsx";
+import apiFetch from "../../utils/apiFetch.jsx";
+import { UserContext } from "../../contexte/userContext.jsx";
 
 export default function AdminCamions() {
   const [openForm, setOpenForm] = useState(false);
+  const { setPage } = useContext(MenuContext);
+  const { user } = useContext(UserContext);
 
-  const [immatriculation, setImmatriculation] = useState("");
+  const date = new Date();
+  const an = String(date.getFullYear());
+  const mo = String(date.getMonth() + 1).padStart(2, "0");
+  const jo = String(date.getDate()).padStart(2, "0");
+  const inputDate = `${an}-${mo}-${jo}`;
 
-  const [statut, setStatut] = useState("Pret");
-  const [energie, setEnergie] = useState("Diesel");
-  const [agence, setAgence] = useState("Toulouse, 31");
-  const [km, setKm] = useState(123340);
-
-  const [marque, setMarque] = useState("Renault");
-  const [modele, setModele] = useState("");
-  const [annee, setAnnee] = useState(2023);
-  const [poids, setPoids] = useState(3500);
+  const [formCamion, setFormCamion] = useState({
+    immatriculation: "",
+    statut: "Disponible",
+    energie: "Diesel",
+    agence: "Toulouse, 31",
+    km: "0",
+    marque: "Renault",
+    modele: "Master",
+    annee: 2023,
+    poids: 3500,
+    dateReleve: inputDate,
+  });
 
   const vehicules = {
     Renault: ["Master", "Trafic", "Kangoo"],
@@ -45,15 +57,30 @@ export default function AdminCamions() {
     Ford: ["Transit", "Transit Custom"],
   };
 
-  const carburants = ["Essence", "Diesel", "Electrique", "GPL"];
+  const carburants = ["Essence", "Diesel", "Electrique"];
+  const statutCamion = [
+    "Disponible",
+    "En tournee",
+    "En entretien",
+    "Immobilise",
+    "Hors service",
+  ];
 
   const marques = Object.keys(vehicules);
 
-  const modeles = vehicules[marque] || [];
+  const modeles = vehicules[formCamion.marque] || [];
 
   const années = [2023, 2024, 2025, 2026, 2027, 2028, 2029];
 
   const salaries = [{ driver: "Theo" }, { rippeur: "Gaetan" }];
+ const correspondances = {
+  Pret: "DISPONIBLE",
+  Disponible: "DISPONIBLE",
+  "En tournée": "EN_TOURNEE",
+  "En entretien": "EN_ENTRETIEN",
+  Immobilisé: "IMMOBILISE",
+  "Hors service": "HORS_SERVICE",
+};
 
   const handleImmat = (e) => {
     const raw = e.target.value.toUpperCase().replace(/-/g, "");
@@ -74,8 +101,38 @@ export default function AdminCamions() {
       value += `-${lettres2}`;
     }
 
-    setImmatriculation(value);
+    setFormCamion((ancienFormulaire) => ({
+      ...ancienFormulaire,
+      immatriculation: value,
+    }));
   };
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  if (formCamion.immatriculation.length < 9) return;
+  if (Number(formCamion.km) <= 0) return;
+
+  const statutBDD = correspondances[formCamion.statut];
+
+  if (!statutBDD) {
+    console.error("Statut inconnu :", formCamion.statut);
+    return;
+  }
+
+  const res = await apiFetch("/creaCamion", "POST", {
+    body: JSON.stringify({
+      ...formCamion,
+      statut: statutBDD,
+      energie: formCamion.energie.toUpperCase(),
+    }),
+  });
+
+  if (!res.ok) return;
+
+  const data = await res.json();
+  console.log(data);
+};
 
   return (
     <div className="w-full h-full flex flex-col gap-4 items-center p-4 overflow-y-auto overflow-x-hidden pb-50">
@@ -127,8 +184,11 @@ export default function AdminCamions() {
         </div>
       )}
 
-      <form className="relative flex justify-center w-full">
-        {!openForm && (
+      <form
+        onSubmit={handleSubmit}
+        className="relative flex flex-col items-center w-full"
+      >
+        {!openForm && user?.permissions?.includes("CAMIONS_CREER") && (
           <button
             type="button"
             onClick={() => setOpenForm(true)}
@@ -207,7 +267,7 @@ export default function AdminCamions() {
 
               <input
                 type="text"
-                value={immatriculation}
+                value={formCamion.immatriculation}
                 onChange={handleImmat}
                 maxLength={9}
                 className="
@@ -226,6 +286,7 @@ export default function AdminCamions() {
                   outline-none
                   z-20
                 "
+                required
               />
 
               {/* INFORMATIONS RAPIDES */}
@@ -247,7 +308,7 @@ export default function AdminCamions() {
                       Statut
                     </div>
 
-                    {statut}
+                    {formCamion.statut}
                   </div>
 
                   {/* ENERGIE */}
@@ -261,7 +322,7 @@ export default function AdminCamions() {
                       Energie
                     </div>
 
-                    {energie}
+                    {formCamion.energie}
                   </div>
 
                   {/* AGENCE */}
@@ -275,7 +336,7 @@ export default function AdminCamions() {
                       Agence
                     </div>
 
-                    {agence}
+                    {formCamion.agence}
                   </div>
 
                   {/* KILOMETRAGE */}
@@ -288,7 +349,7 @@ export default function AdminCamions() {
                       />
                       Kilométrage
                     </div>
-                    {km} km
+                    {formCamion.km} km
                   </div>
                 </div>
               </div>
@@ -307,11 +368,13 @@ export default function AdminCamions() {
                 <SelectCustom
                   label="Marque"
                   liste={marques}
-                  value={marque}
+                  value={formCamion.marque}
                   onChange={(nouvelleMarque) => {
-                    setMarque(nouvelleMarque);
-
-                    setModele("");
+                    setFormCamion((ancienFormulaire) => ({
+                      ...ancienFormulaire,
+                      marque: nouvelleMarque,
+                      modele: "",
+                    }));
                   }}
                   Icone={CamionIcone}
                   required
@@ -322,38 +385,72 @@ export default function AdminCamions() {
                 <SelectCustom
                   label="Modèle"
                   liste={modeles}
-                  value={modele}
-                  onChange={setModele}
+                  value={formCamion.modele}
+                  onChange={(nouveauModele) =>
+                    setFormCamion((ancienFormulaire) => ({
+                      ...ancienFormulaire,
+                      modele: nouveauModele,
+                    }))
+                  }
                   Icone={ModeleIcone}
                   placeholder="Modèle"
-                  disabled={!marque}
+                  disabled={!formCamion.marque}
                   required
                 />
 
                 <SelectCustom
                   label="Année"
                   liste={années}
-                  onChange={setAnnee}
-                  value={annee}
+                  onChange={(nouvelleAnnee) =>
+                    setFormCamion((ancienFormulaire) => ({
+                      ...ancienFormulaire,
+                      annee: nouvelleAnnee,
+                    }))
+                  }
+                  value={formCamion.annee}
                   Icone={CalendrierIcone}
-                  disabled={!annee}
+                  disabled={!formCamion.annee}
                   required
                 />
                 <SelectCustom
                   label="PTAC (kg)"
-                  onChange={setPoids}
-                  value={poids}
+                  onChange={(nouveauPoids) =>
+                    setFormCamion((ancienFormulaire) => ({
+                      ...ancienFormulaire,
+                      poids: nouveauPoids,
+                    }))
+                  }
+                  value={formCamion.poids}
                   Icone={PoidsIcone}
-                  disabled={!poids}
+                  disabled={!formCamion.poids}
                   required
                 />
                 <SelectCustom
                   label="Energie"
                   liste={carburants}
-                  onChange={setEnergie}
-                  value={energie}
+                  onChange={(nouvelleEnergie) =>
+                    setFormCamion((ancienFormulaire) => ({
+                      ...ancienFormulaire,
+                      energie: nouvelleEnergie,
+                    }))
+                  }
+                  value={formCamion.energie}
                   Icone={CarburantIcone}
-                  disabled={!energie}
+                  disabled={!formCamion.energie}
+                  required
+                />
+                <SelectCustom
+                  label="Statut"
+                  liste={statutCamion}
+                  onChange={(nouveauStatut) =>
+                    setFormCamion((ancienFormulaire) => ({
+                      ...ancienFormulaire,
+                      statut: nouveauStatut,
+                    }))
+                  }
+                  value={formCamion.statut}
+                  Icone={CocheIcone}
+                  disabled={!formCamion.statut}
                   required
                 />
               </div>
@@ -363,23 +460,81 @@ export default function AdminCamions() {
               <h1 className="text-[0.8rem] whitespace-nowrap">
                 Déclaration kilométrique initiale
               </h1>
-              <div className="flex w-full gap-2"><input type="number" className="outline-red-400 border w-1/2" /><input type="date" className=" border w-1/2 " /></div>
+              <div className="flex w-full gap-2">
+                <div className="flex flex-col w-1/2">
+                  <label
+                    htmlFor="number"
+                    className="text-[0.5rem] text-white/50 p-1"
+                  >
+                    Kilométrage actuel
+                  </label>
+                  <div className="flex w-full border border-(--yellow-zesteo) rounded-md">
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={6}
+                      name="number"
+                      value={formCamion.km}
+                      onChange={(e) => {
+                        const nouveauKm = e.target.value.replace(/\D/g, "");
+
+                        setFormCamion((ancienFormulaire) => ({
+                          ...ancienFormulaire,
+                          km: Number(nouveauKm),
+                        }));
+                      }}
+                      className="outline-none w-7/8 px-1 text-[0.8rem] text-right"
+                    />
+                    <p className="flex w-1/8 justify-center items-center text-[0.6rem]">
+                      km
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex flex-col w-1/2 justify-end">
+                  <label
+                    htmlFor="date"
+                    className="text-[0.5rem] text-white/50 p-1"
+                  >
+                    Date du relevé
+                  </label>
+                  <input
+                    name="date"
+                    type="date"
+                    className="border w-full rounded-md px-1 text-[0.8rem] border-(--yellow-zesteo)"
+                    value={formCamion.dateReleve}
+                    onChange={(e) =>
+                      setFormCamion((ancienFormulaire) => ({
+                        ...ancienFormulaire,
+                        dateReleve: e.target.value,
+                      }))
+                    }
+                  />
+                </div>
+              </div>
             </div>
           </div>
         )}
+
+        {openForm && (
+          <div className="flex w-full gap-2 text-[0.8rem] mt-2">
+            <button
+              type="submit"
+              className="hover:scale-[1.02] flex justify-center items-center w-3/5 h-10 bg-(--yellow-zesteo) text-black rounded-xl gap-2 cursor-pointer"
+            >
+              <DriverIcone className="size-4" /> Creer le camion
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setPage("Administration")}
+              className="flex justify-center items-center w-2/5 h-10 card rounded-xl cursor-pointer"
+            >
+              Annuler
+            </button>
+          </div>
+        )}
       </form>
-      {openForm && (
-        <div className="flex w-full gap-2 text-[0.8rem]">
-          <div className="hover:scale-[1.02] flex justify-center items-center w-3/5 h-10 bg-(--yellow-zesteo) text-black rounded-xl gap-2 cursor-pointer">
-            <DriverIcone className="size-4" /> Creer le camion
-          </div>
-          <div className="flex justify-center items-center w-2/5 h-10 card rounded-xl cursor-pointer">
-            Annuler
-          </div>
-        </div>
-      )}
     </div>
   );
 }
-
-

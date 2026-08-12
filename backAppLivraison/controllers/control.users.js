@@ -296,10 +296,7 @@ export const controlImageProfil = async (req, res) => {
 
 export const controlAfficherAvatar = async (req, res) => {
   try {
-    /*
-     * Ton middleware a déjà récupéré l’utilisateur complet.
-     * On évite donc une nouvelle requête PostgreSQL.
-     */
+    
     const avatarUrl =
       req.user?.avatar ??
       req.user?.avatar_img_url;
@@ -310,9 +307,7 @@ export const controlAfficherAvatar = async (req, res) => {
       });
     }
 
-    /*
-     * Le navigateur envoie l’ETag de l’image qu’il possède déjà.
-     */
+   
     const etagNavigateur =
       req.headers["if-none-match"];
 
@@ -352,10 +347,7 @@ export const controlAfficherAvatar = async (req, res) => {
       "nosniff",
     );
 
-    /*
-     * L’image n’a pas changé :
-     * le navigateur réutilise immédiatement sa copie.
-     */
+   
     if (resultatBlob.statusCode === 304) {
       return res.status(304).end();
     }

@@ -160,11 +160,15 @@ html {
 }
 
 /* =========================================================
-   INPUT DATE
+   INPUT
    ========================================================= */
+/* INPUT DATE NORMAL */
+.date-input::-webkit-datetime-edit {
+  color: transparent;
+}
 
-input[type="date"]:focus::-webkit-datetime-edit,
-input[type="date"]:valid::-webkit-datetime-edit {
+.date-input:focus::-webkit-datetime-edit,
+.date-input:valid::-webkit-datetime-edit {
   color: var(--text-main);
 }
 
@@ -175,6 +179,21 @@ input[type="date"]:valid::-webkit-datetime-edit {
 .date-input:focus::-webkit-datetime-edit,
 .date-input:valid::-webkit-datetime-edit {
   color: var(--text-main);
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+
+/* INPUT NUMBER */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  appearance: textfield;
 }
 
 /* =========================================================
