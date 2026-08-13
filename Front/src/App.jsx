@@ -12,6 +12,10 @@ import AdminLivreurs from "./Page/pageAdmin/AdminLivreurs.jsx";
 import AdminGestions from "./Page/pageAdmin/AdminGestions.jsx";
 import AdminAgences from "./Page/pageAdmin/AdminAgences.jsx";
 import AdminCamions from "./Page/pageAdmin/AdminCamions.jsx";
+import AdminPlannings from "./Page/pageAdmin/AdminPlannings.jsx";
+import AdminIncidents from "./Page/pageAdmin/AdminIncidents.jsx";
+import AdminSecteurs from "./Page/pageAdmin/AdminSecteurs.jsx";
+import AdminStatistiques from "./Page/pageAdmin/AdminStatistiques.jsx";
 
 const chargerSeConnecter = () =>
   import("./Page/SeConnecter.jsx");
@@ -162,7 +166,7 @@ export default function App() {
         {page === "AdminCamions" && (
           <AdminCamions />
         )}
-        {/*{page === "AdminSecteurs" && (
+        {page === "AdminSecteurs" && (
           <AdminSecteurs />
         )}
         {page === "AdminPlannings" && (
@@ -173,7 +177,7 @@ export default function App() {
         )}
         {page === "AdminStatistiques" && (
           <AdminStatistiques />
-        )} */}
+        )}
         {page === "AdminGestions" && (
           <AdminGestions />
         )}
