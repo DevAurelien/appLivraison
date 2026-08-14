@@ -12,6 +12,7 @@
   "dependencies": {
     "@tailwindcss/vite": "^4.3.1",
     "@vercel/blob": "^2.6.1",
+    "@vis.gl/react-google-maps": "^1.9.0",
     "framer-motion": "^12.42.2",
     "maplibre-gl": "^6.3.0",
     "react": "^19.2.6",
