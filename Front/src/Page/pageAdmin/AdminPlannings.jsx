@@ -1,19 +1,29 @@
 import { APIProvider, Map } from "@vis.gl/react-google-maps";
+import { useContext } from "react";
+import {LivraisonsContext} from "../../contexte/livraisonsContext.jsx"
 const key = import.meta.env.VITE_GOOGLE_KEY;
 
 export default function AdminPlannings() {
+
+  const livraisons = useContext(LivraisonsContext)
+
+
   return (
     <div className="h-[50vh] m-2">
-      <APIProvider apiKey={key} className="flex m-2">
+      <APIProvider apiKey={key} >
         <Map 
           defaultCenter={{
-            lat: 44.651,
-            lng: 0.591,
+            lat: 44.408,
+            lng: 0.705,
           }}
-          defaultZoom={11}
+          defaultZoom={12}
+          disableDefaultUI
           style={{
             width: "100%",
             height: "100%",
+            border:"1px solid white",
+            padding:"6px",
+            borderRadius:"10px",
           }}
         />
       </APIProvider>
