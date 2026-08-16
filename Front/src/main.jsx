@@ -17,6 +17,7 @@ import { UserContextProvider } from "./contexte/userContext.jsx";
 import { ContactContextProvider } from "./contexte/contactContext.jsx";
 import { LivraisonsContextProvider } from "./contexte/livraisonsContext.jsx";
 import MiseAJourPWA from "./utils/MiseAJourPWA.jsx";
+import InstallationPWA from "./utils/InstallationPWA.jsx";
 
 import BarreNavigation from "./Navigation.jsx";
 
@@ -32,6 +33,7 @@ function Layout() {
       <App />
       {!cacherNav && <BarreNavigation />}
       <MiseAJourPWA />
+      <InstallationPWA/>
     </>
   );
 }
