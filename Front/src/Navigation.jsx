@@ -352,43 +352,43 @@ export default function BarreNavigation() {
                   "
                 >
                   <button
-                    type="button"
-                    aria-label={item.titre}
-                    onClick={() => {
-                      if (!actif) {
-                        navigate(item.route);
-                      }
-                    }}
-                    className={`
-                      relative
-                      z-20
-                      flex
-                      h-16
-                      w-16
-                      shrink-0
-                      cursor-pointer
-                      items-center
-                      justify-center
-                      rounded-full
+  type="button"
+  aria-label={item.titre}
+  onClick={() => {
+    if (pathname !== item.route) {
+      navigate(item.route);
+    }
+  }}
+  className={`
+    relative
+    z-20
+    flex
+    h-16
+    w-16
+    shrink-0
+    cursor-pointer
+    items-center
+    justify-center
+    rounded-full
 
-                      ${
-                        actif
-                          ? "text-yellow-300"
-                          : "text-white"
-                      }
-                    `}
-                  >
-                    <Icone
-                      width={30}
-                      height={30}
-                      titre={item.titre}
-                      color1={
-                        actif
-                          ? "#fde047"
-                          : "#fff"
-                      }
-                    />
-                  </button>
+    ${
+      actif
+        ? "text-yellow-300"
+        : "text-white"
+    }
+  `}
+>
+  <Icone
+    width={30}
+    height={30}
+    titre={item.titre}
+    color1={
+      actif
+        ? "#fde047"
+        : "#fff"
+    }
+  />
+</button>
                 </li>
               );
             },
