@@ -1,13 +1,37 @@
+import { useContext } from "react";
+
 import {
-  lazy,
-  Suspense,
-  useContext,
-  useEffect,
-} from "react";
-import { MenuContext } from "./contexte/menuContext.jsx";
+  Navigate,
+  Route,
+  Routes,
+  useLocation,
+} from "react-router-dom";
+
 import { UserContext } from "./contexte/userContext.jsx";
+
 import HeaderLogo from "./Page/HeaderLogo.jsx";
 import Pulse from "./components/Loading.jsx";
+
+/*
+ * AUTHENTIFICATION
+ */
+import SeConnecter from "./Page/SeConnecter.jsx";
+import Inscription from "./Page/Inscription.jsx";
+
+/*
+ * PAGES PRINCIPALES
+ */
+import Accueil from "./Page/pageAccueil/Accueil.jsx";
+import Profil from "./Page/pageProfil/Profil.jsx";
+import Livraisons from "./Page/pageLivraisons/Livraisons.jsx";
+import Contacts from "./Page/pageMessages/Contacts.jsx";
+import Messagerie from "./Page/pageMessages/Messagerie.jsx";
+
+/*
+ * ADMINISTRATION
+ */
+import Administration from "./Page/pageAdmin/Administration.jsx";
+
 import AdminLivreurs from "./Page/pageAdmin/AdminLivreurs.jsx";
 import AdminGestions from "./Page/pageAdmin/AdminGestions.jsx";
 import AdminAgences from "./Page/pageAdmin/AdminAgences.jsx";
@@ -17,171 +41,361 @@ import AdminIncidents from "./Page/pageAdmin/AdminIncidents.jsx";
 import AdminSecteurs from "./Page/pageAdmin/AdminSecteurs.jsx";
 import AdminStatistiques from "./Page/pageAdmin/AdminStatistiques.jsx";
 
-const chargerSeConnecter = () =>
-  import("./Page/SeConnecter.jsx");
-
-const chargerInscription = () =>
-  import("./Page/Inscription.jsx");
-
-const chargerAccueil = () =>
-  import("./Page/pageAccueil/Accueil.jsx");
-
-const chargerProfil = () =>
-  import("./Page/pageProfil/Profil.jsx");
-
-const chargerLivraisons = () =>
-  import("./Page/pageLivraisons/Livraisons.jsx");
-
-const chargerContacts = () =>
-  import("./Page/pageMessages/Contacts.jsx");
-
-const chargerMessagerie = () =>
-  import("./Page/pageMessages/Messagerie.jsx");
-
-const chargerAdministration = () =>
-  import("./Page/pageAdmin/Administration.jsx");
-
-const SeConnecter = lazy(chargerSeConnecter);
-const Inscription = lazy(chargerInscription);
-const Accueil = lazy(chargerAccueil);
-const Profil = lazy(chargerProfil);
-const Livraisons = lazy(chargerLivraisons);
-const Contacts = lazy(chargerContacts);
-const Messagerie = lazy(chargerMessagerie);
-const Administration = lazy(chargerAdministration);
 
 export default function App() {
-  const { user, authLoading } = useContext(UserContext);
-  const { page, setPage } = useContext(MenuContext);
+  const { user, authLoading } =
+    useContext(UserContext);
 
-  useEffect(() => {
-    const prechargerToutesLesPages = async () => {
-      const resultats = await Promise.allSettled([
-        chargerAccueil(),
-        chargerProfil(),
-        chargerLivraisons(),
-        chargerContacts(),
-        chargerMessagerie(),
-        chargerAdministration(),
-      ]);
-
-      resultats.forEach((resultat, index) => {
-        if (resultat.status === "rejected") {
-          console.error(
-            "Erreur préchargement page :",
-            index,
-            resultat.reason,
-          );
-        }
-      });
-    };
-
-    const compatibleIdleCallback =
-      "requestIdleCallback" in window;
-
-    const id = compatibleIdleCallback
-      ? window.requestIdleCallback(
-          prechargerToutesLesPages,
-          {
-            timeout: 1500,
-          },
-        )
-      : window.setTimeout(
-          prechargerToutesLesPages,
-          500,
-        );
-
-    return () => {
-      if (compatibleIdleCallback) {
-        window.cancelIdleCallback(id);
-      } else {
-        window.clearTimeout(id);
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-  if (authLoading) return;
-
-  const pageAuthentification =
-    page === "connection" ||
-    page === "inscription";
-
-  if (user && pageAuthentification) {
-    setPage("Accueil");
-    return;
-  }
-
-  if (!user && !pageAuthentification) {
-    setPage("connection");
-  }
-}, [user, authLoading, page, setPage]);
+  const { pathname } = useLocation();
 
   if (authLoading) {
     return (
-      <div className="flex h-full w-full items-center justify-center">
+      <div
+        className="
+          flex
+          h-full
+          w-full
+          items-center
+          justify-center
+        "
+      >
         <Pulse />
       </div>
     );
   }
 
+
+  const connecte = Boolean(user?.id);
+
+
+  /* Header Zesteo pas affiché */
+
+  
+  const pageAuthentification =
+    pathname === "/connection" ||
+    pathname === "/inscription";
+
+
   const afficherHeader =
-    page !== "connection" &&
-    page !== "inscription";
+    connecte &&
+    !pageAuthentification;
+
+
+  const estAdministration =
+    pathname === "/administration" ||
+    pathname.startsWith("/administration/");
+
 
   return (
-    <div className={`${ page === "Administration" ? "bg_test" : ""} flex h-full w-full flex-col text-white select-none`}>
+    <div
+      className={`
+        ${estAdministration ? "bg_test" : ""}
+
+        flex
+        h-full
+        w-full
+        flex-col
+        text-white
+        select-none
+      `}
+    >
+
       {afficherHeader && <HeaderLogo />}
 
-      <Suspense
-        fallback={
-          <div className="flex h-full w-full items-center justify-center">
-            <Pulse />
-          </div>
-        }
-      >
-        {page === "connection" && <SeConnecter />}
 
-        {page === "inscription" && <Inscription />}
+      <Routes>
 
-        {page === "Accueil" && <Accueil />}
+        {/* ================================================== */}
+        {/* RACINE */}
+        {/* ================================================== */}
 
-        {page === "Profil" && <Profil />}
+        <Route
+          path="/"
+          element={
+            <Navigate
+              to={
+                connecte
+                  ? "/accueil"
+                  : "/connection"
+              }
+              replace
+            />
+          }
+        />
 
-        {page === "Livraisons" && <Livraisons />}
 
-        {page === "Contacts" && <Contacts />}
+        {/* ================================================== */}
+        {/* AUTHENTIFICATION */}
+        {/* ================================================== */}
 
-        {page === "Messagerie" && <Messagerie />}
+        <Route
+          path="/connection"
+          element={
+            connecte
+              ? (
+                <Navigate
+                  to="/accueil"
+                  replace
+                />
+              )
+              : <SeConnecter />
+          }
+        />
 
-        {page === "Administration" && (
-          <Administration />
-        )}
-        {page === "AdminLivreurs" && (
-          <AdminLivreurs />
-        )}
-         {page === "AdminAgences" && (
-          <AdminAgences />
-        )}
-        {page === "AdminCamions" && (
-          <AdminCamions />
-        )}
-        {page === "AdminSecteurs" && (
-          <AdminSecteurs />
-        )}
-        {page === "AdminPlannings" && (
-          <AdminPlannings />
-        )}
-        {page === "AdminIncidents" && (
-          <AdminIncidents />
-        )}
-        {page === "AdminStatistiques" && (
-          <AdminStatistiques />
-        )}
-        {page === "AdminGestions" && (
-          <AdminGestions />
-        )}
-      </Suspense>
+
+        <Route
+          path="/inscription"
+          element={
+            connecte
+              ? (
+                <Navigate
+                  to="/accueil"
+                  replace
+                />
+              )
+              : <Inscription />
+          }
+        />
+
+
+        {/* ================================================== */}
+        {/* PAGES PRINCIPALES */}
+        {/* ================================================== */}
+
+        <Route
+          path="/accueil"
+          element={
+            connecte
+              ? <Accueil />
+              : (
+                <Navigate
+                  to="/connection"
+                  replace
+                />
+              )
+          }
+        />
+
+
+        <Route
+          path="/profil"
+          element={
+            connecte
+              ? <Profil />
+              : (
+                <Navigate
+                  to="/connection"
+                  replace
+                />
+              )
+          }
+        />
+
+
+        <Route
+          path="/livraisons"
+          element={
+            connecte
+              ? <Livraisons />
+              : (
+                <Navigate
+                  to="/connection"
+                  replace
+                />
+              )
+          }
+        />
+
+
+        <Route
+          path="/contacts"
+          element={
+            connecte
+              ? <Contacts />
+              : (
+                <Navigate
+                  to="/connection"
+                  replace
+                />
+              )
+          }
+        />
+
+
+        <Route
+          path="/messagerie"
+          element={
+            connecte
+              ? <Messagerie />
+              : (
+                <Navigate
+                  to="/connection"
+                  replace
+                />
+              )
+          }
+        />
+
+
+        {/* ================================================== */}
+        {/* ADMINISTRATION */}
+        {/* ================================================== */}
+
+        <Route
+          path="/administration"
+          element={
+            connecte
+              ? <Administration />
+              : (
+                <Navigate
+                  to="/connection"
+                  replace
+                />
+              )
+          }
+        />
+
+
+        <Route
+          path="/administration/livreurs"
+          element={
+            connecte
+              ? <AdminLivreurs />
+              : (
+                <Navigate
+                  to="/connection"
+                  replace
+                />
+              )
+          }
+        />
+
+
+        <Route
+          path="/administration/agences"
+          element={
+            connecte
+              ? <AdminAgences />
+              : (
+                <Navigate
+                  to="/connection"
+                  replace
+                />
+              )
+          }
+        />
+
+
+        <Route
+          path="/administration/camions"
+          element={
+            connecte
+              ? <AdminCamions />
+              : (
+                <Navigate
+                  to="/connection"
+                  replace
+                />
+              )
+          }
+        />
+
+
+        <Route
+          path="/administration/secteurs"
+          element={
+            connecte
+              ? <AdminSecteurs />
+              : (
+                <Navigate
+                  to="/connection"
+                  replace
+                />
+              )
+          }
+        />
+
+
+        <Route
+          path="/administration/plannings"
+          element={
+            connecte
+              ? <AdminPlannings />
+              : (
+                <Navigate
+                  to="/connection"
+                  replace
+                />
+              )
+          }
+        />
+
+
+        <Route
+          path="/administration/incidents"
+          element={
+            connecte
+              ? <AdminIncidents />
+              : (
+                <Navigate
+                  to="/connection"
+                  replace
+                />
+              )
+          }
+        />
+
+
+        <Route
+          path="/administration/statistiques"
+          element={
+            connecte
+              ? <AdminStatistiques />
+              : (
+                <Navigate
+                  to="/connection"
+                  replace
+                />
+              )
+          }
+        />
+
+
+        <Route
+          path="/administration/gestions"
+          element={
+            connecte
+              ? <AdminGestions />
+              : (
+                <Navigate
+                  to="/connection"
+                  replace
+                />
+              )
+          }
+        />
+
+
+        {/* ================================================== */}
+        {/* ROUTE INCONNUE */}
+        {/* ================================================== */}
+
+        <Route
+          path="*"
+          element={
+            <Navigate
+              to={
+                connecte
+                  ? "/accueil"
+                  : "/connection"
+              }
+              replace
+            />
+          }
+        />
+
+      </Routes>
+
     </div>
   );
 }

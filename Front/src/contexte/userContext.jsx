@@ -23,7 +23,7 @@ export const UserContextProvider = ({ children }) => {
   });
 
   useEffect(() => {
-  const restaurerSession = async () => {
+     const restaurerSession = async () => {
     try {
       const reponse = await fetch(
         `${import.meta.env.VITE_BACKEND_URL}/auth/refresh`,

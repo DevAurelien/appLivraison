@@ -12,53 +12,44 @@ import {
   useState,
 } from "react";
 
-import { MenuContext } from "./contexte/menuContext.jsx";
+import {
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
+
 import { UserContext } from "./contexte/userContext.jsx";
 
 export default function BarreNavigation() {
-  const { page, setPage } = useContext(MenuContext);
   const { user } = useContext(UserContext);
+
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
 
   const elementsRef = useRef({});
   const blobRef = useRef(null);
 
   const [positionCercle, setPositionCercle] = useState(0);
 
-  const permissions = Array.isArray(user?.permissions)
-    ? user.permissions
-    : [];
-
-  /*
-   * Les pages secondaires de l'administration doivent garder
-   * l'icône Administration active dans la barre de navigation.
-   */
-  const pagesAdministration = [
-    "Administration",
-    "AdminLivreurs",
-    "AdminAgences",
-    "AdminCamions",
-    "AdminSecteurs",
-    "AdminPlannings",
-    "AdminIncidents",
-    "AdminStatistiques",
-    "AdminGestions",
-  ];
-
-  const pageNavigationActive = pagesAdministration.includes(page)
-    ? "Administration"
-    : page;
+  const permissions = useMemo(
+    () =>
+      Array.isArray(user?.permissions)
+        ? user.permissions
+        : [],
+    [user?.permissions],
+  );
 
   const listeIcones = useMemo(
     () => [
       {
         titre: "Accueil",
-        page: "Accueil",
+        route: "/accueil",
         composant: Home,
         authentificationSeulement: true,
       },
+
       {
         titre: "Livraisons",
-        page: "Livraisons",
+        route: "/livraisons",
         composant: LivraisonIcone,
 
         permissionsRequises: [
@@ -67,16 +58,20 @@ export default function BarreNavigation() {
           "LIVRAISONS_LIRE_TOUTES",
         ],
       },
+
       {
         titre: "Messages",
-        page: "Contacts",
+        route: "/contacts",
         composant: MessagesIcone,
 
-        permissionsRequises: ["MESSAGES_LIRE"],
+        permissionsRequises: [
+          "MESSAGES_LIRE",
+        ],
       },
+
       {
         titre: "Administration",
-        page: "Administration",
+        route: "/administration",
         composant: Engrenages,
 
         permissionsRequises: [
@@ -168,9 +163,10 @@ export default function BarreNavigation() {
           "SYSTEME_ADMINISTRER",
         ],
       },
+
       {
         titre: "Profil",
-        page: "Profil",
+        route: "/profil",
         composant: UserIcone,
         authentificationSeulement: true,
       },
@@ -192,21 +188,45 @@ export default function BarreNavigation() {
         return false;
       }
 
-      return item.permissionsRequises.some((permission) =>
-        permissions.includes(permission),
+      return item.permissionsRequises.some(
+        (permission) =>
+          permissions.includes(permission),
       );
     });
-  }, [listeIcones, permissions, user?.id]);
+  }, [
+    listeIcones,
+    permissions,
+    user?.id,
+  ]);
 
-  
-  const activeIndex = iconesAutorisees.findIndex(
-    (item) => item.page === pageNavigationActive,
-  );
+  const routeEstActive = (route) => {
+    return (
+      pathname === route ||
+      pathname.startsWith(`${route}/`)
+    );
+  };
+
+  const routeNavigationActive =
+    iconesAutorisees.find((item) =>
+      routeEstActive(item.route),
+    )?.route;
+
+  const activeIndex =
+    iconesAutorisees.findIndex(
+      (item) =>
+        item.route === routeNavigationActive,
+    );
 
   useLayoutEffect(() => {
     const calculerPositionCercle = () => {
+      if (!routeNavigationActive) {
+        return;
+      }
+
       const elementActif =
-        elementsRef.current[pageNavigationActive];
+        elementsRef.current[
+          routeNavigationActive
+        ];
 
       const blob = blobRef.current;
 
@@ -219,13 +239,15 @@ export default function BarreNavigation() {
         elementActif.offsetWidth / 2;
 
       setPositionCercle(
-        centreElement - blob.offsetWidth / 2,
+        centreElement -
+          blob.offsetWidth / 2,
       );
     };
 
-    const animationFrame = requestAnimationFrame(
-      calculerPositionCercle,
-    );
+    const animationFrame =
+      requestAnimationFrame(
+        calculerPositionCercle,
+      );
 
     window.addEventListener(
       "resize",
@@ -233,7 +255,9 @@ export default function BarreNavigation() {
     );
 
     return () => {
-      cancelAnimationFrame(animationFrame);
+      cancelAnimationFrame(
+        animationFrame,
+      );
 
       window.removeEventListener(
         "resize",
@@ -241,11 +265,14 @@ export default function BarreNavigation() {
       );
     };
   }, [
-    pageNavigationActive,
+    routeNavigationActive,
     iconesAutorisees.length,
   ]);
 
-  if (!user?.id || iconesAutorisees.length === 0) {
+  if (
+    !user?.id ||
+    iconesAutorisees.length === 0
+  ) {
     return null;
   }
 
@@ -265,14 +292,19 @@ export default function BarreNavigation() {
       "
     >
       <div className="relative h-full w-full">
+
         {activeIndex >= 0 && (
           <div
             ref={blobRef}
-            className={`nav-active-blob shape-${activeIndex}`}
+            className={`
+              nav-active-blob
+              shape-${activeIndex}
+            `}
             style={{
               width: "70px",
               height: "70px",
-              transform: `translate(${positionCercle}px, -50%)`,
+              transform:
+                `translate(${positionCercle}px, -50%)`,
             }}
           />
         )}
@@ -290,63 +322,77 @@ export default function BarreNavigation() {
             px-1
           "
         >
-          {iconesAutorisees.map((item) => {
-            const Icone = item.composant;
+          {iconesAutorisees.map(
+            (item) => {
+              const Icone =
+                item.composant;
 
-            const actif =
-              pageNavigationActive === item.page;
+              const actif =
+                routeEstActive(
+                  item.route,
+                );
 
-            return (
-              <li
-                key={item.page}
-                ref={(element) => {
-                  elementsRef.current[item.page] =
-                    element;
-                }}
-                className="
-                  relative
-                  z-30
-                  flex
-                  min-w-0
-                  flex-1
-                  items-center
-                  justify-center
-                  pb-2
-                "
-              >
-                <button
-                  type="button"
-                  onClick={() => setPage(item.page)}
-                  className={`
+              return (
+                <li
+                  key={item.route}
+                  ref={(element) => {
+                    elementsRef.current[
+                      item.route
+                    ] = element;
+                  }}
+                  className="
                     relative
-                    z-20
+                    z-30
                     flex
-                    h-16
-                    w-16
-                    shrink-0
-                    cursor-pointer
+                    min-w-0
+                    flex-1
                     items-center
                     justify-center
-                    rounded-full
-                    ${
-                      actif
-                        ? "text-yellow-300"
-                        : "text-white"
-                    }
-                  `}
+                    pb-2
+                  "
                 >
-                  <Icone
-                    width={30}
-                    height={30}
-                    titre={item.titre}
-                    color1={
-                      actif ? "#fde047" : "#fff"
-                    }
-                  />
-                </button>
-              </li>
-            );
-          })}
+                  <button
+                    type="button"
+                    aria-label={item.titre}
+                    onClick={() => {
+                      if (!actif) {
+                        navigate(item.route);
+                      }
+                    }}
+                    className={`
+                      relative
+                      z-20
+                      flex
+                      h-16
+                      w-16
+                      shrink-0
+                      cursor-pointer
+                      items-center
+                      justify-center
+                      rounded-full
+
+                      ${
+                        actif
+                          ? "text-yellow-300"
+                          : "text-white"
+                      }
+                    `}
+                  >
+                    <Icone
+                      width={30}
+                      height={30}
+                      titre={item.titre}
+                      color1={
+                        actif
+                          ? "#fde047"
+                          : "#fff"
+                      }
+                    />
+                  </button>
+                </li>
+              );
+            },
+          )}
         </ul>
       </div>
     </nav>
