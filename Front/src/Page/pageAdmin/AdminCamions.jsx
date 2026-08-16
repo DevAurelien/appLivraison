@@ -29,7 +29,6 @@ import { UserContext } from "../../contexte/userContext.jsx";
 export default function AdminCamions() {
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const [openForm, setOpenForm] = useState(false);
   const { setPage } = useContext(MenuContext);
   const { user } = useContext(UserContext);
 
