@@ -22,23 +22,17 @@ import { Location } from "../../components/componentsIcone/IconeStartEnd.jsx";
 
 import truck from "../../assets/truck.png";
 import camion from "/camion.png";
-import { MenuContext } from "../../contexte/menuContext.jsx";
+
 import apiFetch from "../../utils/apiFetch.jsx";
 import { UserContext } from "../../contexte/userContext.jsx";
 
 export default function AdminCamions() {
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const { setPage } = useContext(MenuContext);
   const { user } = useContext(UserContext);
 
-  const date = new Date();
-  const an = String(date.getFullYear());
-  const mo = String(date.getMonth() + 1).padStart(2, "0");
-  const jo = String(date.getDate()).padStart(2, "0");
-  const inputDate = `${an}-${mo}-${jo}`;
-
-  const openForm = pathname === "/administration/camions/creation";
+  const openForm =
+    pathname === "/administration/camions/creation";
 
   const [formCamion, setFormCamion] = useState({
     immatriculation: "",
