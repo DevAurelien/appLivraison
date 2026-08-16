@@ -6,6 +6,7 @@ import routeDeliveries from "./routes/route.deliveries.js"
 import routeUsers from "./routes/route.users.js"
 import routeSalaries from "./routes/route.salaries.js"
 import routeAgences from "./routes/route.agences.js"
+import routeSecteurs from "./routes/route.secteurs.js"
 import dotenv from "dotenv";
 import routerGestion from "./routes/route.gestion.js"
 
@@ -27,6 +28,7 @@ app.use("/", routeUsers);
 app.use("/", routeSalaries);
 app.use("/", routeAgences);
 app.use("/", routerGestion);
+app.use("/", routeSecteurs)
 
 
 if (process.env.NODE_ENV !== "production") {

@@ -18,12 +18,15 @@ export const creeAgence = async (
 VALUES ($1, $2, $3, NOW(), $4)
 RETURNING *;
         `,
-    [
-      nom,
-      nomComplet,
-      heure_embauche,
-      heure_embauche_modifiee_par,
-    ],
+    [nom, nomComplet, heure_embauche, heure_embauche_modifiee_par],
   );
   return res[0];
+};
+
+export const getListeAgences = async () => {
+  const res = await sql.query(`
+    SELECT nom, id
+    FROM agences
+    `);
+  return res || [];
 };

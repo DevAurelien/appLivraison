@@ -34,6 +34,13 @@ export default function AdminCamions() {
   const openForm =
     pathname === "/administration/camions/creation";
 
+  const date = new Date();
+  const an = String(date.getFullYear());
+  const mo = String(date.getMonth() + 1).padStart(2, "0");
+  const jo = String(date.getDate()).padStart(2, "0");
+
+  const inputDate = `${an}-${mo}-${jo}`;
+
   const [formCamion, setFormCamion] = useState({
     immatriculation: "",
     statut: "Disponible",
