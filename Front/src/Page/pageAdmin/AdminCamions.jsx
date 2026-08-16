@@ -1,4 +1,5 @@
 import React, { useContext, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import CamionIcone from "../../components/componentsIcone/CamionIcone.jsx";
 import PlaqueImmatriculation from "../../components/componentsIcone/ImmatPlaque.jsx";
@@ -26,6 +27,8 @@ import apiFetch from "../../utils/apiFetch.jsx";
 import { UserContext } from "../../contexte/userContext.jsx";
 
 export default function AdminCamions() {
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
   const [openForm, setOpenForm] = useState(false);
   const { setPage } = useContext(MenuContext);
   const { user } = useContext(UserContext);
@@ -35,6 +38,8 @@ export default function AdminCamions() {
   const mo = String(date.getMonth() + 1).padStart(2, "0");
   const jo = String(date.getDate()).padStart(2, "0");
   const inputDate = `${an}-${mo}-${jo}`;
+
+  const openForm = pathname === "/administration/camions/creation";
 
   const [formCamion, setFormCamion] = useState({
     immatriculation: "",
@@ -73,14 +78,14 @@ export default function AdminCamions() {
   const années = [2023, 2024, 2025, 2026, 2027, 2028, 2029];
 
   const salaries = [{ driver: "Theo" }, { rippeur: "Gaetan" }];
- const correspondances = {
-  Pret: "DISPONIBLE",
-  Disponible: "DISPONIBLE",
-  "En tournée": "EN_TOURNEE",
-  "En entretien": "EN_ENTRETIEN",
-  Immobilisé: "IMMOBILISE",
-  "Hors service": "HORS_SERVICE",
-};
+  const correspondances = {
+    Pret: "DISPONIBLE",
+    Disponible: "DISPONIBLE",
+    "En tournée": "EN_TOURNEE",
+    "En entretien": "EN_ENTRETIEN",
+    Immobilisé: "IMMOBILISE",
+    "Hors service": "HORS_SERVICE",
+  };
 
   const handleImmat = (e) => {
     const raw = e.target.value.toUpperCase().replace(/-/g, "");
@@ -107,32 +112,31 @@ export default function AdminCamions() {
     }));
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  if (formCamion.immatriculation.length < 9) return;
-  if (Number(formCamion.km) <= 0) return;
+    if (formCamion.immatriculation.length < 9) return;
+    if (Number(formCamion.km) <= 0) return;
 
-  const statutBDD = correspondances[formCamion.statut];
+    const statutBDD = correspondances[formCamion.statut];
 
-  if (!statutBDD) {
-    console.error("Statut inconnu :", formCamion.statut);
-    return;
-  }
+    if (!statutBDD) {
+      console.error("Statut inconnu :", formCamion.statut);
+      return;
+    }
 
-  const res = await apiFetch("/creaCamion", "POST", {
-    body: JSON.stringify({
-      ...formCamion,
-      statut: statutBDD,
-      energie: formCamion.energie.toUpperCase(),
-    }),
-  });
+    const res = await apiFetch("/creaCamion", "POST", {
+      body: JSON.stringify({
+        ...formCamion,
+        statut: statutBDD,
+        energie: formCamion.energie.toUpperCase(),
+      }),
+    });
 
-  if (!res.ok) return;
+    if (!res.ok) return;
 
-  const data = await res.json();
-  console.log(data);
-};
+    const data = await res.json();
+  };
 
   return (
     <div className="w-full h-full flex flex-col gap-4 items-center p-4 overflow-y-auto overflow-x-hidden pb-50">
@@ -191,7 +195,7 @@ const handleSubmit = async (e) => {
         {!openForm && user?.permissions?.includes("CAMIONS_CREER") && (
           <button
             type="button"
-            onClick={() => setOpenForm(true)}
+            onClick={() => navigate("/administration/camions/creation")}
             className="
               z-5
               flex
@@ -527,7 +531,7 @@ const handleSubmit = async (e) => {
 
             <button
               type="button"
-              onClick={() => setPage("Administration")}
+              onClick={() => navigate("/administration/camions")}
               className="flex justify-center items-center w-2/5 h-10 card rounded-xl cursor-pointer"
             >
               Annuler
