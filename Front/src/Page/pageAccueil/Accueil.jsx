@@ -1,77 +1,76 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import { UserContext } from "../../contexte/userContext.jsx";
 import { MenuContext } from "../../contexte/menuContext.jsx";
+import { LivraisonsContext } from "../../contexte/livraisonsContext.jsx";
 import apiFetch from "../../utils/apiFetch.jsx";
-import CardMessage from "../../components/componentsCard/CardMessage.jsx";
+import CardDiffusionAccueil from "./CardDiffusionAccueil.jsx";
 import CardLivraisonsDash from "../../components/componentsCard/CardLivraisonsDash.jsx";
 import CardPointage from "../../components/componentsCard/CardPointage.jsx";
+import Pulse from "../../components/Loading.jsx";
+
+const adresseLivraison = (livraison) => livraison
+  ? [livraison.adresse?.rue, livraison.adresse?.codePostal, livraison.adresse?.ville].filter(Boolean).join(" ")
+  : "Aucune étape";
 
 export default function Accueil() {
   const { user } = useContext(UserContext);
-  const { accessToken } = user;
   const { setPage } = useContext(MenuContext);
-  const [livraison, setLivraison] = useState([]);
-  const adresse = import.meta.env.VITE_BACKEND_URL;
+  const {
+    livraisons, setLivraisons, livraisonsLoading, setLivraisonsLoading,
+    livraisonsError, setLivraisonsError, setLivraisonsChargees,
+    utilisateurChargeId, setUtilisateurChargeId,
+  } = useContext(LivraisonsContext);
 
-  const handleLivraison = async (accessToken) => {
-    apifetch(`${adresse}/deliveries`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.deco) setPage("connection");
-        setLivraison(data);
-      });
-  };
+  useEffect(() => {
+    if (!user?.id || (utilisateurChargeId === user.id && livraisons.length > 0)) return;
+    let actif = true;
+    setLivraisonsLoading(true);
+    setLivraisonsError("");
+    apiFetch("/livraisonsJour")
+      .then(async (response) => {
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || "Livraisons indisponibles");
+        if (actif) {
+          setLivraisons(Array.isArray(data) ? data : []);
+          setLivraisonsChargees(true);
+          setUtilisateurChargeId(user.id);
+        }
+      })
+      .catch((error) => actif && setLivraisonsError(error.message))
+      .finally(() => actif && setLivraisonsLoading(false));
+    return () => { actif = false; };
+  }, [user?.id, utilisateurChargeId, livraisons.length, setLivraisons, setLivraisonsChargees, setLivraisonsError, setLivraisonsLoading, setUtilisateurChargeId]);
 
+  const compteExterne = ["CLIENT", "MAGASIN"].includes(user?.role_code);
+  const terminees = livraisons.filter((livraison) => livraison.statut === "LIVREE");
+  const restantes = livraisons.filter((livraison) => !["LIVREE", "ECHEC"].includes(livraison.statut));
+  const prochaine = restantes[0];
+  const derniere = restantes.at(-1);
+  const nombreProduits = livraisons.reduce((total, livraison) => total + (livraison.produits?.length || 0), 0);
+  const statutTournee = livraisons.length === 0 ? "Aucune tournée" : terminees.length === livraisons.length ? "Terminée" : terminees.length > 0 ? "En cours" : "À démarrer";
   return (
-    <div className="relative w-full h-full mb-15 overflow-y-auto overflow-x-hidden">
-      <div className="fd relative bg-(--bg-main) w-full h-full flex justify-center text-white">
-        <div className="mx-4 w-full h-full gap-4">
-          <div className="flex flex-col w-full gap-2 pt-4">
-            {user.role != "Client" ? (
-              <CardMessage
-                className=""
-                titre={"Mot du Directeur"}
-                signature={"- Jean-Louis"}
-              >
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Optio
-                tempore ratione expedita maiores, vero dicta reprehenderit
-                inventore sequi animi nisi debitis porro
-              </CardMessage>
-            ) : (
-              <CardMessage
-                className=""
-                titre={"Mot du Directeur"}
-                signature={"- Jean-Louis"}
-              >
-                Nous informons notre aimable clientèle que votre livraison
-                pourrait être retardée en raison des fortes chaleurs
-              </CardMessage>
-            )}
-            {user.role != "Client" ? (
-              <>
-                <CardLivraisonsDash
-                  className=""
-                  titre={`Tournée du jour`}
-                  depart={
-                    livraison[0]
-                      ? `${livraison[0].adresse.rue} ${livraison[0].adresse.codePostal} ${livraison[0].adresse.ville}`
-                      : ""
-                  }
-                  arrivee={
-                    livraison[1]
-                      ? `${livraison[1].adresse.rue} ${livraison[1].adresse.codePostal} ${livraison[1].adresse.ville}`
-                      : ""
-                  }
-                ></CardLivraisonsDash>
-                <CardPointage></CardPointage>
-              </>
-            ) : (
-              <p className="flex justify-center items-center card">
-                Votre livraison
-              </p>
-            )}
-           
-          </div>
+    <div className="relative h-full w-full overflow-x-hidden overflow-y-auto pb-40">
+      <div className="fd relative min-h-full w-full bg-(--bg-main) text-white">
+        <div className="mx-4 flex flex-col gap-2 pt-4">
+          <CardDiffusionAccueil />
+
+          {livraisonsLoading && <Pulse className="mx-auto py-8" />}
+          {!livraisonsLoading && livraisonsError && <p className="rounded-xl border border-red-400/30 p-3 text-sm text-red-300">{livraisonsError}</p>}
+
+          {!livraisonsLoading && !livraisonsError && !compteExterne && (
+            <CardLivraisonsDash
+              titre="Tournée du jour"
+              depart={adresseLivraison(prochaine)}
+              arrivee={adresseLivraison(derniere)}
+              produits={`${nombreProduits} article${nombreProduits !== 1 ? "s" : ""}`}
+              totalLivraisons={livraisons.length}
+              livraisonsFaite={terminees.length}
+              statut={statutTournee}
+              onClick={() => setPage("Livraisons")}
+            />
+          )}
+
+          {!compteExterne && <CardPointage />}
         </div>
       </div>
     </div>

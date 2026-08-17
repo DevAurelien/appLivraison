@@ -11,6 +11,7 @@ import dotenv from "dotenv";
 import routerGestion from "./routes/route.gestion.js"
 import routeAdministration from "./routes/route.administration.js"
 import routeMessages from "./routes/route.messages.js"
+import routeMessagesDiffusion from "./routes/route.messagesDiffusion.js"
 import { interdireRoles, verifierAuthentification } from "./middlewares/middlewares.auth.js"
 
 dotenv.config({
@@ -35,6 +36,7 @@ app.use("/", routerGestion);
 app.use("/", routeSecteurs)
 app.use("/", routeAdministration)
 app.use("/", routeMessages)
+app.use("/", routeMessagesDiffusion)
 
 
 if (process.env.NODE_ENV !== "production") {

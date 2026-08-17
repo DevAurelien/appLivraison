@@ -102,6 +102,7 @@ export default function CardPointage() {
   };
 
   const prochainPointage = valeurPointage.find((item) => !item.lien);
+  const etapesPointees = valeurPointage.filter((item) => item.lien).length;
   const Icone = prochainPointage?.icone;
 
   return (
@@ -127,8 +128,8 @@ export default function CardPointage() {
 
           <LinearBarProgress
             className="w-full pr-4 py-2"
-            progress={2}
-            max={8}
+            progress={etapesPointees}
+            max={valeurPointage.length}
           ></LinearBarProgress>
 
           {valeurPointage.map((item, index) => {
@@ -141,7 +142,7 @@ export default function CardPointage() {
                   <>
                     <span>
                       {item.moment}{" "}
-                      {new Date(item.lien).toLocaleTimeString("fr-FR")}
+                      {new Date(item.lien).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}
                     </span>
                   </>
                 )}

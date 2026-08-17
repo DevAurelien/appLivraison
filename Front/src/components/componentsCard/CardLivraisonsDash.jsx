@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import Jauge from "../componentsIcone/Jauge.jsx";
 import { ArrivedLocation, Location } from "../componentsIcone/IconeStartEnd.jsx";
 import BoxLivraison from "../componentsIcone/BoxLivraison.jsx";
@@ -10,10 +9,11 @@ export default function CardLivraisonsDash({
   depart = "",
   arrivee = "",
   produits = "",
+  totalLivraisons = 0,
+  livraisonsFaite = 0,
+  statut = "À démarrer",
+  onClick = () => {},
 }) {
-  const [totalLivraisons, setTotalLivraisons] = useState(30);
-  const livraisonsFaite = 13;
-
   return (
     <div
       className={`${className} flex card w-full opacity-[0.8] rounded-xl text-white p-2 gap-2 select-none`}
@@ -29,7 +29,7 @@ export default function CardLivraisonsDash({
               <h1 className="text-[0.8rem] w-full flex justify-between">
                 {titre}
                 <span className="rounded-xl px-2 bg-green-700/20 text-green-400 self-start">
-                  En cours
+                  {statut}
                 </span>
               </h1>
             </div>
@@ -45,7 +45,7 @@ export default function CardLivraisonsDash({
                   <Location className="w-full h-full" />
                 </div>
                 <div className="flex flex-col w-full">
-                  <h1 className="flex items-start">Depart</h1>
+                  <h1 className="flex items-start">Prochaine étape</h1>
                   <p className=" break-words whitespace-normal text-[0.6rem]">
                     {depart}
                   </p>
@@ -57,7 +57,7 @@ export default function CardLivraisonsDash({
                   <ArrivedLocation className="w-full h-full" />
                 </div>
                 <div className="flex flex-col w-full">
-                  <h1 className="font-bold flex items-start">Arrivée</h1>
+                  <h1 className="font-bold flex items-start">Dernière étape</h1>
                   <p className=" break-words whitespace-normal text-[0.6rem]">
                     {arrivee}
                   </p>
@@ -99,7 +99,7 @@ export default function CardLivraisonsDash({
                   </div>
                 </div>
 
-                <button className="cursor-pointer hover:bg-yellow-500 hover:text-black hover:scale-[1.1] duration-200 transition-transform ease-in-out flex text-yellow-200 justify-center items-center outline outline-blue-200/30 rounded-md text-[0.7rem] p-1 font-light text-nowrap">
+                <button onClick={onClick} className="cursor-pointer hover:bg-yellow-500 hover:text-black hover:scale-[1.03] duration-200 transition-transform ease-in-out flex text-yellow-200 justify-center items-center outline outline-blue-200/30 rounded-md text-[0.7rem] p-1 font-light text-nowrap">
                   Voir ma tournée
                 </button>
               </div>
