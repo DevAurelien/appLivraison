@@ -35,6 +35,7 @@ export const creerCamion = async (formulaire) => {
     marque,
     modele,
     statut,
+    agence_id,
   } = formulaire;
 
   const res = await sql.query(
@@ -55,7 +56,7 @@ export const creerCamion = async (formulaire) => {
       immatriculation,
       marque,
       modele,
-      14,
+      Number(agence_id),
       Number(km),
       energie.toUpperCase(),
       statut,
@@ -63,4 +64,47 @@ export const creerCamion = async (formulaire) => {
   );
 
   return res[0];
+};
+
+export const recupererCamions = async () => {
+  const res = await sql.query(`
+    SELECT camions.id, camions.immatriculation, camions.marque,
+      camions.modele, camions.agence_id, camions.kilometrage,
+      camions.energie, camions.statut, agences.nom AS agence_nom
+    FROM camions
+    LEFT JOIN agences ON agences.id = camions.agence_id
+    ORDER BY camions.id;
+  `);
+  return res || [];
+};
+
+export const modifierCamion = async (id, formulaire) => {
+  const { energie, immatriculation, km, marque, modele, statut, agence_id } = formulaire;
+  const res = await sql.query(
+    `UPDATE camions SET immatriculation = $2, marque = $3, modele = $4,
+      agence_id = $5, kilometrage = $6, energie = $7, statut = $8
+      WHERE id = $1 RETURNING *;`,
+    [Number(id), immatriculation, marque, modele, Number(agence_id),
+      Number(km), energie.toUpperCase(), statut],
+  );
+  return res[0] || null;
+};
+
+export const supprimerCamion = async (id) => {
+  const res = await sql.query(
+    `DELETE FROM camions WHERE id = $1 RETURNING *;`,
+    [Number(id)],
+  );
+  return res[0] || null;
+};
+
+export const affecterCamionAgence = async (camionId, agenceId) => {
+  const res = await sql.query(
+    `WITH retrait_equipage AS (
+      DELETE FROM camions_equipages WHERE camion_id = $1
+    )
+    UPDATE camions SET agence_id = $2 WHERE id = $1 RETURNING *;`,
+    [camionId, agenceId],
+  );
+  return res[0] || null;
 };

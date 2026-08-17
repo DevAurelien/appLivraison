@@ -40,6 +40,8 @@ export default function Administration() {
       permissionsRequises: [
         "UTILISATEURS_LIRE",
         "UTILISATEURS_MODIFIER",
+        "AGENCES_AFFECTER_SALARIE",
+        "CAMIONS_AFFECTER_EQUIPAGE",
       ],
 
       onClick: () => setPage("AdminLivreurs"),

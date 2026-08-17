@@ -66,6 +66,9 @@ export default function App() {
 
 
   const connecte = Boolean(user?.id);
+  const compteExterne = ["CLIENT", "MAGASIN"].includes(user?.role_code);
+  const accesAdministration = connecte && !compteExterne;
+  const redirectionAdministration = connecte ? "/accueil" : "/connection";
 
 
   /* Header Zesteo pas affiché */
@@ -244,11 +247,11 @@ export default function App() {
         <Route
           path="/administration"
           element={
-            connecte
+            accesAdministration
               ? <Administration />
               : (
                 <Navigate
-                  to="/connection"
+                  to={redirectionAdministration}
                   replace
                 />
               )
@@ -259,11 +262,11 @@ export default function App() {
         <Route
           path="/administration/livreurs"
           element={
-            connecte
+            accesAdministration
               ? <AdminLivreurs />
               : (
                 <Navigate
-                  to="/connection"
+                  to={redirectionAdministration}
                   replace
                 />
               )
@@ -274,11 +277,11 @@ export default function App() {
         <Route
           path="/administration/agences"
           element={
-            connecte
+            accesAdministration
               ? <AdminAgences />
               : (
                 <Navigate
-                  to="/connection"
+                  to={redirectionAdministration}
                   replace
                 />
               )
@@ -289,11 +292,11 @@ export default function App() {
         <Route
           path="/administration/camions"
           element={
-            connecte
+            accesAdministration
               ? <AdminCamions />
               : (
                 <Navigate
-                  to="/connection"
+                  to={redirectionAdministration}
                   replace
                 />
               )
@@ -304,11 +307,11 @@ export default function App() {
         <Route
           path="/administration/secteurs"
           element={
-            connecte
+            accesAdministration
               ? <AdminSecteurs />
               : (
                 <Navigate
-                  to="/connection"
+                  to={redirectionAdministration}
                   replace
                 />
               )
@@ -319,11 +322,11 @@ export default function App() {
         <Route
           path="/administration/plannings"
           element={
-            connecte
+            accesAdministration
               ? <AdminPlannings />
               : (
                 <Navigate
-                  to="/connection"
+                  to={redirectionAdministration}
                   replace
                 />
               )
@@ -334,11 +337,11 @@ export default function App() {
         <Route
           path="/administration/incidents"
           element={
-            connecte
+            accesAdministration
               ? <AdminIncidents />
               : (
                 <Navigate
-                  to="/connection"
+                  to={redirectionAdministration}
                   replace
                 />
               )
@@ -349,11 +352,11 @@ export default function App() {
         <Route
           path="/administration/statistiques"
           element={
-            connecte
+            accesAdministration
               ? <AdminStatistiques />
               : (
                 <Navigate
-                  to="/connection"
+                  to={redirectionAdministration}
                   replace
                 />
               )
@@ -364,11 +367,11 @@ export default function App() {
         <Route
           path="/administration/gestions"
           element={
-            connecte
+            accesAdministration
               ? <AdminGestions />
               : (
                 <Navigate
-                  to="/connection"
+                  to={redirectionAdministration}
                   replace
                 />
               )

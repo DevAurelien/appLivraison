@@ -1,10 +1,8 @@
-import React, { useContext, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useCallback, useContext, useEffect, useState } from "react";
 
 import CamionIcone from "../../components/componentsIcone/CamionIcone.jsx";
 import PlaqueImmatriculation from "../../components/componentsIcone/ImmatPlaque.jsx";
 import DriverIcone from "../../components/componentsIcone/DriverIcone.jsx";
-import RippeurIcone from "../../components/componentsIcone/RippeurIcone.jsx";
 import PlusIcone from "../../components/componentsIcone/PlusIcone.jsx";
 
 import CocheIcone from "../../components/componentAdminCamion/CocheIcone.jsx";
@@ -15,7 +13,6 @@ import CalendrierIcone from "../../components/componentAdminCamion/CalendrierIco
 import CarburantIcone from "../../components/componentAdminCamion/CarburantIcone.jsx";
 import PoidsIcone from "../../components/componentAdminCamion/PoidsIcone.jsx";
 
-import StatutCard from "../../components/componentsCard/StatutCard.jsx";
 import SelectCustom from "../../components/componentsCard/SelectCustom.jsx";
 
 import { Location } from "../../components/componentsIcone/IconeStartEnd.jsx";
@@ -25,14 +22,18 @@ import camion from "/camion.png";
 
 import apiFetch from "../../utils/apiFetch.jsx";
 import { UserContext } from "../../contexte/userContext.jsx";
+import { AgencesContext } from "../../contexte/agencesContext.jsx";
+import Pulse from "../../components/Loading.jsx";
 
 export default function AdminCamions() {
-  const navigate = useNavigate();
-  const { pathname } = useLocation();
   const { user } = useContext(UserContext);
-
-  const openForm =
-    pathname === "/administration/camions/creation";
+  const { listeAgences } = useContext(AgencesContext);
+  const [openForm, setOpenForm] = useState(false);
+  const [camionEnModificationId, setCamionEnModificationId] = useState(null);
+  const [camions, setCamions] = useState([]);
+  const [chargementCamions, setChargementCamions] = useState(false);
+  const [menuCamionOuvertId, setMenuCamionOuvertId] = useState(null);
+  const [agenceEditionCamionId, setAgenceEditionCamionId] = useState(null);
 
   const date = new Date();
   const an = String(date.getFullYear());
@@ -52,7 +53,30 @@ export default function AdminCamions() {
     annee: 2023,
     poids: 3500,
     dateReleve: inputDate,
+    agence_id: "",
   });
+
+  const recupererCamions = useCallback(async () => {
+    setChargementCamions(true);
+    try {
+      const res = await apiFetch("/administration/camions/recuperation");
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Récupération impossible");
+      setCamions(Array.isArray(data.donnees) ? data.donnees : []);
+    } catch (e) {
+      console.error("ERREUR RÉCUPÉRATION CAMIONS :", e);
+      setCamions([]);
+    } finally {
+      setChargementCamions(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!user?.permissions?.includes("CAMIONS_LIRE")) return;
+
+    const chargement = window.setTimeout(() => recupererCamions(), 0);
+    return () => window.clearTimeout(chargement);
+  }, [user?.permissions, recupererCamions]);
 
   const vehicules = {
     Renault: ["Master", "Trafic", "Kangoo"],
@@ -77,13 +101,14 @@ export default function AdminCamions() {
 
   const années = [2023, 2024, 2025, 2026, 2027, 2028, 2029];
 
-  const salaries = [{ driver: "Theo" }, { rippeur: "Gaetan" }];
   const correspondances = {
     Pret: "DISPONIBLE",
     Disponible: "DISPONIBLE",
+    "En tournee": "EN_TOURNEE",
     "En tournée": "EN_TOURNEE",
     "En entretien": "EN_ENTRETIEN",
     Immobilisé: "IMMOBILISE",
+    Immobilise: "IMMOBILISE",
     "Hors service": "HORS_SERVICE",
   };
 
@@ -116,7 +141,7 @@ export default function AdminCamions() {
     e.preventDefault();
 
     if (formCamion.immatriculation.length < 9) return;
-    if (Number(formCamion.km) <= 0) return;
+    if (Number(formCamion.km) < 0 || !formCamion.agence_id) return;
 
     const statutBDD = correspondances[formCamion.statut];
 
@@ -125,7 +150,11 @@ export default function AdminCamions() {
       return;
     }
 
-    const res = await apiFetch("/creaCamion", "POST", {
+    const endpoint = camionEnModificationId
+      ? `/administration/camions/modification/${camionEnModificationId}`
+      : "/creaCamion";
+    const method = camionEnModificationId ? "PATCH" : "POST";
+    const res = await apiFetch(endpoint, method, {
       body: JSON.stringify({
         ...formCamion,
         statut: statutBDD,
@@ -133,58 +162,180 @@ export default function AdminCamions() {
       }),
     });
 
-    if (!res.ok) return;
+    if (!res.ok) {
+      const erreur = await res.json();
+      console.error("ERREUR ENREGISTREMENT CAMION :", erreur);
+      return;
+    }
 
-    const data = await res.json();
+    await res.json();
+    await recupererCamions();
+    setOpenForm(false);
+    setCamionEnModificationId(null);
+  };
+
+  const ouvrirCreation = () => {
+    setCamionEnModificationId(null);
+    setFormCamion((ancien) => ({
+      ...ancien,
+      immatriculation: "",
+      km: 0,
+      agence_id: "",
+      dateReleve: inputDate,
+    }));
+    setOpenForm(true);
+  };
+
+  const ouvrirModification = (camionAModifier) => {
+    const statutAffiche = {
+      DISPONIBLE: "Disponible",
+      EN_TOURNEE: "En tournee",
+      EN_ENTRETIEN: "En entretien",
+      IMMOBILISE: "Immobilise",
+      HORS_SERVICE: "Hors service",
+    }[camionAModifier.statut] || "Disponible";
+
+    setCamionEnModificationId(camionAModifier.id);
+    setFormCamion((ancien) => ({
+      ...ancien,
+      immatriculation: camionAModifier.immatriculation,
+      statut: statutAffiche,
+      energie: `${camionAModifier.energie.charAt(0)}${camionAModifier.energie.slice(1).toLowerCase()}`,
+      agence: camionAModifier.agence_nom || "",
+      agence_id: camionAModifier.agence_id,
+      km: camionAModifier.kilometrage,
+      marque: camionAModifier.marque,
+      modele: camionAModifier.modele,
+    }));
+    setOpenForm(true);
+  };
+
+  const supprimerUnCamion = async (camionASupprimer) => {
+    if (!window.confirm(`Supprimer le camion ${camionASupprimer.immatriculation} ?`)) return;
+    try {
+      const res = await apiFetch(
+        `/administration/camions/suppression/${camionASupprimer.id}`,
+        "DELETE",
+      );
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Suppression impossible");
+      setCamions((actuels) => actuels.filter((camionActuel) => camionActuel.id !== camionASupprimer.id));
+    } catch (e) {
+      console.error("ERREUR SUPPRESSION CAMION :", e);
+    }
+  };
+
+  const changerAgenceCamion = async (camionId, agenceId) => {
+    try {
+      const res = await apiFetch(`/administration/camions/${camionId}/agence`, "PUT", {
+        body: JSON.stringify({ agence_id: Number(agenceId) }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Affectation impossible");
+      setAgenceEditionCamionId(null);
+      await recupererCamions();
+    } catch (e) {
+      console.error("ERREUR AFFECTATION CAMION :", e);
+    }
   };
 
   return (
     <div className="w-full h-full flex flex-col gap-4 items-center p-4 overflow-y-auto overflow-x-hidden pb-50">
       {!openForm && (
-        <div className="flex flex-col items-center gap-2">
+        <div className="flex w-full flex-col items-center gap-3">
           <h1 className="text-xl">Mes camions</h1>
+          {chargementCamions ? (
+            <Pulse className="py-10" />
+          ) : camions.length === 0 ? (
+            <p className="py-8 text-sm text-white/60">Aucun camion enregistré.</p>
+          ) : (
+            camions.map((camionActuel) => (
+              <div key={camionActuel.id} className="card relative flex min-h-36 w-full rounded-2xl p-2">
+                {(user?.permissions?.includes("CAMIONS_MODIFIER") ||
+                  user?.permissions?.includes("CAMIONS_SUPPRIMER")) && (
+                  <div className="absolute right-2 top-2 z-20">
+                    <button
+                      type="button"
+                      aria-label={`Actions pour ${camionActuel.immatriculation}`}
+                      onClick={() =>
+                        setMenuCamionOuvertId((idActuel) =>
+                          idActuel === camionActuel.id ? null : camionActuel.id,
+                        )
+                      }
+                      className="flex h-8 w-8 items-center justify-center rounded-full text-xl leading-none hover:bg-white/10"
+                    >
+                      ⋮
+                    </button>
 
-          <div className="w-full flex size-fit rounded-2xl card">
-            <div className="w-2/5 relative pt-4">
-              <div className="card2 absolute m-2 px-1 rounded-md top-0 left-0">
-                <h1 className="text-(--yellow-zesteo) text-[0.6rem] border-(--yellow-zesteo-border)">
-                  Equipe 1
-                </h1>
+                    {menuCamionOuvertId === camionActuel.id && (
+                      <div className="absolute right-0 top-9 z-30 min-w-32 overflow-hidden rounded-xl border border-white/15 bg-[#081222] py-1 text-xs shadow-xl">
+                        {user?.permissions?.includes("CAMIONS_MODIFIER") && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setMenuCamionOuvertId(null);
+                              ouvrirModification(camionActuel);
+                            }}
+                            className="w-full px-3 py-2 text-left hover:bg-white/10"
+                          >
+                            Modifier
+                          </button>
+                        )}
+                        {user?.permissions?.includes("CAMIONS_SUPPRIMER") && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setMenuCamionOuvertId(null);
+                              supprimerUnCamion(camionActuel);
+                            }}
+                            className="w-full px-3 py-2 text-left text-red-300 hover:bg-white/10"
+                          >
+                            Supprimer
+                          </button>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                <div className="flex w-1/3 shrink-0 items-center justify-center overflow-hidden">
+                  <img src={truck} alt="Camion" className="h-auto w-full object-contain scale-[1.6]" />
+                </div>
+                <div className="flex w-2/3 flex-col justify-center gap-2 px-3 py-2 pr-9">
+                  <div className="flex justify-end">
+                    <span className="rounded-full border border-white/10 bg-green-500/10 px-2 py-1 text-[0.6rem] text-green-300">
+                      {camionActuel.statut}
+                    </span>
+                  </div>
+                  <PlaqueImmatriculation
+                    className="h-12 w-full"
+                    immatriculation={camionActuel.immatriculation}
+                  />
+                  <p className="text-xs">{camionActuel.marque} {camionActuel.modele}</p>
+                  {agenceEditionCamionId === camionActuel.id ? (
+                    <select
+                      autoFocus
+                      defaultValue={camionActuel.agence_id}
+                      onChange={(e) => changerAgenceCamion(camionActuel.id, e.target.value)}
+                      onBlur={() => setAgenceEditionCamionId(null)}
+                      className="rounded-lg bg-[#081222] px-2 py-1 text-xs"
+                    >
+                      {listeAgences.map((agence) => <option key={agence.id} value={agence.id}>{agence.nom}</option>)}
+                    </select>
+                  ) : (
+                    <button
+                      type="button"
+                      disabled={!user?.permissions?.includes("CAMIONS_MODIFIER")}
+                      onClick={() => setAgenceEditionCamionId(camionActuel.id)}
+                      className="flex items-center gap-1 text-left text-xs text-white/60 disabled:cursor-default"
+                    >
+                      <Location className="size-4" /> {camionActuel.agence_nom || "Agence inconnue"}
+                    </button>
+                  )}
+                </div>
               </div>
-
-              <img src={truck} alt="Camion" className="scale-[1.5]" />
-            </div>
-
-            <div className="h-full flex flex-col w-3/5 px-4 p-2">
-              <StatutCard couleurFond="var(--success)" statut="Pret" />
-
-              <PlaqueImmatriculation
-                className="w-full h-4/5"
-                immatriculation="GK-822-PX"
-              />
-
-              <div className="flex gap-2 text-[0.8rem] py-1 border-b border-(--border-default)">
-                {salaries.map((sal, index) => (
-                  <p className="flex gap-2" key={index}>
-                    {sal.driver ? (
-                      <DriverIcone className="size-4 flex" />
-                    ) : null}
-                    {sal.driver}
-                    {sal.rippeur}{" "}
-                    {sal.rippeur ? (
-                      <RippeurIcone className="size-4 flex" />
-                    ) : null}
-                  </p>
-                ))}
-              </div>
-
-              <div className="flex pt-1 gap-2">
-                <Location className="size-4" />
-
-                <h1 className="text-[0.8rem]">Toulouse, 31</h1>
-              </div>
-            </div>
-          </div>
+            ))
+          )}
         </div>
       )}
 
@@ -195,7 +346,7 @@ export default function AdminCamions() {
         {!openForm && user?.permissions?.includes("CAMIONS_CREER") && (
           <button
             type="button"
-            onClick={() => navigate("/administration/camions/creation")}
+            onClick={ouvrirCreation}
             className="
               z-5
               flex
@@ -243,9 +394,9 @@ export default function AdminCamions() {
                 "
               >
                 <h1 className="font-bold leading-none drop-shadow-md">
-                  Créer
+                  {camionEnModificationId ? "Modifier" : "Créer"}
                   <br />
-                  <span className="text-yellow-300">un camion</span>
+                  <span className="text-yellow-300">le camion</span>
                 </h1>
               </div>
 
@@ -457,6 +608,28 @@ export default function AdminCamions() {
                   disabled={!formCamion.statut}
                   required
                 />
+                <label className="col-span-2 flex flex-col gap-1">
+                  <span className="text-white/60">Agence</span>
+                  <select
+                    required
+                    value={formCamion.agence_id}
+                    onChange={(e) => {
+                      const agenceId = Number(e.target.value);
+                      const agence = listeAgences.find((item) => item.id === agenceId);
+                      setFormCamion((ancienFormulaire) => ({
+                        ...ancienFormulaire,
+                        agence_id: agenceId,
+                        agence: agence?.nom || "",
+                      }));
+                    }}
+                    className="rounded-lg border border-white/15 bg-[#081222] px-2 py-2 outline-none"
+                  >
+                    <option value="">Choisir une agence</option>
+                    {listeAgences.map((agence) => (
+                      <option key={agence.id} value={agence.id}>{agence.nom}</option>
+                    ))}
+                  </select>
+                </label>
               </div>
             </div>
 
@@ -526,12 +699,16 @@ export default function AdminCamions() {
               type="submit"
               className="hover:scale-[1.02] flex justify-center items-center w-3/5 h-10 bg-(--yellow-zesteo) text-black rounded-xl gap-2 cursor-pointer"
             >
-              <DriverIcone className="size-4" /> Creer le camion
+              <DriverIcone className="size-4" />
+              {camionEnModificationId ? "Enregistrer les modifications" : "Créer le camion"}
             </button>
 
             <button
               type="button"
-              onClick={() => navigate("/administration/camions")}
+              onClick={() => {
+                setOpenForm(false);
+                setCamionEnModificationId(null);
+              }}
               className="flex justify-center items-center w-2/5 h-10 card rounded-xl cursor-pointer"
             >
               Annuler

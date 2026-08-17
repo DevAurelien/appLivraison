@@ -25,8 +25,37 @@ RETURNING *;
 
 export const getListeAgences = async () => {
   const res = await sql.query(`
-    SELECT nom, id
+    SELECT id, nom, nom_complet, heure_embauche,
+      heure_embauche_modifiee_at, heure_embauche_modifiee_par
     FROM agences
+    ORDER BY nom
     `);
   return res || [];
+};
+
+export const modifierAgence = async (
+  id,
+  nom,
+  nomComplet,
+  heureEmbauche,
+  utilisateurId,
+) => {
+  const res = await sql.query(
+    `UPDATE agences
+      SET nom = $2, nom_complet = $3, heure_embauche = $4,
+        heure_embauche_modifiee_at = NOW(),
+        heure_embauche_modifiee_par = $5
+      WHERE id = $1
+      RETURNING *;`,
+    [id, nom, nomComplet, heureEmbauche, utilisateurId],
+  );
+  return res[0] || null;
+};
+
+export const supprimerAgence = async (id) => {
+  const res = await sql.query(
+    `DELETE FROM agences WHERE id = $1 RETURNING *;`,
+    [id],
+  );
+  return res[0] || null;
 };

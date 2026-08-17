@@ -19,6 +19,8 @@ import {
 
 import { UserContext } from "./contexte/userContext.jsx";
 
+const AUCUNE_PERMISSION = [];
+
 export default function BarreNavigation() {
   const { user } = useContext(UserContext);
 
@@ -30,13 +32,9 @@ export default function BarreNavigation() {
 
   const [positionCercle, setPositionCercle] = useState(0);
 
-  const permissions = useMemo(
-    () =>
-      Array.isArray(user?.permissions)
-        ? user.permissions
-        : [],
-    [user?.permissions],
-  );
+  const permissions = Array.isArray(user?.permissions) ? user.permissions : AUCUNE_PERMISSION;
+  const userId = user?.id;
+  const roleCode = user?.role_code;
 
   const listeIcones = useMemo(
     () => [
@@ -175,11 +173,14 @@ export default function BarreNavigation() {
   );
 
   const iconesAutorisees = useMemo(() => {
-    if (!user?.id) {
+    if (!userId) {
       return [];
     }
 
     return listeIcones.filter((item) => {
+      if (item.route === "/administration" && ["CLIENT", "MAGASIN"].includes(roleCode)) {
+        return false;
+      }
       if (item.authentificationSeulement) {
         return true;
       }
@@ -196,7 +197,8 @@ export default function BarreNavigation() {
   }, [
     listeIcones,
     permissions,
-    user?.id,
+    userId,
+    roleCode,
   ]);
 
   const routeEstActive = (route) => {

@@ -343,6 +343,7 @@ export const recupererUtilisateurPourAutorisation = async (id) => {
         users.avatar_img_url,
 
         roles.libelle AS role_libelle,
+        roles.code AS role_code,
 
         agences.id AS agence_id,
         agences.nom AS agence_nom,
@@ -386,6 +387,7 @@ export const recupererUtilisateurPourAutorisation = async (id) => {
 
     role_id: user.role_id,
     role: user.role_libelle,
+    role_code: user.role_code,
 
     agence_id: user.agence_id,
     agence_nom: user.agence_nom,

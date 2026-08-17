@@ -1,6 +1,5 @@
 import { useState, useEffect, useContext } from "react";
 import Radar from "../componentsIcone/Radar.jsx";
-import { UserContext } from "../../contexte/userContext.jsx";
 import apiFetch from "../../utils/apiFetch.jsx";
 import Pulse from "../Loading.jsx";
 import { PointageContext } from "../../contexte/pointageContext.jsx";
@@ -13,10 +12,20 @@ import LinearBarProgress from "../componentsIcone/LineaireBarProgress.jsx";
 export default function CardPointage() {
   const { pointage, setPointage } = useContext(PointageContext);
 
-  const [moment, setMoment] = useState("Je suis arrivé au travail à ");
   const [isLoading, setIsLoading] = useState(false);
+  const [maintenant, setMaintenant] = useState(Date.now());
 
-  const { user, setUser } = useContext(UserContext);
+  useEffect(() => {
+    if (!pointage.start_pause_pointed_at || pointage.end_pause_pointed_at) return;
+    const intervalle = window.setInterval(() => setMaintenant(Date.now()), 30000);
+    return () => window.clearInterval(intervalle);
+  }, [pointage.start_pause_pointed_at, pointage.end_pause_pointed_at]);
+
+  const pauseDepassee = Boolean(
+    pointage.start_pause_pointed_at &&
+    !pointage.end_pause_pointed_at &&
+    maintenant - new Date(pointage.start_pause_pointed_at).getTime() >= 45 * 60 * 1000
+  );
 
 
   const valeurPointage = [
@@ -59,7 +68,7 @@ export default function CardPointage() {
       .finally(() => {
         setIsLoading(false);
       });
-  }, []);
+  }, [setPointage]);
 
   const handlePointer = async () => {
     try {
@@ -103,6 +112,11 @@ export default function CardPointage() {
         </div>
 
         <div className="flex flex-col w-full">
+          {pauseDepassee && (
+            <div role="alert" className="mb-2 rounded-lg border border-orange-400/40 bg-orange-500/15 px-3 py-2 text-xs text-orange-200">
+              Ta pause dépasse 45 minutes. Pense à pointer ta fin de pause.
+            </div>
+          )}
           <h1 className={`select-none ${pointage.erreur && "text-red-500"}`}>
             {pointage.erreur ? pointage.erreur : "Pointer ma présence"}{" "}
           </h1>
@@ -118,8 +132,6 @@ export default function CardPointage() {
           ></LinearBarProgress>
 
           {valeurPointage.map((item, index) => {
-            const IconeItem = item.icone;
-
             return (
               <p
                 key={index}
