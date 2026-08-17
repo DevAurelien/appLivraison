@@ -7,6 +7,7 @@ import {
   controlOrganisationAgence,
   controlRechercheLivreurs,
   controlTousSalaries,
+  controlRolesFiltreSalaries,
 } from "../controllers/control.salaries.js";
 import { autoriserPermissions, autoriserUneDesPermissions, verifierAuthentification } from "../middlewares/middlewares.auth.js";
 import {autoriserRoles} from "../middlewares/middlewares.auto.js"
@@ -32,6 +33,12 @@ router.put(
   verifierAuthentification,
   autoriserPermissions("AGENCES_AFFECTER_SALARIE"),
   controlAffiliationLivreurAgence,
+);
+router.get(
+  "/administration/livreurs/roles",
+  verifierAuthentification,
+  autoriserUneDesPermissions("UTILISATEURS_LIRE", "AGENCES_AFFECTER_SALARIE", "POINTAGES_LIRE_AGENCE", "CAMIONS_AFFECTER_EQUIPAGE"),
+  controlRolesFiltreSalaries,
 );
 router.get(
   "/administration/livreurs/tous",

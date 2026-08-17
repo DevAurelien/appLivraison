@@ -2,9 +2,30 @@ import {
   listerRolesAdministrables,
   modifierRoleUtilisateur,
   rechercherUtilisateursAdministration,
+  recupererIndicateursAdministration,
+  recupererChiffreAffairesAgences,
 } from "../services/gestion.administration.js";
 
+export const controlChiffreAffairesAgences = async (req, res) => {
+  const periode = ["mois", "annee", "30j"].includes(req.query.periode) ? req.query.periode : "mois";
+  try {
+    return res.status(200).json({ donnees: await recupererChiffreAffairesAgences(periode) });
+  } catch (error) {
+    console.error("ERREUR STATISTIQUES CHIFFRE AFFAIRES :", error);
+    return res.status(500).json({ message: "Chargement du chiffre d’affaires impossible" });
+  }
+};
+
 const idValide = (id) => Number.isInteger(Number(id)) && Number(id) > 0;
+
+export const controlIndicateursAdministration = async (_req, res) => {
+  try {
+    return res.status(200).json({ donnees: await recupererIndicateursAdministration() });
+  } catch (error) {
+    console.error("ERREUR INDICATEURS ADMINISTRATION :", error);
+    return res.status(500).json({ message: "Chargement des indicateurs impossible" });
+  }
+};
 
 export const controlRechercheUtilisateursAdministration = async (req, res) => {
   const saisie = String(req.query.saisie || "").trim();

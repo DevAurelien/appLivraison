@@ -1,6 +1,7 @@
 import {
   useContext,
   useEffect,
+  useRef,
   useState,
 } from "react";
 
@@ -39,6 +40,10 @@ export default function Livraisons() {
   } = useContext(LivraisonsContext);
 
   const [livActif, setLivActif] = useState(0);
+  const [livFermeture, setLivFermeture] = useState(null);
+  const transitionRef = useRef(null);
+
+  useEffect(() => () => clearTimeout(transitionRef.current), []);
 
   useEffect(() => {
     const recupererLivraisons = async () => {
@@ -48,7 +53,8 @@ export default function Livraisons() {
 
       if (
         livraisonsChargees &&
-        utilisateurChargeId === user.id
+        utilisateurChargeId === user.id &&
+        livraisons.length > 0
       ) {
         return;
       }
@@ -112,6 +118,7 @@ export default function Livraisons() {
     user?.id,
     user?.role_id,
     livraisonsChargees,
+    livraisons.length,
     utilisateurChargeId,
     setLivraisons,
     setLivraisonsLoading,
@@ -121,11 +128,28 @@ export default function Livraisons() {
   ]);
 
   const handleActif = (index) => {
-    setLivActif(index);
+    if (livFermeture !== null) return;
+    if (livActif === null) {
+      setLivActif(index);
+      return;
+    }
+    setLivFermeture(livActif);
+    transitionRef.current = setTimeout(() => {
+      setLivActif(livActif === index ? null : index);
+      setLivFermeture(null);
+    }, 650);
+  };
+
+  const mettreAJourLivraison = (index, modification) => {
+    setLivraisons((liste) => liste.map((livraison, position) => {
+      if (position !== index) return livraison;
+      if (modification.articleId) return { ...livraison, produits: livraison.produits.map((produit) => produit.id === modification.articleId ? { ...produit, statut: modification.articleStatut } : produit) };
+      return { ...livraison, ...modification };
+    }));
   };
 
   return (
-    <div className="mb-25 flex h-full w-full flex-col items-center gap-2 overflow-x-hidden overflow-y-scroll px-4">
+    <div className="flex h-full w-full flex-col items-center gap-3 overflow-x-hidden overflow-y-scroll px-4 pb-44">
       {livraisonsLoading && (
         <Pulse className="pt-10" />
       )}
@@ -155,6 +179,8 @@ export default function Livraisons() {
             onClick={() =>
               handleActif(index)
             }
+            onMiseAJour={(modification) => mettreAJourLivraison(index, modification)}
+            fermeture={livFermeture === index}
             {...livraison}
           />
         ) : (

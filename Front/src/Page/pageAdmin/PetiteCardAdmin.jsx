@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import LinearBarProgress from "../../components/componentsIcone/LineaireBarProgress.jsx";
 
 export default function PetiteCardAdmin({
@@ -12,7 +11,6 @@ export default function PetiteCardAdmin({
   nbAbsents = 0,
 }) {
   const Icone = icone;
-  const [content, setContent] = useState("");
 
   const couleursParStatut = {
     bleu: "--primary",
@@ -30,11 +28,11 @@ export default function PetiteCardAdmin({
   };
   const couleurStatut = couleursParStatut[statut] ?? couleursParStatut.bleu;
 
-  useEffect(() => {
-   afficherBarre && setContent(<LinearBarProgress progress={nb} max={max} />);
-   afficherLivreur && setContent(String(nbAbsents)+" absent"+(nbAbsents < 2 ? "": "s"));
- 
-}, [afficherBarre, afficherLivreur, nbAbsents, nb, max]);
+  const content = afficherBarre
+    ? <LinearBarProgress progress={nb} max={max} />
+    : afficherLivreur
+      ? `${nbAbsents} absent${nbAbsents < 2 ? "" : "s"}`
+      : null;
 
   return (
     <div

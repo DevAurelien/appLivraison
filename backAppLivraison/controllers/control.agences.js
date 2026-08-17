@@ -4,8 +4,11 @@ import {
   modifierAgence,
   supprimerAgence,
 } from "../services/gestion.agences.js";
+import { affecterCamionTournee, recupererTourneesEtCamionsAgence } from "../services/gestion.tournees.js";
 
 const idValide = (id) => Number.isInteger(Number(id)) && Number(id) > 0;
+const agenceAutorisee = (req, agenceId) =>
+  req.user.role_code !== "CHEF_AGENCE" || Number(req.user.agence_id) === Number(agenceId);
 const donneesValides = ({ nom, nomComplet, heure_embauche }) =>
   typeof nom === "string" && nom.trim().length > 0 &&
   typeof nomComplet === "string" && nomComplet.trim().length > 0 &&
@@ -82,5 +85,36 @@ export const controlSuppressionAgence = async (req, res) => {
       });
     }
     return res.status(500).json({ error: "Erreur pendant la suppression de l'agence" });
+  }
+};
+
+export const controlOrganisationTourneesAgence = async (req, res) => {
+  const agenceId = Number(req.params.id);
+  if (!idValide(agenceId)) return res.status(400).json({ message: "Agence invalide" });
+  if (!agenceAutorisee(req, agenceId)) return res.status(403).json({ message: "Vous ne pouvez gérer que votre agence" });
+  try {
+    return res.status(200).json({ donnees: await recupererTourneesEtCamionsAgence(agenceId) });
+  } catch (error) {
+    console.error("ERREUR TOURNÉES AGENCE :", error);
+    return res.status(500).json({ message: "Chargement des tournées impossible" });
+  }
+};
+
+export const controlAffectationCamionTournee = async (req, res) => {
+  const agenceId = Number(req.params.id);
+  const tourneeId = Number(req.params.tourneeId);
+  const camionId = Number(req.body.camion_id);
+  if (![agenceId, tourneeId, camionId].every(idValide)) {
+    return res.status(400).json({ message: "Agence, tournée ou camion invalide" });
+  }
+  if (!agenceAutorisee(req, agenceId)) return res.status(403).json({ message: "Vous ne pouvez gérer que votre agence" });
+  try {
+    const tournee = await affecterCamionTournee(agenceId, tourneeId, camionId);
+    return tournee
+      ? res.status(200).json({ donnees: tournee })
+      : res.status(400).json({ message: "Le camion doit appartenir à l’agence et la tournée doit être modifiable" });
+  } catch (error) {
+    console.error("ERREUR AFFECTATION CAMION TOURNÉE :", error);
+    return res.status(500).json({ message: "Affectation du camion impossible" });
   }
 };

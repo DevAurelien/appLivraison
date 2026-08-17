@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import UserIcone from "../../components/componentsIcone/UserIcone.jsx";
 import ShopIcone from "../../components/componentsIcone/ShopIcone.jsx";
@@ -16,12 +16,26 @@ import PetiteCardAdmin from "./PetiteCardAdmin.jsx";
 
 import { UserContext } from "../../contexte/userContext.jsx";
 import { MenuContext } from "../../contexte/menuContext.jsx";
+import apiFetch from "../../utils/apiFetch.jsx";
 
 export default function Administration() {
   const { user } = useContext(UserContext);
   const { setPage } = useContext(MenuContext);
 
   const [inputSearch, setInputSearch] = useState("");
+  const [indicateurs, setIndicateurs] = useState(null);
+
+  useEffect(() => {
+    let actif = true;
+    apiFetch("/administration/tableau-de-bord")
+      .then(async (res) => ({ ok: res.ok, data: await res.json() }))
+      .then(({ ok, data }) => {
+        if (!ok) throw new Error(data.message || "Indicateurs indisponibles");
+        if (actif) setIndicateurs(data.donnees);
+      })
+      .catch((error) => console.error("Chargement du tableau de bord :", error));
+    return () => { actif = false; };
+  }, []);
 
   const permissionsUtilisateur = Array.isArray(user?.permissions)
     ? user.permissions
@@ -32,7 +46,7 @@ export default function Administration() {
       titre: "Mes Livreurs",
       description: "Gérer vos équipes",
       composant: UserIcone,
-      statut: "12 actifs",
+      statut: indicateurs ? `${indicateurs.salaries_actifs} actif${indicateurs.salaries_actifs > 1 ? "s" : ""}` : "Chargement…",
       couleur: "var(--couleurLivreurs)",
       couleurFond: "var(--couleurLivreursBg)",
       couleurBordure: "var(--couleurLivreursBorder)",
@@ -50,7 +64,7 @@ export default function Administration() {
       titre: "Mes Agences",
       description: "Sites et dépôts",
       composant: ShopIcone,
-      statut: "3 agences",
+      statut: indicateurs ? `${indicateurs.agences_actives} active${indicateurs.agences_actives > 1 ? "s" : ""}` : "Chargement…",
       couleur: "var(--couleurAgences)",
       couleurFond: "var(--couleurAgencesBg)",
       couleurBordure: "var(--couleurAgencesBorder)",
@@ -68,7 +82,7 @@ export default function Administration() {
       titre: "Mes Camions",
       description: "Suivi de la flotte",
       composant: CamionIcone,
-      statut: "8 camions",
+      statut: indicateurs ? `${indicateurs.camions_disponibles} disponible${indicateurs.camions_disponibles > 1 ? "s" : ""}` : "Chargement…",
       couleur: "var(--couleurCamions)",
       couleurFond: "var(--couleurCamionsBg)",
       couleurBordure: "var(--couleurCamionsBorder)",
@@ -87,7 +101,7 @@ export default function Administration() {
       titre: "Mes Secteurs",
       description: "Zones d'intervention",
       composant: SecteurIcone,
-      statut: "6 secteurs",
+      statut: indicateurs ? `${indicateurs.secteurs_actifs} actif${indicateurs.secteurs_actifs > 1 ? "s" : ""}` : "Chargement…",
       couleur: "var(--couleurSecteurs)",
       couleurFond: "var(--couleurSecteursBg)",
       couleurBordure: "var(--couleurSecteursBorder)",
@@ -105,7 +119,7 @@ export default function Administration() {
       titre: "Plannings",
       description: "Tournées et affectations",
       composant: PlanningIcone,
-      statut: "5 en cours",
+      statut: indicateurs ? `${indicateurs.tournees_realisees} réalisée${indicateurs.tournees_realisees > 1 ? "s" : ""}` : "Chargement…",
       couleur: "var(--couleurPlannings)",
       couleurFond: "var(--couleurPlanningsBg)",
       couleurBordure: "var(--couleurPlanningsBorder)",
@@ -124,7 +138,7 @@ export default function Administration() {
       titre: "Incidents",
       description: "Signalements terrain",
       composant: IncidentsIcone,
-      statut: "1 ouvert",
+      statut: indicateurs ? `${indicateurs.incidents_ouverts} ouvert${indicateurs.incidents_ouverts > 1 ? "s" : ""}` : "Chargement…",
       couleur: "var(--couleurIncidents)",
       couleurFond: "var(--couleurIncidentsBg)",
       couleurBordure: "var(--couleurIncidentsBorder)",
@@ -143,7 +157,7 @@ export default function Administration() {
       titre: "Statistiques",
       description: "Analyses et rapports",
       composant: StatsIcone,
-      statut: "À jour",
+      statut: indicateurs?.statistiques_a_jour ? "À jour" : "Vérification…",
       couleur: "var(--couleurStatistiques)",
       couleurFond: "var(--couleurStatistiquesBg)",
       couleurBordure: "var(--couleurStatistiquesBorder)",
@@ -162,7 +176,7 @@ export default function Administration() {
       titre: "Gestion",
       description: "Paramètres et outils",
       composant: GestionUsersIcone,
-      statut: user?.role ?? null,
+      statut: user?.role_code === "GM" ? null : user?.role ?? null,
       couleur: "var(--couleurGestions)",
       couleurFond: "var(--couleurGestionsBg)",
       couleurBordure: "var(--couleurGestionsBorder)",
@@ -199,7 +213,7 @@ export default function Administration() {
     });
 
   return (
-    <div className="flex w-full flex-col gap-4 overflow-x-hidden overflow-y-scroll px-4 pb-25 text-[0.8rem]">
+    <div className="flex w-full flex-col gap-4 overflow-x-hidden overflow-y-scroll px-4 pb-44 text-[0.8rem]">
       <div className="admin-overview flex w-full rounded-2xl">
         <div className="flex w-full flex-col pb-2">
           <div className="flex justify-between px-4 py-2">
@@ -222,24 +236,26 @@ export default function Administration() {
           <div className="pointer-events-none grid w-full grid-cols-3 gap-2 px-2 pb-1">
             <PetiteCardAdmin
               icone={UserIcone}
-              max={3}
-              detail="Livreurs actifs"
+              nb={indicateurs?.salaries_actifs ?? 0}
+              max={Math.max(1, indicateurs?.salaries_total ?? 0)}
+              nbAbsents={Math.max(0, (indicateurs?.salaries_total ?? 0) - (indicateurs?.salaries_actifs ?? 0))}
+              detail="Salariés actifs"
               afficherLivreur
             />
 
             <PetiteCardAdmin
               icone={CamionIcone}
               statut="couleurCamions"
-              detail="Tournées en cours"
-              nb={2}
-              max={3}
+              detail="Tournées réalisées"
+              nb={indicateurs?.tournees_realisees ?? 0}
+              max={Math.max(1, indicateurs?.tournees_total_jour ?? 0)}
               afficherBarre
             />
 
             <PetiteCardAdmin
               icone={DangerIcone}
               statut="danger"
-              nb={0}
+              nb={indicateurs?.incidents_ouverts ?? 0}
               detail="Incidents en cours"
             />
           </div>

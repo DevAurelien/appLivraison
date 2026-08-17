@@ -7,6 +7,7 @@ import {
   recupererOrganisationAgence,
   rechercherLivreurs,
   verifierLivreursPourCamion,
+  listerRolesPourFiltreSalaries,
 } from "../services/gestion.salaries.js";
 import { get } from "@vercel/blob";
 import { Readable } from "node:stream";
@@ -116,13 +117,22 @@ export const controlTousSalaries = async (req, res) => {
   }
 };
 
+export const controlRolesFiltreSalaries = async (_req, res) => {
+  try {
+    return res.status(200).json({ donnees: await listerRolesPourFiltreSalaries() });
+  } catch (e) {
+    console.error("ERREUR LISTE RÔLES SALARIÉS :", e);
+    return res.status(500).json({ message: "Liste des rôles indisponible" });
+  }
+};
+
 export const controlAffectationEquipage = async (req, res) => {
   const camionId = Number(req.params.camionId);
   const userIds = Array.isArray(req.body.user_ids)
     ? [...new Set(req.body.user_ids.map(Number))]
     : [];
-  if (!idValide(camionId) || userIds.length > 2 || userIds.some((id) => !idValide(id))) {
-    return res.status(400).json({ message: "Un équipage contient au maximum deux livreurs" });
+  if (!idValide(camionId) || userIds.length > 3 || userIds.some((id) => !idValide(id))) {
+    return res.status(400).json({ message: "Un camion contient au maximum trois salariés" });
   }
   try {
     const agenceId = await recupererAgenceCamion(camionId);
@@ -132,7 +142,9 @@ export const controlAffectationEquipage = async (req, res) => {
     }
     const valides = await verifierLivreursPourCamion(camionId, userIds);
     if (valides.length !== userIds.length) {
-      return res.status(400).json({ message: "Les livreurs doivent appartenir à l'agence du camion" });
+      return res.status(400).json({
+        message: "Chaque membre de l’équipage doit être salarié et affilié à l’agence du camion",
+      });
     }
     const affectations = await affecterEquipageCamion(camionId, userIds, req.user.id);
     return res.status(200).json({ donnees: affectations });

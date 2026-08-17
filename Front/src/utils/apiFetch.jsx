@@ -16,7 +16,7 @@ export default async function apiFetch(
       credentials: "include",
       headers: {
         ...options.headers,
-        "Content-Type": "application/json",
+        ...(!(options.body instanceof FormData) ? { "Content-Type": "application/json" } : {}),
         ...(token
           ? {
               Authorization: `Bearer ${token}`,
@@ -84,7 +84,7 @@ export default async function apiFetch(
           credentials: "include",
           headers: {
             ...options.headers,
-            "Content-Type": "application/json",
+            ...(!(options.body instanceof FormData) ? { "Content-Type": "application/json" } : {}),
             Authorization: `Bearer ${nouveauToken}`,
           },
         },

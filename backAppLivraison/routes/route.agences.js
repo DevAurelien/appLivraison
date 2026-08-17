@@ -1,10 +1,12 @@
 import express from "express";
-import { autoriserPermissions, verifierAuthentification } from "../middlewares/middlewares.auth.js";
+import { autoriserPermissions, autoriserUneDesPermissions, verifierAuthentification } from "../middlewares/middlewares.auth.js";
 import {
   controlCreaAgences,
   controlModificationAgence,
   controlRecupAgences,
   controlSuppressionAgence,
+  controlAffectationCamionTournee,
+  controlOrganisationTourneesAgence,
 } from "../controllers/control.agences.js";
 const router = express.Router();
 
@@ -34,6 +36,19 @@ router.delete(
   verifierAuthentification,
   autoriserPermissions("AGENCES_SUPPRIMER"),
   controlSuppressionAgence,
+);
+
+router.get(
+  "/administration/agences/:id/tournees",
+  verifierAuthentification,
+  autoriserUneDesPermissions("PLANNING_LIRE", "PLANNING_MODIFIER", "CAMIONS_MODIFIER"),
+  controlOrganisationTourneesAgence,
+);
+router.put(
+  "/administration/agences/:id/tournees/:tourneeId/camion",
+  verifierAuthentification,
+  autoriserUneDesPermissions("PLANNING_MODIFIER", "CAMIONS_MODIFIER"),
+  controlAffectationCamionTournee,
 );
 
 

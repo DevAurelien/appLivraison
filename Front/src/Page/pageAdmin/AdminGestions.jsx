@@ -81,7 +81,7 @@ export default function AdminGestions() {
   };
 
   return (
-    <div className="flex h-full min-h-0 w-full flex-col gap-4 overflow-y-auto px-4 pb-32">
+    <div className="flex h-full min-h-0 w-full flex-col gap-4 overflow-y-auto px-4 pb-44">
       <header className="pt-2"><h1 className="text-xl font-semibold">Gestion des utilisateurs</h1><p className="text-xs text-white/55">Rechercher un compte et modifier son niveau d’accès</p></header>
       <section className="card rounded-2xl p-4">
         <h2 className="mb-1 font-semibold">Trouver un utilisateur</h2>

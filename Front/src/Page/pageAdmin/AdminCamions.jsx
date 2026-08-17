@@ -3,6 +3,8 @@ import { useCallback, useContext, useEffect, useState } from "react";
 import CamionIcone from "../../components/componentsIcone/CamionIcone.jsx";
 import PlaqueImmatriculation from "../../components/componentsIcone/ImmatPlaque.jsx";
 import DriverIcone from "../../components/componentsIcone/DriverIcone.jsx";
+import RippeurIcone from "../../components/componentsIcone/RippeurIcone.jsx";
+import UserIcone from "../../components/componentsIcone/UserIcone.jsx";
 import PlusIcone from "../../components/componentsIcone/PlusIcone.jsx";
 
 import CocheIcone from "../../components/componentAdminCamion/CocheIcone.jsx";
@@ -25,6 +27,12 @@ import { UserContext } from "../../contexte/userContext.jsx";
 import { AgencesContext } from "../../contexte/agencesContext.jsx";
 import Pulse from "../../components/Loading.jsx";
 
+const postesEquipage = [
+  { libelle: "Chauffeur", Icone: DriverIcone, props: { color: "currentColor" } },
+  { libelle: "Ripeur", Icone: RippeurIcone, props: { color: "currentColor" } },
+  { libelle: "Suppléant", Icone: UserIcone, props: { color1: "currentColor" } },
+];
+
 export default function AdminCamions() {
   const { user } = useContext(UserContext);
   const { listeAgences } = useContext(AgencesContext);
@@ -34,6 +42,12 @@ export default function AdminCamions() {
   const [chargementCamions, setChargementCamions] = useState(false);
   const [menuCamionOuvertId, setMenuCamionOuvertId] = useState(null);
   const [agenceEditionCamionId, setAgenceEditionCamionId] = useState(null);
+  const [camionEquipe, setCamionEquipe] = useState(null);
+  const [salariesAgence, setSalariesAgence] = useState([]);
+  const [equipage, setEquipage] = useState([]);
+  const [chargementEquipage, setChargementEquipage] = useState(false);
+  const [enregistrementEquipage, setEnregistrementEquipage] = useState(false);
+  const [messageEquipage, setMessageEquipage] = useState("");
 
   const date = new Date();
   const an = String(date.getFullYear());
@@ -239,6 +253,51 @@ export default function AdminCamions() {
     }
   };
 
+  const ouvrirEquipage = async (camionActuel) => {
+    setCamionEquipe(camionActuel);
+    setChargementEquipage(true);
+    setMessageEquipage("");
+    try {
+      const res = await apiFetch(`/administration/livreurs/organisation?agence_id=${camionActuel.agence_id}`);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Chargement impossible");
+      const camionOrganisation = data.donnees.camions.find((item) => Number(item.id) === Number(camionActuel.id));
+      setSalariesAgence(data.donnees.livreurs || []);
+      setEquipage(camionOrganisation?.equipage?.map((salarie) => salarie.id) || []);
+    } catch (error) {
+      setMessageEquipage(error.message);
+    } finally {
+      setChargementEquipage(false);
+    }
+  };
+
+  const modifierEquipage = (position, valeur) => {
+    const salarieId = valeur ? Number(valeur) : null;
+    setEquipage((actuel) => {
+      const suivant = [...actuel];
+      if (!salarieId) return suivant.slice(0, position);
+      suivant[position] = salarieId;
+      return suivant;
+    });
+  };
+
+  const enregistrerEquipage = async () => {
+    setEnregistrementEquipage(true);
+    setMessageEquipage("");
+    try {
+      const res = await apiFetch(`/administration/livreurs/camions/${camionEquipe.id}/equipage`, "PUT", {
+        body: JSON.stringify({ user_ids: equipage.filter(Boolean) }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Enregistrement impossible");
+      setMessageEquipage("Équipage enregistré.");
+    } catch (error) {
+      setMessageEquipage(error.message);
+    } finally {
+      setEnregistrementEquipage(false);
+    }
+  };
+
   return (
     <div className="w-full h-full flex flex-col gap-4 items-center p-4 overflow-y-auto overflow-x-hidden pb-50">
       {!openForm && (
@@ -249,8 +308,9 @@ export default function AdminCamions() {
           ) : camions.length === 0 ? (
             <p className="py-8 text-sm text-white/60">Aucun camion enregistré.</p>
           ) : (
-            camions.map((camionActuel) => (
-              <div key={camionActuel.id} className="card relative flex min-h-36 w-full rounded-2xl p-2">
+            <div className="grid w-full gap-3 sm:grid-cols-2">
+            {camions.map((camionActuel) => (
+              <article key={camionActuel.id} className="relative flex min-h-44 w-full overflow-hidden rounded-3xl border border-white/10 bg-linear-to-br from-[#132139] to-[#091425] p-3 shadow-lg shadow-black/10">
                 {(user?.permissions?.includes("CAMIONS_MODIFIER") ||
                   user?.permissions?.includes("CAMIONS_SUPPRIMER")) && (
                   <div className="absolute right-2 top-2 z-20">
@@ -298,8 +358,8 @@ export default function AdminCamions() {
                   </div>
                 )}
 
-                <div className="flex w-1/3 shrink-0 items-center justify-center overflow-hidden">
-                  <img src={truck} alt="Camion" className="h-auto w-full object-contain scale-[1.6]" />
+                <div className="flex w-1/3 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-white/3">
+                  <img src={truck} alt="Camion" className="h-auto w-full scale-[1.35] object-contain" />
                 </div>
                 <div className="flex w-2/3 flex-col justify-center gap-2 px-3 py-2 pr-9">
                   <div className="flex justify-end">
@@ -332,12 +392,27 @@ export default function AdminCamions() {
                       <Location className="size-4" /> {camionActuel.agence_nom || "Agence inconnue"}
                     </button>
                   )}
+                  {user?.permissions?.includes("CAMIONS_AFFECTER_EQUIPAGE") && (
+                    <button type="button" onClick={() => ouvrirEquipage(camionActuel)} className="mt-1 flex items-center justify-center gap-2 rounded-lg border border-yellow-300/20 bg-yellow-300/5 px-3 py-2 text-xs text-yellow-100">
+                      <DriverIcone width={15} height={15} /> Gérer l’équipage
+                    </button>
+                  )}
                 </div>
-              </div>
-            ))
+              </article>
+            ))}
+            </div>
           )}
         </div>
       )}
+
+      {camionEquipe && <div className="fixed inset-0 z-50 flex items-end bg-black/70 backdrop-blur-sm sm:items-center sm:justify-center" onMouseDown={(e) => e.target === e.currentTarget && setCamionEquipe(null)}>
+        <section className="w-full rounded-t-3xl border border-white/12 bg-[#081426] p-5 shadow-2xl sm:max-w-2xl sm:rounded-3xl">
+          <div className="mb-5 flex items-start justify-between"><div><p className="text-[0.6rem] uppercase tracking-[0.16em] text-yellow-200/60">Équipage du camion</p><h2 className="text-lg font-semibold">{camionEquipe.immatriculation}</h2><p className="text-xs text-white/40">{camionEquipe.agence_nom} · 3 places maximum</p></div><button type="button" onClick={() => setCamionEquipe(null)} className="flex size-9 items-center justify-center rounded-full border border-white/10 text-lg">×</button></div>
+          {chargementEquipage ? <Pulse className="py-12" /> : salariesAgence.length === 0 ? <div className="rounded-2xl border border-dashed border-white/12 py-10 text-center text-sm text-white/50">Aucun salarié affilié à cette agence.</div> : <div className="grid gap-3 sm:grid-cols-3">{postesEquipage.map(({ libelle, Icone, props }, position) => <label key={libelle} className="rounded-2xl border border-white/8 bg-white/3 p-3 text-xs text-white/55"><span className="mb-2 flex items-center gap-2 text-white/80"><Icone width={19} height={19} {...props} />{libelle}</span><select value={equipage[position] || ""} disabled={position > 0 && !equipage[position - 1]} onChange={(e) => modifierEquipage(position, e.target.value)} className="w-full rounded-xl border border-white/12 bg-[#0b192d] px-2 py-3 text-xs text-white disabled:opacity-40"><option value="">Non affecté</option>{salariesAgence.map((salarie) => <option key={salarie.id} value={salarie.id} disabled={equipage.some((id, index) => index !== position && id === salarie.id)}>{salarie.prenom} {salarie.nom}</option>)}</select></label>)}</div>}
+          {messageEquipage && <p className="mt-3 rounded-xl bg-white/5 px-3 py-2 text-xs text-white/65">{messageEquipage}</p>}
+          {!chargementEquipage && salariesAgence.length > 0 && <div className="mt-5 flex justify-end"><button type="button" disabled={enregistrementEquipage} onClick={enregistrerEquipage} className="rounded-xl bg-(--yellow-zesteo) px-4 py-2.5 text-sm font-semibold text-black disabled:opacity-50">{enregistrementEquipage ? "Enregistrement…" : "Enregistrer l’équipage"}</button></div>}
+        </section>
+      </div>}
 
       <form
         onSubmit={handleSubmit}

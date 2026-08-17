@@ -1,13 +1,21 @@
 import { sql } from "../database/db.js";
 
+export const listerRolesPourFiltreSalaries = () => sql.query(
+  `SELECT code, libelle FROM roles
+   WHERE actif = TRUE AND code NOT IN ('CLIENT', 'MAGASIN', 'GM')
+   ORDER BY ordre_affichage, libelle`,
+);
+
 export const recupSalaries = async (saisie, userId) => {
   const recup = await sql.query(
     `
-      SELECT nom, prenom, id, avatar_img_url
+      SELECT users.nom, users.prenom, users.id, users.avatar_img_url
       FROM users
-      WHERE (prenom ILIKE $1 OR nom ILIKE $1)
-        AND salarie = TRUE
-        AND id != $2
+      JOIN roles ON roles.id = users.role_id
+      WHERE (users.prenom ILIKE $1 OR users.nom ILIKE $1)
+        AND users.salarie = TRUE
+        AND roles.code NOT IN ('CLIENT', 'MAGASIN', 'GM')
+        AND users.id != $2
     `,
     [`${saisie}%`, userId],
   );
@@ -19,9 +27,10 @@ export const recupImgSalaries = async (id) => {
   const resultat = await sql.query(
     `
       SELECT avatar_img_url
-      FROM users
-      WHERE id = $1
-        AND salarie = TRUE
+      FROM users JOIN roles ON roles.id = users.role_id
+      WHERE users.id = $1
+        AND users.salarie = TRUE
+        AND roles.code NOT IN ('CLIENT', 'MAGASIN', 'GM')
     `,
     [id],
   );
@@ -39,7 +48,7 @@ export const rechercherLivreurs = async (saisie = "") => {
     LEFT JOIN roles r ON r.id = u.role_id
     LEFT JOIN users_agences ua ON ua.user_id = u.id AND ua.est_principale = TRUE
     LEFT JOIN agences a ON a.id = ua.agence_id
-    WHERE u.salarie = TRUE
+    WHERE u.salarie = TRUE AND COALESCE(r.code, '') NOT IN ('CLIENT', 'MAGASIN', 'GM')
       AND ($1 = '%%' OR u.email ILIKE $1 OR u.nom ILIKE $1
         OR u.prenom ILIKE $1 OR CONCAT(u.prenom, ' ', u.nom) ILIKE $1)
     ORDER BY u.nom, u.prenom
@@ -49,26 +58,30 @@ export const rechercherLivreurs = async (saisie = "") => {
 };
 
 export const affilierLivreurAgence = async (userId, agenceId) => {
-  const res = await sql.query(
-    `WITH retrait_principale AS (
-      UPDATE users_agences SET est_principale = FALSE
-      WHERE user_id = $1
-    )
-    INSERT INTO users_agences (user_id, agence_id, est_principale)
-    SELECT u.id, $2, TRUE FROM users u
-    WHERE u.id = $1 AND u.salarie = TRUE
-    ON CONFLICT (user_id, agence_id)
-    DO UPDATE SET est_principale = TRUE
-    RETURNING *;`,
-    [userId, agenceId],
-  );
-  return res[0] || null;
+  const [, affiliation] = await sql.transaction([
+    sql`UPDATE users_agences
+        SET est_principale = FALSE
+        WHERE user_id = ${userId} AND est_principale = TRUE`,
+    sql`INSERT INTO users_agences (user_id, agence_id, est_principale)
+        SELECT u.id, ${agenceId}, TRUE
+        FROM users u JOIN roles r ON r.id = u.role_id
+        WHERE u.id = ${userId} AND u.salarie = TRUE
+          AND r.code NOT IN ('CLIENT', 'MAGASIN', 'GM')
+        ON CONFLICT (user_id, agence_id)
+        DO UPDATE SET est_principale = TRUE
+        RETURNING *`,
+    sql`DELETE FROM camions_equipages ce
+        USING camions c
+        WHERE ce.camion_id = c.id AND ce.user_id = ${userId}
+          AND c.agence_id <> ${agenceId}`,
+  ]);
+  return affiliation[0] || null;
 };
 
 export const recupererOrganisationAgence = async (agenceId = null) => {
   const livreurs = await sql.query(
     `SELECT u.id, u.nom, u.prenom, u.email,
-      COALESCE(r.libelle, u.role, 'Salarié') AS role,
+      COALESCE(r.libelle, u.role, 'Salarié') AS role, r.code AS role_code,
       a.id AS agence_id, a.nom AS agence_nom,
       ce.camion_id, c.immatriculation, a.heure_embauche,
       a.duree_travail_journaliere_minutes, a.pause_prevue_minutes,
@@ -101,7 +114,9 @@ export const recupererOrganisationAgence = async (agenceId = null) => {
     LEFT JOIN camions_equipages ce ON ce.user_id = u.id
     LEFT JOIN camions c ON c.id = ce.camion_id
     LEFT JOIN pointages p ON p.user_id = u.id AND p.date_jour = CURRENT_DATE
-    WHERE u.salarie = TRUE AND ($1::integer IS NULL OR ua.agence_id = $1)
+    WHERE u.salarie = TRUE
+      AND COALESCE(r.code, '') NOT IN ('CLIENT', 'MAGASIN', 'GM')
+      AND ($1::integer IS NULL OR ua.agence_id = $1)
     ORDER BY u.nom, u.prenom;`,
     [agenceId],
   );
@@ -129,7 +144,8 @@ export const verifierLivreursPourCamion = async (camionId, userIds) => {
     JOIN users u ON u.id = ua.user_id
     JOIN roles r ON r.id = u.role_id
     WHERE c.id = $1 AND u.id = ANY($2::int[])
-      AND r.code IN ('LIVREUR', 'CHEF_CAMION');`,
+      AND u.salarie = TRUE
+      AND r.code NOT IN ('CLIENT', 'MAGASIN', 'GM');`,
     [camionId, userIds],
   );
 };
@@ -143,7 +159,7 @@ export const affecterEquipageCamion = async (camionId, userIds, affectePar) => {
   const res = await sql.query(
     `WITH suppression AS (
       DELETE FROM camions_equipages
-      WHERE camion_id = $1 OR user_id = ANY($2::int[])
+      WHERE camion_id = $1
     )
     INSERT INTO camions_equipages (camion_id, user_id, position, affecte_par)
     SELECT $1, user_id, position, $3

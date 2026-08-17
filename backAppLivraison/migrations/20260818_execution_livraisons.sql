@@ -1,0 +1,28 @@
+CREATE TABLE IF NOT EXISTS executions_livraisons (
+  livraison_id INTEGER PRIMARY KEY REFERENCES livraisons(id) ON DELETE CASCADE,
+  resultat VARCHAR(20) NOT NULL CHECK (resultat IN ('LIVREE', 'ECHEC')),
+  motif_echec VARCHAR(100),
+  commentaire TEXT,
+  non_conforme BOOLEAN NOT NULL DEFAULT FALSE,
+  decharge_conformite BOOLEAN NOT NULL DEFAULT FALSE,
+  effectue_par INTEGER NOT NULL REFERENCES users(id),
+  effectue_le TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS incidents_livraisons (
+  id BIGSERIAL PRIMARY KEY,
+  livraison_id INTEGER NOT NULL REFERENCES livraisons(id) ON DELETE CASCADE,
+  type VARCHAR(60) NOT NULL,
+  description TEXT NOT NULL,
+  statut VARCHAR(20) NOT NULL DEFAULT 'OUVERT',
+  declare_par INTEGER NOT NULL REFERENCES users(id),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS photos_livraisons (
+  id BIGSERIAL PRIMARY KEY,
+  livraison_id INTEGER NOT NULL REFERENCES livraisons(id) ON DELETE CASCADE,
+  blob_url TEXT NOT NULL,
+  ajoutee_par INTEGER NOT NULL REFERENCES users(id),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);

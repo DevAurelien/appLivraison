@@ -9,7 +9,8 @@ export default function AdminPlannings() {
 
 
   return (
-    <div className="h-[50vh] m-2">
+    <div className="h-full min-h-0 overflow-y-auto px-2 pb-44">
+      <div className="h-[50vh]">
       <APIProvider apiKey={key} >
         <Map 
           defaultCenter={{
@@ -27,6 +28,7 @@ export default function AdminPlannings() {
           }}
         />
       </APIProvider>
+      </div>
     </div>
   );
 }

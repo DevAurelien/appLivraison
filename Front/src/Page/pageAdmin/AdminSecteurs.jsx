@@ -476,7 +476,7 @@ export default function AdminSecteurs() {
   };
 
   return (
-    <div className="flex h-full min-h-0 w-full flex-col gap-4 overflow-y-auto overscroll-contain px-2 pb-30">
+    <div className="flex h-full min-h-0 w-full flex-col gap-4 overflow-y-auto overscroll-contain px-2 pb-44">
       <h1 className="flex justify-center text-xl">Mes secteurs</h1>
 
       <div className="flex flex-col gap-2 rounded-xl border border-white/15 bg-white/5 p-3">

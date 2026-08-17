@@ -1,6 +1,5 @@
 import { useContext } from "react";
 import ZesteoLogo from "../components/Zesteo_Logo.jsx";
-import CardMetierHeader from "./pageAccueil/CardMetierHeader.jsx";
 import Notif from "./pageAccueil/Notif.jsx";
 import { UserContext } from "../contexte/userContext.jsx";
 import { MenuContext } from "../contexte/menuContext.jsx";
@@ -9,7 +8,7 @@ export const CardTitre = ({children})=>{
   return(<p className="cardLiv rounded-2xl flex justify-center items-center w-fit text-sm whitespace-nowrap px-4 py-1 shadow-[0_0_10px_color-mix(in_srgb,var(--yellow-zesteo)_10%,transparent)]">{children}</p>)
 }
 
-export default function HeaderLogo({ children, bg, notif = 0 }) {
+export default function HeaderLogo({ bg, notif = 0 }) {
   const { user } = useContext(UserContext);
   const { role, prenom, nom } = user;
   const { page } = useContext(MenuContext);
@@ -27,8 +26,15 @@ export default function HeaderLogo({ children, bg, notif = 0 }) {
     Profil: (<CardTitre>Profil</CardTitre>),
     Messagerie: (<CardTitre>Discussions</CardTitre>),
     Contacts: (<CardTitre>Discussions</CardTitre>), 
-    Administration: (<CardTitre>Administration</CardTitre>),
-    AdminLivreurs: (<CardTitre>Gestion des Equipes</CardTitre>),
+    Administration: (<CardTitre>Vue d’ensemble</CardTitre>),
+    AdminLivreurs: (<CardTitre>Gestion des équipes</CardTitre>),
+    AdminAgences: (<CardTitre>Gestion des agences</CardTitre>),
+    AdminCamions: (<CardTitre>Gestion de la flotte</CardTitre>),
+    AdminSecteurs: (<CardTitre>Gestion des secteurs</CardTitre>),
+    AdminPlannings: (<CardTitre>Gestion des tournées</CardTitre>),
+    AdminIncidents: (<CardTitre>Gestion des incidents</CardTitre>),
+    AdminStatistiques: (<CardTitre>Statistiques</CardTitre>),
+    AdminGestions: (<CardTitre>Gestion des accès</CardTitre>),
   };
 
   return (

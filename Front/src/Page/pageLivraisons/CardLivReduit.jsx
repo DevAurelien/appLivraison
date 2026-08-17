@@ -1,51 +1,43 @@
-import React from "react";
-
 export default function CardLivReduit({
-  onClick=()=>{},
+  onClick = () => {},
   numeroDeLivraison = 1,
-  client = {
-    nom: "Dutard",
-    prenom: "Jean-Pierre",
-    telephone: "06 12 45 78 90",
-  },
-  adresse = {
-    rue: "16 Rue des Lilas",
-    codePostal: "47300",
-    ville: "Villeneuve-sur-Lot",
-  },
-  magasin = {
-    nom: "BUT VILLENEUVE",
-  },
-  estimation = {
-    heure: "10:45",
-    creneau: "10:00 - 13:00",
-    dureeProchaineLivraison: "7 min",
-    distanceProchaineLivraison: "4.8 km",
-  },
-  produits = [
-    { nom: "Réfrigérateur", categorie: "Installation", reprise: true },
-    { nom: "Table basse", categorie: "Depose", reprise: false },
-  ],
+  client = {},
+  adresse = {},
+  estimation = {},
+  produits = [],
 }) {
   return (
-    <div onClick={onClick} className="flex shrink-0 w-full card rounded-xl justify-start cursor-pointer">
-      <div className="flex  p-2 items-center gap-2 w-full">
-        <p className="flex text-blue-500 aspect-square justify-center items-center h-full rounded-md bg-(--card-bg-soft) border border-blue-500">
-          {numeroDeLivraison}
-        </p>
-        <div className="flex flex-col w-full">
-          <div className="flex flex-col gap-0.2 text-[0.6rem]">
-            <p className="font-bold text-xs text-white">
-              {client.nom} {client.prenom}
-            </p>
+    <button
+      type="button"
+      onClick={onClick}
+      className="group flex w-full shrink-0 items-stretch overflow-hidden rounded-2xl border border-white/8 bg-[#0d1c32] text-left text-white shadow-[0_8px_24px_rgba(0,0,0,0.16)] transition duration-200 hover:border-blue-400/40 active:scale-[0.99]"
+    >
+      <span className="w-1 shrink-0 bg-blue-500" />
+      <span className="flex min-w-0 flex-1 items-center gap-3 px-3 py-3">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-500/12 text-blue-300">
+          <strong className="text-base">{numeroDeLivraison}</strong>
+        </span>
 
-            <p>{adresse.rue}</p>
-            <p>
-              {adresse.codePostal} {adresse.ville}
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
+        <span className="min-w-0 flex-1">
+          <span className="flex items-start justify-between gap-2">
+            <strong className="truncate text-sm font-extrabold">
+              {client.nom} {client.prenom}
+            </strong>
+            <time className="shrink-0 text-sm font-black text-blue-300">
+              {estimation.heure || "—"}
+            </time>
+          </span>
+          <span className="mt-1 block truncate text-xs text-slate-400">
+            {adresse.rue}
+          </span>
+          <span className="mt-1 flex items-center justify-between gap-2 text-[0.65rem] text-slate-500">
+            <span className="truncate">{adresse.codePostal} {adresse.ville}</span>
+            <span className="shrink-0">{produits.length} article{produits.length !== 1 ? "s" : ""}</span>
+          </span>
+        </span>
+
+        <svg className="h-4 w-4 shrink-0 text-slate-600 transition group-hover:translate-x-0.5 group-hover:text-blue-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m9 18 6-6-6-6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+      </span>
+    </button>
   );
 }

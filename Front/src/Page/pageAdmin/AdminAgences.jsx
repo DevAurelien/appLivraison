@@ -19,16 +19,17 @@ export default function AdminAgences() {
   const [agenceEnModificationId, setAgenceEnModificationId] = useState(null);
   const [menuOuvertId, setMenuOuvertId] = useState(null);
   const [chargement, setChargement] = useState(true);
+  const [chargementTournees, setChargementTournees] = useState(false);
   const [enregistrement, setEnregistrement] = useState(false);
+  const [tourneeEnregistrement, setTourneeEnregistrement] = useState(null);
   const [message, setMessage] = useState({ type: "", texte: "" });
-  const [agenceEquipe, setAgenceEquipe] = useState(null);
-  const [organisation, setOrganisation] = useState({ livreurs: [], camions: [] });
-  const [equipages, setEquipages] = useState({});
+  const [agenceTournees, setAgenceTournees] = useState(null);
+  const [organisationTournees, setOrganisationTournees] = useState({ tournees: [], camions: [] });
 
   const peutCreer = user?.permissions?.includes("AGENCES_CREER") ?? false;
   const peutModifier = user?.permissions?.includes("AGENCES_MODIFIER") ?? false;
   const peutSupprimer = user?.permissions?.includes("AGENCES_SUPPRIMER") ?? false;
-  const peutAffecterEquipage = user?.permissions?.includes("CAMIONS_AFFECTER_EQUIPAGE") ?? false;
+  const peutGererTournees = user?.permissions?.some((permission) => ["PLANNING_LIRE", "PLANNING_MODIFIER", "CAMIONS_MODIFIER"].includes(permission)) ?? false;
 
   const chargerAgences = useCallback(async () => {
     setChargement(true);
@@ -129,50 +130,42 @@ export default function AdminAgences() {
     }
   };
 
-  const gererEquipages = async (agence) => {
-    setAgenceEquipe(agence);
-    setChargement(true);
+  const gererTournees = async (agence) => {
+    setAgenceTournees(agence);
+    setChargementTournees(true);
+    setMessage({ type: "", texte: "" });
     try {
-      const res = await apiFetch(`/administration/livreurs/organisation?agence_id=${agence.id}`);
+      const res = await apiFetch(`/administration/agences/${agence.id}/tournees`);
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Chargement impossible");
-      setOrganisation(data.donnees);
-      setEquipages(Object.fromEntries(data.donnees.camions.map((camion) => [
-        camion.id,
-        camion.equipage.map((livreur) => livreur.id),
-      ])));
+      setOrganisationTournees(data.donnees);
     } catch (error) {
       setMessage({ type: "erreur", texte: error.message });
     } finally {
-      setChargement(false);
+      setChargementTournees(false);
     }
   };
 
-  const basculerLivreur = (camionId, livreurId) => {
-    setEquipages((actuels) => {
-      const equipe = actuels[camionId] || [];
-      if (equipe.includes(livreurId)) return { ...actuels, [camionId]: equipe.filter((id) => id !== livreurId) };
-      if (equipe.length >= 2) return actuels;
-      return { ...actuels, [camionId]: [...equipe, livreurId] };
-    });
-  };
-
-  const enregistrerEquipage = async (camionId) => {
+  const affecterCamionTournee = async (tourneeId, camionId) => {
+    if (!camionId) return;
+    setTourneeEnregistrement(tourneeId);
     try {
-      const res = await apiFetch(`/administration/livreurs/camions/${camionId}/equipage`, "PUT", {
-        body: JSON.stringify({ user_ids: equipages[camionId] || [] }),
+      const res = await apiFetch(`/administration/agences/${agenceTournees.id}/tournees/${tourneeId}/camion`, "PUT", {
+        body: JSON.stringify({ camion_id: Number(camionId) }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Affectation impossible");
-      setMessage({ type: "succes", texte: "L’équipage a été enregistré." });
-      await gererEquipages(agenceEquipe);
+      setMessage({ type: "succes", texte: "Le camion a été affecté à la tournée." });
+      await gererTournees(agenceTournees);
     } catch (error) {
       setMessage({ type: "erreur", texte: error.message });
+    } finally {
+      setTourneeEnregistrement(null);
     }
   };
 
   return (
-    <div className="flex h-full min-h-0 w-full flex-col gap-4 overflow-y-auto px-4 pb-32">
+    <div className="flex h-full min-h-0 w-full flex-col gap-4 overflow-y-auto px-4 pb-44">
       <header className="flex items-center justify-between gap-3 pt-2">
         <div>
           <h1 className="text-xl font-semibold">Mes agences</h1>
@@ -271,13 +264,13 @@ export default function AdminAgences() {
                 <p className="text-xs text-white/50">
                   Embauche : {String(agence.heure_embauche || "--:--").slice(0, 5)}
                 </p>
+                {peutGererTournees && <button type="button" onClick={() => gererTournees(agence)} className="mt-1 self-start rounded-lg border border-yellow-300/20 bg-yellow-300/5 px-3 py-2 text-xs text-yellow-100">Gérer les tournées</button>}
 
-                {(peutModifier || peutSupprimer || peutAffecterEquipage) && (
+                {(peutModifier || peutSupprimer) && (
                   <div className="absolute right-2 top-2">
                     <button type="button" aria-label={`Actions pour ${agence.nom}`} onClick={() => setMenuOuvertId((id) => id === agence.id ? null : agence.id)} className="flex h-8 w-8 items-center justify-center rounded-full text-xl hover:bg-white/10">⋮</button>
                     {menuOuvertId === agence.id && (
                       <div className="absolute right-0 top-9 z-20 min-w-32 overflow-hidden rounded-xl border border-white/15 bg-[#081222] py-1 text-xs shadow-xl">
-                        {peutAffecterEquipage && <button type="button" onClick={() => { setMenuOuvertId(null); gererEquipages(agence); }} className="w-full px-3 py-2 text-left text-yellow-200 hover:bg-white/10">Gérer l’équipage</button>}
                         {peutModifier && <button type="button" onClick={() => ouvrirModification(agence)} className="w-full px-3 py-2 text-left hover:bg-white/10">Modifier</button>}
                         {peutSupprimer && <button type="button" onClick={() => supprimerUneAgence(agence)} className="w-full px-3 py-2 text-left text-red-300 hover:bg-white/10">Supprimer</button>}
                       </div>
@@ -290,27 +283,18 @@ export default function AdminAgences() {
         )}
       </section>
 
-      {agenceEquipe && peutAffecterEquipage && (
-        <section className="flex flex-col gap-3 rounded-2xl border border-white/15 p-4">
-          <div className="flex items-center justify-between">
-            <div><h2 className="font-semibold">Équipages — {agenceEquipe.nom}</h2><p className="text-xs text-white/55">Maximum 2 livreurs par camion.</p></div>
-            <button type="button" onClick={() => setAgenceEquipe(null)} className="rounded-lg border border-white/15 px-3 py-1 text-xs">Fermer</button>
+      {agenceTournees && peutGererTournees && <div className="fixed inset-0 z-50 flex items-end bg-black/70 backdrop-blur-sm sm:items-center sm:justify-center" onMouseDown={(e) => e.target === e.currentTarget && setAgenceTournees(null)}>
+        <section className="flex max-h-[88dvh] w-full flex-col overflow-hidden rounded-t-3xl border border-white/12 bg-[#081426] shadow-2xl sm:max-w-2xl sm:rounded-3xl">
+          <div className="flex items-start justify-between border-b border-white/8 px-5 py-4">
+            <div><p className="text-[0.6rem] font-semibold uppercase tracking-[0.16em] text-yellow-200/60">Planification</p><h2 className="mt-1 text-lg font-semibold">Tournées · {agenceTournees.nom}</h2><p className="text-xs text-white/45">Affectez un camion de l’agence à chaque tournée</p></div>
+            <button type="button" onClick={() => setAgenceTournees(null)} aria-label="Fermer" className="flex size-9 items-center justify-center rounded-full border border-white/10 text-lg text-white/60 hover:bg-white/8">×</button>
           </div>
-          {organisation.camions.length === 0 ? <p className="text-sm text-white/55">Aucun camion affecté à cette agence.</p> : organisation.camions.map((camion) => (
-            <article key={camion.id} className="card flex flex-col gap-3 rounded-xl p-3">
-              <strong>{camion.immatriculation} <span className="text-xs font-normal text-white/50">{camion.marque} {camion.modele}</span></strong>
-              <div className="grid gap-2 sm:grid-cols-2">
-                {organisation.livreurs.map((livreur) => {
-                  const selectionne = (equipages[camion.id] || []).includes(livreur.id);
-                  const complet = (equipages[camion.id] || []).length >= 2;
-                  return <label key={livreur.id} className={`flex items-center gap-2 rounded-lg border p-2 text-sm ${selectionne ? "border-yellow-300/50" : "border-white/10"}`}><input type="checkbox" checked={selectionne} disabled={!selectionne && complet} onChange={() => basculerLivreur(camion.id, livreur.id)} />{livreur.prenom} {livreur.nom}</label>;
-                })}
-              </div>
-              <button type="button" onClick={() => enregistrerEquipage(camion.id)} className="self-end rounded-lg bg-(--yellow-zesteo) px-3 py-2 text-sm font-semibold text-black">Enregistrer</button>
-            </article>
-          ))}
+
+          <div className="overflow-y-auto p-4 sm:p-5">
+            {chargementTournees ? <Pulse className="py-14" /> : organisationTournees.tournees.length === 0 ? <div className="rounded-2xl border border-dashed border-white/12 px-4 py-12 text-center"><p className="text-sm text-white/60">Aucune tournée enregistrée</p><p className="mt-1 text-xs text-white/35">Les tournées apparaîtront ici dès que le planning sera créé.</p></div> : organisationTournees.camions.length === 0 ? <div className="rounded-2xl border border-orange-300/15 bg-orange-400/5 px-4 py-10 text-center text-sm text-orange-200">Aucun camion n’est affecté à cette agence.</div> : <div className="flex flex-col gap-3">{organisationTournees.tournees.map((tournee) => <article key={tournee.id} className="rounded-2xl border border-white/10 bg-white/3 p-4"><div className="mb-3 flex items-center justify-between gap-3"><div><strong>Tournée #{tournee.id}</strong><p className="text-xs text-white/40">{new Date(tournee.date_tournee).toLocaleDateString("fr-FR")} · {String(tournee.heure_depart_prevue || "--:--").slice(0, 5)}</p></div><span className="rounded-full bg-white/5 px-2 py-1 text-[0.6rem] text-white/50">{tournee.statut}</span></div><select value={tournee.camion_id || ""} disabled={["TERMINEE", "ANNULEE"].includes(tournee.statut) || tourneeEnregistrement === tournee.id} onChange={(e) => affecterCamionTournee(tournee.id, e.target.value)} className="w-full rounded-xl border border-white/12 bg-[#0b192d] px-3 py-3 text-sm text-white"><option value="">Choisir un camion</option>{organisationTournees.camions.map((camion) => <option key={camion.id} value={camion.id}>{camion.immatriculation} · {camion.marque} {camion.modele}</option>)}</select></article>)}</div>}
+          </div>
         </section>
-      )}
+      </div>}
     </div>
   );
 }

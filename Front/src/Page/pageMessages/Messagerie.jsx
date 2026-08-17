@@ -1,113 +1,70 @@
-import BulleGauche from "./BulleGauche.jsx";
-import BulleDroite from "./BulleDroite.jsx";
-import { useRef, createRef, useState } from "react";
-import Fleche from "../../components/componentsIcone/Fleche.jsx";
+import { useContext, useEffect, useRef, useState } from "react";
+import { ContactContext } from "../../contexte/contactContext.jsx";
 import { MenuContext } from "../../contexte/menuContext.jsx";
-import { useContext } from "react";
+import { UserContext } from "../../contexte/userContext.jsx";
+import apiFetch from "../../utils/apiFetch.jsx";
+import { Avatar } from "./Contacts.jsx";
+
+const horodatage = (date) => {
+  const instant = new Date(date);
+  return Date.now() - instant.getTime() < 24 * 60 * 60 * 1000
+    ? new Intl.DateTimeFormat("fr-FR", { hour: "2-digit", minute: "2-digit" }).format(instant)
+    : new Intl.DateTimeFormat("fr-FR", { weekday: "short", day: "2-digit", month: "2-digit" }).format(instant);
+};
 
 export default function Messagerie() {
-  const reftextSaisie = useRef(null);
-  const [saisie, setSaisie] = useState("");
-  const [content, setContent] = useState([]);
+  const { conversationActive } = useContext(ContactContext);
+  const { user } = useContext(UserContext);
   const { setPage } = useContext(MenuContext);
+  const [messages, setMessages] = useState([]);
+  const [saisie, setSaisie] = useState("");
+  const [erreur, setErreur] = useState("");
+  const [envoi, setEnvoi] = useState(false);
+  const finRef = useRef(null);
+  const estCanal = conversationActive?.type && conversationActive.type !== "PRIVEE";
+  const baseEndpoint = estCanal ? "/messagerie/canaux" : "/messagerie/conversations";
 
-  const handleChangeTaille = () => {
-    setSaisie(reftextSaisie.current.value);
-    const textarea = reftextSaisie.current;
-    textarea.style.height = "auto";
-    const hauteur = textarea.scrollHeight;
-    textarea.style.height = `${hauteur}px`;
+  useEffect(() => {
+    if (!conversationActive?.id) { setPage("Contacts"); return; }
+    let actif = true;
+    const charger = async () => {
+      try {
+        const response = await apiFetch(`${baseEndpoint}/${conversationActive.id}/messages`);
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message);
+        if (actif) setMessages(data.donnees || []);
+      } catch (error) { if (actif) setErreur(error.message || "Messages indisponibles"); }
+    };
+    charger();
+    const intervalle = setInterval(charger, 5000);
+    return () => { actif = false; clearInterval(intervalle); };
+  }, [baseEndpoint, conversationActive?.id, setPage]);
+  useEffect(() => { finRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
+
+  const envoyer = async (event) => {
+    event.preventDefault();
+    const contenu = saisie.trim();
+    if (!contenu || envoi) return;
+    setEnvoi(true); setErreur("");
+    try {
+      const response = await apiFetch(`${baseEndpoint}/${conversationActive.id}/messages`, "POST", { body: JSON.stringify({ contenu }) });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message);
+      setMessages((actuels) => [...actuels, data.donnees]); setSaisie("");
+    } catch (error) { setErreur(error.message || "Envoi impossible"); }
+    finally { setEnvoi(false); }
   };
 
- const handleSubmit = (e) => {
-  e.preventDefault();
-
-  if (saisie.trim() === "") return;
-
-  setContent((prev) => [...prev, saisie]);
-  setSaisie("");
-
-  reftextSaisie.current.style.height = "auto";
-};
-
-const envoyerMessage = () => {
-  const message = reftextSaisie.current?.textContent?.trim();
-
-  if (!message) return;
-
-  setContent((prev) => [...prev, message]);
-  setSaisie("");
-
-  reftextSaisie.current.textContent = "";
-};
-
+  if (!conversationActive) return null;
   return (
-    <>
-      <div
-        onClick={() => setPage("Contacts")}
-        className="h-[5vh] flex justify-start items-center rounded-xl border w-fit px-2 gap-2 ml-2"
-      >
-        <Fleche color="white" />
-        Retour
-      </div>
-      <div className="w-full h-full bg-(--bg-main) overflow-x-hidden overflow-y-auto pb-21 flex-col-reverse flex justify-start gap-4">
-        <div className="w-full p-4 pb-20 z-0">
-          <BulleGauche>
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dolores,
-            consectetur reiciendis et blanditiis magnam fuga quia? Neque aliquam
-          </BulleGauche>
-          {content.length > 0 &&
-            content.map((message, index) => (
-              <BulleDroite key={index}>{message}</BulleDroite>
-            ))}
-        </div>
-
-         <form
-    onSubmit={(e) => {
-      e.preventDefault();
-      envoyerMessage();
-    }}
-    className="flex w-full fixed bottom-22"
-  >
-    <div
-      ref={reftextSaisie}
-      contentEditable
-      suppressContentEditableWarning
-      role="textbox"
-      aria-multiline="false"
-      enterKeyHint="send"
-      data-placeholder="Messages"
-      onInput={(e) => {
-        setSaisie(e.currentTarget.textContent);
-      }}
-      onBeforeInput={(e) => {
-        const inputType = e.nativeEvent.inputType;
-
-        if (
-          inputType === "insertParagraph" ||
-          inputType === "insertLineBreak"
-        ) {
-          e.preventDefault();
-          envoyerMessage();
-        }
-      }}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" && !e.shiftKey) {
-          e.preventDefault();
-          envoyerMessage();
-        }
-      }}
-      className="
-        z-20 min-h-10 w-full rounded-4xl
-        border bg-(--card-bg-soft) p-3 text-right
-        outline-none focus:border-2 focus:border-blue-500/50
-        empty:before:content-[attr(data-placeholder)]
-        empty:before:text-xl
-        empty:before:text-white/30
-      "
-    />
-  </form>
-      </div>
-    </>
+    <main className="flex h-full min-h-0 flex-col bg-[#061326] text-white">
+      <header className="flex shrink-0 items-center gap-3 border-b border-slate-800 px-3 py-2"><button type="button" onClick={() => setPage("Contacts")} className="flex h-10 w-8 items-center justify-center text-2xl">‹</button><Avatar personne={conversationActive} compact /><div className="min-w-0"><h1 className="truncate text-sm font-extrabold">{estCanal ? conversationActive.nom : `${conversationActive.prenom || ""} ${conversationActive.nom || ""}`}</h1><p className="truncate text-[0.68rem] text-slate-500">{conversationActive.role || conversationActive.email}</p></div></header>
+      <section className="min-h-0 flex-1 overflow-y-auto px-4 py-5 pb-36">
+        {erreur && <p className="mb-3 rounded-xl bg-red-400/10 p-3 text-xs text-red-200">{erreur}</p>}
+        {messages.length === 0 && <div className="py-16 text-center"><p className="font-bold">Commencez la conversation</p><p className="mt-1 text-xs text-slate-500">Vos messages sont privés entre ces deux comptes.</p></div>}
+        <div className="space-y-3">{messages.map((message) => { const mien = Number(message.sender_id) === Number(user.id); return <div key={message.id} className={`flex ${mien ? "justify-end" : "justify-start"}`}><div className={`max-w-[78%] rounded-2xl px-4 py-2.5 ${mien ? "rounded-br-md bg-[#075e54] text-white" : "rounded-bl-md bg-[#14243b] text-slate-100"}`}>{estCanal && !mien && <p className="mb-1 text-[0.62rem] font-bold text-emerald-300">{message.sender_prenom} {message.sender_nom}</p>}<p className="whitespace-pre-wrap break-words text-sm">{message.contenu}</p><p className={`mt-1 text-right text-[0.58rem] ${mien ? "text-emerald-100/70" : "text-slate-500"}`}>{horodatage(message.created_at)}</p></div></div>; })}</div><div ref={finRef} />
+      </section>
+      <form onSubmit={envoyer} className="fixed bottom-24 left-1/2 z-20 flex w-full max-w-xl -translate-x-1/2 gap-2 px-4"><input value={saisie} onChange={(e) => setSaisie(e.target.value)} maxLength={2000} placeholder="Écrire un message..." className="h-12 min-w-0 flex-1 rounded-2xl border border-slate-700 bg-[#102139] px-4 text-sm shadow-xl outline-none placeholder:text-slate-500 focus:border-blue-400" /><button type="submit" disabled={!saisie.trim() || envoi} className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-yellow-300 text-xl font-black text-[#061326] disabled:opacity-40">↑</button></form>
+    </main>
   );
 }
