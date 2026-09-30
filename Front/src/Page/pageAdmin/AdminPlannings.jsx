@@ -1,46 +1,51 @@
 import { APIProvider, Map } from "@vis.gl/react-google-maps";
-import { useContext } from "react";
-import {LivraisonsContext} from "../../contexte/livraisonsContext.jsx"
+import { useContext, useState } from "react";
+import { LivraisonsContext } from "../../contexte/livraisonsContext.jsx";
+import apiFetch from "../../utils/apiFetch.jsx";
+import { useEffect } from "react";
 const key = import.meta.env.VITE_GOOGLE_KEY;
 
 export default function AdminPlannings() {
+  const livraisons = useContext(LivraisonsContext);
+  const [tabLivraison, setTabLivraison] = useState([]);
 
-  const livraisons = useContext(LivraisonsContext)
-
+  useEffect(() => {
+    try {
+      const requete = async () => {
+        const res = await apiFetch("/livraisonsAll", "GET");
+        const data = await res.json();
+        setTabLivraison(data);
+      };
+      requete();
+    } catch (e) {
+      console.log(
+        "une erreur s'est produite lors de la recuperation des livraisons",
+      );
+    }
+  }, []);
 
   return (
-    <div className="h-full min-h-0 overflow-y-auto px-2 pb-44">
-      <div className="h-[50vh]">
-      <APIProvider apiKey={key} >
-        <Map 
-          defaultCenter={{
-            lat: 44.408,
-            lng: 0.705,
-          }}
-          defaultZoom={12}
-          disableDefaultUI
-          style={{
-            width: "100%",
-            height: "100%",
-            border:"1px solid white",
-            padding:"6px",
-            borderRadius:"10px",
-          }}
-        />
-      </APIProvider>
+    <div className="flex h-full w-full overflow-y-auto px-2 pb-25">
+      <div className="flex flex-col size-full border px-2">
+        <div className="flex flex-col border h-[10vh]">
+          <p className="flex justify-end w-full">
+            <button className="flex justify-center items-center p-1 border shrink-0 size-10 text-4xl rounded-md aspect-square bg-(--yellow-zesteo)/50 text-black">
+              +
+            </button>
+          </p>
+          <p>qdzdqzd</p>
+          {tabLivraison != [] && console.log(tabLivraison)}
+        </div>
       </div>
     </div>
   );
 }
-
-
 
 // import Map from "react-map-gl/maplibre";
 // import "maplibre-gl/dist/maplibre-gl.css";
 
 // export default function AdminPlannings() {
 //   const key = import.meta.env.VITE_GOOGLE_KEY;
-
 
 //   const styleOSM = {
 //     version: 8,

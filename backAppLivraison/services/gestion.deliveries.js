@@ -15,7 +15,7 @@ export const recupererLivraisons = async (userId) => {
       COALESCE(l.destinataire_nom, client.nom) AS client_nom,
       COALESCE(l.destinataire_prenom, client.prenom) AS client_prenom,
       COALESCE(l.destinataire_telephone, client.phone) AS client_telephone,
-      COALESCE(l.donneur_ordre_nom, createur.nom, 'Magasin') AS magasin_nom,
+      COALESCE(l.donneur_ordre_nom, createur.nom, 'Siege') AS magasin_nom,
       te.ordre, te.heure_arrivee_estimee,
       COALESCE(json_agg(json_build_object(
         'id', o.id, 'nom', o.designation, 'categorie',
@@ -41,19 +41,46 @@ export const recupererLivraisons = async (userId) => {
     id: ligne.id,
     numeroDeLivraison: ligne.ordre || index + 1,
     statut: ligne.statut,
-    client: { nom: ligne.client_nom, prenom: ligne.client_prenom, telephone: ligne.client_telephone },
-    adresse: { rue: [ligne.adresse, ligne.complement_adresse].filter(Boolean).join(" "), codePostal: ligne.code_postal, ville: ligne.ville },
+    client: {
+      nom: ligne.client_nom,
+      prenom: ligne.client_prenom,
+      telephone: ligne.client_telephone,
+    },
+    adresse: {
+      rue: [ligne.adresse, ligne.complement_adresse].filter(Boolean).join(" "),
+      codePostal: ligne.code_postal,
+      ville: ligne.ville,
+    },
     magasin: { nom: ligne.magasin_nom },
     estimation: {
-      heure: ligne.heure_arrivee_estimee ? new Date(ligne.heure_arrivee_estimee).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Paris" }) : null,
-      creneau: ligne.creneau_debut && ligne.creneau_fin ? `${String(ligne.creneau_debut).slice(0, 5)} - ${String(ligne.creneau_fin).slice(0, 5)}` : null,
+      heure: ligne.heure_arrivee_estimee
+        ? new Date(ligne.heure_arrivee_estimee).toLocaleTimeString("fr-FR", {
+            hour: "2-digit",
+            minute: "2-digit",
+            timeZone: "Europe/Paris",
+          })
+        : null,
+      creneau:
+        ligne.creneau_debut && ligne.creneau_fin
+          ? `${String(ligne.creneau_debut).slice(0, 5)} - ${String(ligne.creneau_fin).slice(0, 5)}`
+          : null,
     },
     produits: ligne.produits,
   }));
 };
 
-export const modifierStatutArticle = async (livraisonId, operationId, userId, statut) => {
-  const statutsBdd = { A_LIVRER: "A_TRAITER", LIVRE: "REALISEE", DEFECTUEUX: "IMPOSSIBLE", NON_CONFORME: "REFUSEE" };
+export const modifierStatutArticle = async (
+  livraisonId,
+  operationId,
+  userId,
+  statut,
+) => {
+  const statutsBdd = {
+    A_LIVRER: "A_TRAITER",
+    LIVRE: "REALISEE",
+    DEFECTUEUX: "IMPOSSIBLE",
+    NON_CONFORME: "REFUSEE",
+  };
   const resultat = await sql.query(
     `UPDATE operations_livraison o SET statut_operation = $4, updated_at = CURRENT_TIMESTAMP
      FROM livraisons l WHERE o.id = $3 AND o.livraison_id = l.id AND l.id = $1
@@ -85,15 +112,30 @@ export const finaliserLivraison = async (livraisonId, userId, donnees) => {
          effectue_par = EXCLUDED.effectue_par, effectue_le = CURRENT_TIMESTAMP RETURNING livraison_id
      ) UPDATE livraisons SET statut = $12, updated_at = CURRENT_TIMESTAMP
        WHERE id IN (SELECT livraison_id FROM execution) RETURNING id, statut`,
-    [livraisonId, userId, donnees.resultat, donnees.motif_echec || null, donnees.commentaire || null,
-      Boolean(donnees.non_conforme), Boolean(donnees.decharge_intervention), donnees.decharge_risque || null,
-      donnees.decharge_signataire || null, Boolean(donnees.decharge_accepte_risques),
-      Boolean(donnees.decharge_conserve_produit), statutLivraison],
+    [
+      livraisonId,
+      userId,
+      donnees.resultat,
+      donnees.motif_echec || null,
+      donnees.commentaire || null,
+      Boolean(donnees.non_conforme),
+      Boolean(donnees.decharge_intervention),
+      donnees.decharge_risque || null,
+      donnees.decharge_signataire || null,
+      Boolean(donnees.decharge_accepte_risques),
+      Boolean(donnees.decharge_conserve_produit),
+      statutLivraison,
+    ],
   );
   return resultat[0] || null;
 };
 
-export const declarerIncidentLivraison = async (livraisonId, userId, type, description) => {
+export const declarerIncidentLivraison = async (
+  livraisonId,
+  userId,
+  type,
+  description,
+) => {
   const resultat = await sql.query(
     `INSERT INTO incidents_livraisons (livraison_id, type, description, declare_par)
      SELECT l.id, $3, $4, $2 FROM livraisons l WHERE l.id = $1 AND ${accesOperationnel}
@@ -114,6 +156,9 @@ export const ajouterPhotoLivraison = async (livraisonId, userId, blobUrl) => {
 };
 
 export const verifierAccesLivraison = async (livraisonId, userId) => {
-  const resultat = await sql.query(`SELECT l.id FROM livraisons l WHERE l.id = $1 AND ${accesOperationnel}`, [livraisonId, userId]);
+  const resultat = await sql.query(
+    `SELECT l.id FROM livraisons l WHERE l.id = $1 AND ${accesOperationnel}`,
+    [livraisonId, userId],
+  );
   return Boolean(resultat[0]);
 };

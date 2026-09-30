@@ -6,7 +6,7 @@ import {
   verifierRefreshToken,
   verifierAccessToken,
   assignPointed,
-  recupPointages
+  recupPointages,
 } from "../services/gestion.users.js";
 import { put } from "@vercel/blob";
 import { get } from "@vercel/blob";
@@ -35,40 +35,36 @@ export const ControlAssignPointed = async (req, res) => {
     const dateJour = pointedAt.toISOString().split("T")[0];
     const pointage = await assignPointed(id, dateJour, pointedAt);
     return res.status(201).json(pointage);
-  }catch (error) {
-  console.error("Erreur assignPointed :", error);
+  } catch (error) {
+    console.error("Erreur assignPointed :", error);
 
-  return res.status(500).json({
-    erreur: error.message,
-    code: error.code,
-  });
-}
+    return res.status(500).json({
+      erreur: error.message,
+      code: error.code,
+    });
+  }
 };
 
-export const ControlRecupPointed = async(req, res)=>{
+export const ControlRecupPointed = async (req, res) => {
   try {
     const id = req.user.id;
     const date = new Date();
     const dateJour = date.toISOString().split("T")[0];
     const pointages = await recupPointages(id, dateJour);
-    if(!pointages) return res.status(404).json({données:"Aucun pointage effectué aujourdhui"})
-    return res.status(201).json(pointages)
-  }catch(error){
-    console.log(error)
+    if (!pointages)
+      return res
+        .status(201)
+        .json({ données: "Aucun pointage effectué aujourdhui" });
+    return res.status(200).json(pointages);
+  } catch (error) {
+    console.log(error);
   }
-}
+};
 
 export const ControlRegisterUsers = async (req, res) => {
   try {
-    let {
-      email,
-      password,
-      nom,
-      prenom,
-      birth,
-      phone,
-      avatar_img_url,
-    } = req.body;
+    let { email, password, nom, prenom, birth, phone, avatar_img_url } =
+      req.body;
 
     if (
       !email?.trim() ||
@@ -91,6 +87,10 @@ export const ControlRegisterUsers = async (req, res) => {
     prenom = prenom.trim();
     birth = birth.trim();
     phone = phone.trim();
+    phone = phone.replaceAll(".", "");
+    phone = phone.replaceAll("/", "");
+    phone = phone.replaceAll("-", "");
+    phone = phone.replaceAll(" ", "");
 
     const user = await creerUser(
       email,
@@ -105,11 +105,7 @@ export const ControlRegisterUsers = async (req, res) => {
     const accessToken = signAccessToken(user);
     const refreshToken = signRefreshToken(user);
 
-    res.cookie(
-      "refreshToken",
-      refreshToken,
-      cookieOptions,
-    );
+    res.cookie("refreshToken", refreshToken, cookieOptions);
 
     return res.status(201).json({
       couleur: "vert",
@@ -119,20 +115,14 @@ export const ControlRegisterUsers = async (req, res) => {
       ok: true,
     });
   } catch (error) {
-    console.error(
-      "Erreur inscription :",
-      error,
-    );
+    console.error("Erreur inscription :", error);
 
-    return res
-      .status(error.status || 500)
-      .json({
-        couleur: "rouge",
-        message:
-          error.message ||
-          "Une erreur s'est produite pendant l'inscription",
-        ok: false,
-      });
+    return res.status(error.status || 500).json({
+      couleur: "rouge",
+      message:
+        error.message || "Une erreur s'est produite pendant l'inscription",
+      ok: false,
+    });
   }
 };
 
@@ -184,14 +174,11 @@ export const ControlRefreshUsers = async (req, res) => {
       });
     }
 
-    const resultatRefresh =
-      await verifierRefreshToken(refreshToken);
+    const resultatRefresh = await verifierRefreshToken(refreshToken);
 
-    const accessToken =
-      resultatRefresh.accessToken;
+    const accessToken = resultatRefresh.accessToken;
 
-    const user =
-      resultatRefresh.user;
+    const user = resultatRefresh.user;
 
     return res.status(200).json({
       couleur: "vert",
@@ -201,16 +188,11 @@ export const ControlRefreshUsers = async (req, res) => {
       ok: true,
     });
   } catch (error) {
-    res.clearCookie(
-      "refreshToken",
-      cookieOptionsClear,
-    );
+    res.clearCookie("refreshToken", cookieOptionsClear);
 
     return res.status(error.status || 401).json({
       couleur: "rouge",
-      message:
-        error.message ||
-        "Session expirée ou invalide",
+      message: error.message || "Session expirée ou invalide",
       ok: false,
     });
   }
@@ -245,8 +227,7 @@ export const controlImageProfil = async (req, res) => {
 
     if (!extension) {
       return res.status(400).json({
-        error:
-          "Format d'image non autorisé. Utilisez JPG, PNG ou WEBP.",
+        error: "Format d'image non autorisé. Utilisez JPG, PNG ou WEBP.",
       });
     }
 
@@ -260,18 +241,13 @@ export const controlImageProfil = async (req, res) => {
 
     const pathname = `avatars/avatar-${Date.now()}.${extension}`;
 
-    const blob = await put(
-      pathname,
-      fichier.buffer,
-      {
-        access: "private",
-        contentType: fichier.mimetype,
-        addRandomSuffix: true,
+    const blob = await put(pathname, fichier.buffer, {
+      access: "private",
+      contentType: fichier.mimetype,
+      addRandomSuffix: true,
 
-        
-        token: process.env.BLOB_READ_WRITE_TOKEN,
-      },
-    );
+      token: process.env.BLOB_READ_WRITE_TOKEN,
+    });
 
     return res.status(201).json({
       message: "Avatar enregistré avec succès",
@@ -281,25 +257,17 @@ export const controlImageProfil = async (req, res) => {
       size: fichier.size,
     });
   } catch (error) {
-    console.error(
-      "Erreur pendant l'upload de l'avatar :",
-      error,
-    );
+    console.error("Erreur pendant l'upload de l'avatar :", error);
 
     return res.status(500).json({
-      error:
-        error.message ||
-        "Impossible d'enregistrer l'image",
+      error: error.message || "Impossible d'enregistrer l'image",
     });
   }
 };
 
 export const controlAfficherAvatar = async (req, res) => {
   try {
-    
-    const avatarUrl =
-      req.user?.avatar ??
-      req.user?.avatar_img_url;
+    const avatarUrl = req.user?.avatar ?? req.user?.avatar_img_url;
 
     if (!avatarUrl) {
       return res.status(404).json({
@@ -307,18 +275,14 @@ export const controlAfficherAvatar = async (req, res) => {
       });
     }
 
-   
-    const etagNavigateur =
-      req.headers["if-none-match"];
+    const etagNavigateur = req.headers["if-none-match"];
 
     const resultatBlob = await get(avatarUrl, {
       access: "private",
       token: process.env.BLOB_READ_WRITE_TOKEN,
 
       ifNoneMatch:
-        typeof etagNavigateur === "string"
-          ? etagNavigateur
-          : undefined,
+        typeof etagNavigateur === "string" ? etagNavigateur : undefined,
     });
 
     if (!resultatBlob) {
@@ -327,35 +291,19 @@ export const controlAfficherAvatar = async (req, res) => {
       });
     }
 
-    res.setHeader(
-      "Cache-Control",
-      "private, no-cache",
-    );
+    res.setHeader("Cache-Control", "private, no-cache");
 
-    res.setHeader(
-      "ETag",
-      resultatBlob.blob.etag,
-    );
+    res.setHeader("ETag", resultatBlob.blob.etag);
 
-    res.setHeader(
-      "Vary",
-      "Authorization",
-    );
+    res.setHeader("Vary", "Authorization");
 
-    res.setHeader(
-      "X-Content-Type-Options",
-      "nosniff",
-    );
+    res.setHeader("X-Content-Type-Options", "nosniff");
 
-   
     if (resultatBlob.statusCode === 304) {
       return res.status(304).end();
     }
 
-    if (
-      resultatBlob.statusCode !== 200 ||
-      !resultatBlob.stream
-    ) {
+    if (resultatBlob.statusCode !== 200 || !resultatBlob.stream) {
       return res.status(404).json({
         message: "Avatar indisponible",
       });
@@ -363,19 +311,12 @@ export const controlAfficherAvatar = async (req, res) => {
 
     res.setHeader(
       "Content-Type",
-      resultatBlob.blob.contentType ||
-        "application/octet-stream",
+      resultatBlob.blob.contentType || "application/octet-stream",
     );
 
-    await pipeline(
-      Readable.fromWeb(resultatBlob.stream),
-      res,
-    );
+    await pipeline(Readable.fromWeb(resultatBlob.stream), res);
   } catch (error) {
-    console.error(
-      "Erreur pendant l’affichage de l’avatar :",
-      error,
-    );
+    console.error("Erreur pendant l’affichage de l’avatar :", error);
 
     if (res.headersSent) {
       return res.end();

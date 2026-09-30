@@ -669,7 +669,7 @@ export default function AdminSecteurs() {
         </section>
       )}
 
-      <div className="h-[70vh] min-h-[520px] shrink-0 border-2 p-2">
+      <div className="h-[70vh] min-h-130 shrink-0 border-2 p-2">
         <APIProvider apiKey={key}>
           <div className="relative h-full w-full">
             {chargementSecteurs && (
