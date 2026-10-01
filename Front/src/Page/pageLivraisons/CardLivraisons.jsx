@@ -22,6 +22,7 @@ export default function CardLivraisons({
   estimation = {},
   produits = [],
   statut,
+  restreintPage = false,
 }) {
   const icones = {
     Installation: <Tournevis width={16} height={16} />,
@@ -152,7 +153,7 @@ export default function CardLivraisons({
       style={{ "--delivery-card-height": `${hauteurCarte}px` }}
       className={`${fermeture ? "delivery-card-collapse" : "delivery-card-expand"} relative w-full shrink-0 overflow-hidden rounded-[1.4rem] border border-blue-400/30 bg-[#0d1c32] text-white shadow-[0_18px_45px_rgba(0,0,0,0.28)]`}
     >
-      <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-blue-500 via-cyan-400 to-blue-500" />
+      <div className="absolute inset-x-0 top-0 h-1 bg-linear-to-r from-blue-500 via-cyan-400 to-blue-500" />
       <header
         onClick={onClick}
         className="flex cursor-pointer items-center gap-3 px-3 pb-3 pt-4"
@@ -169,27 +170,34 @@ export default function CardLivraisons({
             <span>{magasin.nom || "Magasin non renseigné"}</span>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="text-right">
-            <p className="text-[0.52rem] uppercase text-slate-500">Arrivée</p>
-            <strong className="text-lg font-black text-cyan-300">
-              {estimation.heure || "—"}
-            </strong>
+        {restreintPage && (
+          <button className="flex justify-center items-center shrink-0 size-10 text-3xl rounded-md aspect-square border-2 border-blue-500 text-white">
+            <span className="leading-none -translate-y-3">...</span>
+          </button>
+        )}
+        {!restreintPage && (
+          <div className="flex items-center gap-2">
+            <div className="text-right">
+              <p className="text-[0.52rem] uppercase text-slate-500">Arrivée</p>
+              <strong className="text-lg font-black text-cyan-300">
+                {estimation.heure || "—"}
+              </strong>
+            </div>
+            <svg
+              className="h-4 w-4 text-slate-500"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path
+                d="m18 15-6-6-6 6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
           </div>
-          <svg
-            className="h-4 w-4 text-slate-500"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
-            <path
-              d="m18 15-6-6-6 6"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </div>
+        )}
       </header>
 
       <div className="mx-3 rounded-xl bg-[#08172a] px-3 py-2.5">
@@ -422,93 +430,94 @@ export default function CardLivraisons({
           </button>
         </section>
       )}
-
-      <footer className="border-t border-white/6 bg-black/10 p-3">
-        <div className="flex items-center gap-2 text-[0.68rem]">
-          <a
-            href={itineraireGoogleMaps}
-            target="_blank"
-            rel="noreferrer"
-            className="flex h-8 flex-1 items-center justify-center gap-2 rounded-lg border border-slate-700 text-slate-300"
-          >
-            <Location />
-            <span>Itinéraire</span>
-          </a>
-          <a
-            href={
-              client.telephone
-                ? `tel:${client.telephone.replace(/\s/g, "")}`
-                : undefined
-            }
-            className={`flex h-8 flex-1 items-center justify-center gap-2 rounded-lg border ${client.telephone ? "border-slate-700 text-slate-300" : "pointer-events-none border-slate-800 text-slate-600"}`}
-          >
-            <Tel />
-            <span>Appeler</span>
-          </a>
-        </div>
-        {panneau === "ACTIONS" && (
-          <div className="mt-2 overflow-hidden rounded-xl border border-slate-700 bg-[#0b192b] text-left text-xs">
-            <button
-              type="button"
-              onClick={() => setPanneau("ECHEC")}
-              className="flex w-full items-center gap-3 border-b border-white/6 px-3 py-2.5 text-slate-200"
+      {!restreintPage && (
+        <footer className="border-t border-white/6 bg-black/10 p-3">
+          <div className="flex items-center gap-2 text-[0.68rem]">
+            <a
+              href={itineraireGoogleMaps}
+              target="_blank"
+              rel="noreferrer"
+              className="flex h-8 flex-1 items-center justify-center gap-2 rounded-lg border border-slate-700 text-slate-300"
             >
-              <span className="flex h-6 w-6 items-center justify-center rounded-full border border-slate-600">
-                ×
-              </span>
-              Déclarer un échec
-            </button>
-            <button
-              type="button"
-              onClick={() => setPanneau("INCIDENT")}
-              className="flex w-full items-center gap-3 border-b border-white/6 px-3 py-2.5 text-slate-200"
+              <Location />
+              <span>Itinéraire</span>
+            </a>
+            <a
+              href={
+                client.telephone
+                  ? `tel:${client.telephone.replace(/\s/g, "")}`
+                  : undefined
+              }
+              className={`flex h-8 flex-1 items-center justify-center gap-2 rounded-lg border ${client.telephone ? "border-slate-700 text-slate-300" : "pointer-events-none border-slate-800 text-slate-600"}`}
             >
-              <span className="flex h-6 w-6 items-center justify-center rounded-full border border-slate-600">
-                !
-              </span>
-              Signaler un incident
-            </button>
-            <label
-              htmlFor={`photo-livraison-${id}`}
-              onClick={() => setPanneau("")}
-              className="flex w-full cursor-pointer items-center gap-3 px-3 py-2.5 text-slate-200"
-            >
-              <span className="flex h-6 w-6 items-center justify-center rounded-full border border-slate-600">
-                ○
-              </span>
-              Prendre une photo
-            </label>
+              <Tel />
+              <span>Appeler</span>
+            </a>
           </div>
-        )}
-        <div className="mt-2 flex gap-2">
-          <button
-            type="button"
-            onClick={() => setPanneau("VALIDER")}
-            className="h-10 flex-1 rounded-xl bg-yellow-300 text-[0.7rem] font-extrabold text-[#071426]"
-          >
-            Terminer la livraison
-          </button>
-          <button
-            type="button"
-            onClick={() =>
-              setPanneau((actuel) => (actuel === "ACTIONS" ? "" : "ACTIONS"))
-            }
-            aria-label="Autres actions"
-            className="h-10 w-11 rounded-xl border border-slate-700 text-lg text-slate-300"
-          >
-            •••
-          </button>
-        </div>
-        <input
-          id={`photo-livraison-${id}`}
-          ref={photoRef}
-          type="file"
-          accept="image/*"
-          capture="environment"
-          onChange={(e) => envoyerPhoto(e.target.files?.[0])}
-          className="hidden"
-        />
-      </footer>
+          {panneau === "ACTIONS" && (
+            <div className="mt-2 overflow-hidden rounded-xl border border-slate-700 bg-[#0b192b] text-left text-xs">
+              <button
+                type="button"
+                onClick={() => setPanneau("ECHEC")}
+                className="flex w-full items-center gap-3 border-b border-white/6 px-3 py-2.5 text-slate-200"
+              >
+                <span className="flex h-6 w-6 items-center justify-center rounded-full border border-slate-600">
+                  ×
+                </span>
+                Déclarer un échec
+              </button>
+              <button
+                type="button"
+                onClick={() => setPanneau("INCIDENT")}
+                className="flex w-full items-center gap-3 border-b border-white/6 px-3 py-2.5 text-slate-200"
+              >
+                <span className="flex h-6 w-6 items-center justify-center rounded-full border border-slate-600">
+                  !
+                </span>
+                Signaler un incident
+              </button>
+              <label
+                htmlFor={`photo-livraison-${id}`}
+                onClick={() => setPanneau("")}
+                className="flex w-full cursor-pointer items-center gap-3 px-3 py-2.5 text-slate-200"
+              >
+                <span className="flex h-6 w-6 items-center justify-center rounded-full border border-slate-600">
+                  ○
+                </span>
+                Prendre une photo
+              </label>
+            </div>
+          )}
+          <div className="mt-2 flex gap-2">
+            <button
+              type="button"
+              onClick={() => setPanneau("VALIDER")}
+              className="h-10 flex-1 rounded-xl bg-yellow-300 text-[0.7rem] font-extrabold text-[#071426]"
+            >
+              Terminer la livraison
+            </button>
+            <button
+              type="button"
+              onClick={() =>
+                setPanneau((actuel) => (actuel === "ACTIONS" ? "" : "ACTIONS"))
+              }
+              aria-label="Autres actions"
+              className="h-10 w-11 rounded-xl border border-slate-700 text-lg text-slate-300"
+            >
+              •••
+            </button>
+          </div>
+          <input
+            id={`photo-livraison-${id}`}
+            ref={photoRef}
+            type="file"
+            accept="image/*"
+            capture="environment"
+            onChange={(e) => envoyerPhoto(e.target.files?.[0])}
+            className="hidden"
+          />
+        </footer>
+      )}
     </article>
   );
 }

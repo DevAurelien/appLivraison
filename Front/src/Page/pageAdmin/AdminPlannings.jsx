@@ -1,40 +1,64 @@
 import { APIProvider, Map } from "@vis.gl/react-google-maps";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { LivraisonsContext } from "../../contexte/livraisonsContext.jsx";
 import apiFetch from "../../utils/apiFetch.jsx";
-import { useEffect } from "react";
+import CardLivraisons from "../pageLivraisons/CardLivraisons.jsx";
+import Pulse from "../../components/Loading.jsx";
 const key = import.meta.env.VITE_GOOGLE_KEY;
 
 export default function AdminPlannings() {
   const livraisons = useContext(LivraisonsContext);
   const [tabLivraison, setTabLivraison] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    try {
-      const requete = async () => {
+    setIsLoading(true);
+
+    const requete = async () => {
+      try {
         const res = await apiFetch("/livraisonsAll", "GET");
         const data = await res.json();
         setTabLivraison(data);
-      };
-      requete();
-    } catch (e) {
-      console.log(
-        "une erreur s'est produite lors de la recuperation des livraisons",
-      );
-    }
+      } catch (e) {
+        console.log(
+          `${e}, une erreur s'est produite lors de la recuperation des livraisons `,
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    requete();
   }, []);
 
   return (
-    <div className="flex h-full w-full overflow-y-auto px-2 pb-25">
-      <div className="flex flex-col size-full border px-2">
-        <div className="flex flex-col border h-[10vh]">
+    <div className="flex h-full w-full overflow-y-auto px-2 mb-25">
+      <div className="flex flex-col size-full px-2">
+        <div className="flex flex-col h-[10vh] gap-4">
           <p className="flex justify-end w-full">
-            <button className="flex justify-center items-center p-1 border shrink-0 size-10 text-4xl rounded-md aspect-square bg-(--yellow-zesteo)/50 text-black">
+            <button className="flex justify-center items-center p-1 shrink-0 size-10 text-4xl rounded-md aspect-square bg-(--yellow-zesteo)/50 text-black">
               +
             </button>
           </p>
-          <p>qdzdqzd</p>
-          {tabLivraison != [] && console.log(tabLivraison)}
+          {isLoading ? (
+            <Pulse />
+          ) : (
+            tabLivraison.map((item, index) => {
+              return (
+                <CardLivraisons
+                  key={index}
+                  restreintPage
+                  client={item.client}
+                  magasin={item.magasin}
+                  adresse={item.adresse}
+                  estimation={item.estimation}
+                  produits={item.produits}
+                  id={item.id}
+                  numeroDeLivraison={item.numeroDeLivraison}
+                  statut={item.statut}
+                ></CardLivraisons>
+              );
+            })
+          )}
         </div>
       </div>
     </div>
