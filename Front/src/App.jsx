@@ -92,7 +92,8 @@ export default function App() {
   return (
     <div
       className={`
-        ${estAdministration ? "bg_test" : ""}
+         ${estAdministration ? "bg_test" : ""}
+        
 
         flex
         h-full
@@ -102,7 +103,6 @@ export default function App() {
         select-none
       `}
     >
-
       {afficherHeader && <HeaderLogo />}
 
 

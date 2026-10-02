@@ -1,4 +1,5 @@
-import { createContext, useState } from "react";
+import { createContext, useState, useEffect } from "react";
+import apiFetch from "../utils/apiFetch";
 
 export const LivraisonsContext = createContext({
   livraisons: [],
@@ -26,6 +27,20 @@ export function LivraisonsContextProvider({ children }) {
 
   const [utilisateurChargeId, setUtilisateurChargeId] =
     useState(null);
+
+  useEffect(()=>{
+    const  requete = async ()=> {
+      try {
+        const res = await apiFetch("/livraisonsAll", "GET")
+        if(!res.ok) return;
+        const data = await res.json();
+        setLivraisons(data);
+      }catch(e){
+        console.log(e)
+      }
+    }
+    requete()
+  },[])
 
   return (
     <LivraisonsContext.Provider

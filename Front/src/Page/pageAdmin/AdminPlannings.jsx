@@ -13,6 +13,7 @@ export default function AdminPlannings() {
 
   useEffect(() => {
     setIsLoading(true);
+    console.log(livraisons)
 
     const requete = async () => {
       try {
@@ -35,14 +36,14 @@ export default function AdminPlannings() {
       <div className="flex flex-col size-full px-2">
         <div className="flex flex-col h-[10vh] gap-4">
           <p className="flex justify-end w-full">
-            <button className="flex justify-center items-center p-1 shrink-0 size-10 text-4xl rounded-md aspect-square bg-(--yellow-zesteo)/50 text-black">
-              +
+            <button className="flex justify-center items-center p-1 shrink-0 size-10 text-4xl rounded-md aspect-square bg-(--yellow-zesteo) text-black">
+              <span className="leading-none -translate-y-1">+</span>
             </button>
           </p>
           {isLoading ? (
             <Pulse />
           ) : (
-            tabLivraison.map((item, index) => {
+            livraisons.livraisons.map((item, index) => {
               return (
                 <CardLivraisons
                   key={index}
@@ -55,7 +56,7 @@ export default function AdminPlannings() {
                   id={item.id}
                   numeroDeLivraison={item.numeroDeLivraison}
                   statut={item.statut}
-                ></CardLivraisons>
+                />
               );
             })
           )}
