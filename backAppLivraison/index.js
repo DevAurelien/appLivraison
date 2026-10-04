@@ -2,6 +2,7 @@ import express from "express"
 import cors from "cors"
 import cookieParser from "cookie-parser"
 
+import routeClients from "./routes/route.clients.js"
 import routeDeliveries from "./routes/route.deliveries.js"
 import routeUsers from "./routes/route.users.js"
 import routeSalaries from "./routes/route.salaries.js"
@@ -37,6 +38,7 @@ app.use("/", routeSecteurs)
 app.use("/", routeAdministration)
 app.use("/", routeMessages)
 app.use("/", routeMessagesDiffusion)
+app.use("/", routeClients)
 
 
 if (process.env.NODE_ENV !== "production") {

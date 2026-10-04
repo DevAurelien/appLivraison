@@ -1,5 +1,4 @@
 import { useContext } from "react";
-
 import {
   Navigate,
   Route,
@@ -12,26 +11,21 @@ import { UserContext } from "./contexte/userContext.jsx";
 import HeaderLogo from "./Page/HeaderLogo.jsx";
 import Pulse from "./components/Loading.jsx";
 
-/*
- * AUTHENTIFICATION
- */
+// Authentification
 import SeConnecter from "./Page/SeConnecter.jsx";
 import Inscription from "./Page/Inscription.jsx";
 
-/*
- * PAGES PRINCIPALES
- */
+// Pages principales
 import Accueil from "./Page/pageAccueil/Accueil.jsx";
 import Profil from "./Page/pageProfil/Profil.jsx";
 import Livraisons from "./Page/pageLivraisons/Livraisons.jsx";
+import Clients from "./Page/PageClients/Clients.jsx"
 import Contacts from "./Page/pageMessages/Contacts.jsx";
 import Messagerie from "./Page/pageMessages/Messagerie.jsx";
+import CreaLivraisons from "./Page/pageClients/CreaLivraisons.jsx";
 
-/*
- * ADMINISTRATION
- */
+// Administration
 import Administration from "./Page/pageAdmin/Administration.jsx";
-
 import AdminLivreurs from "./Page/pageAdmin/AdminLivreurs.jsx";
 import AdminGestions from "./Page/pageAdmin/AdminGestions.jsx";
 import AdminAgences from "./Page/pageAdmin/AdminAgences.jsx";
@@ -43,362 +37,190 @@ import AdminStatistiques from "./Page/pageAdmin/AdminStatistiques.jsx";
 
 
 export default function App() {
-  const { user, authLoading } =
-    useContext(UserContext);
-
+  const { user, authLoading } = useContext(UserContext);
   const { pathname } = useLocation();
 
   if (authLoading) {
     return (
-      <div
-        className="
-          flex
-          h-full
-          w-full
-          items-center
-          justify-center
-        "
-      >
+      <div className="flex h-full w-full items-center justify-center">
         <Pulse />
       </div>
     );
   }
 
-
   const connecte = Boolean(user?.id);
-  const compteExterne = ["CLIENT", "MAGASIN"].includes(user?.role_code);
+
+  const compteExterne = ["CLIENT", "MAGASIN"].includes(
+    user?.role_code,
+  );
+
   const accesAdministration = connecte && !compteExterne;
-  const redirectionAdministration = connecte ? "/accueil" : "/connection";
 
-
-  /* Header Zesteo pas affiché */
-
-  
   const pageAuthentification =
     pathname === "/connection" ||
     pathname === "/inscription";
 
-
   const afficherHeader =
-    connecte &&
-    !pageAuthentification;
-
+    connecte && !pageAuthentification;
 
   const estAdministration =
     pathname === "/administration" ||
     pathname.startsWith("/administration/");
 
+  const protegerPage = (page) => {
+    if (connecte) return page;
+
+    return <Navigate to="/connection" replace />;
+  };
+
+  const protegerAdmin = (page) => {
+    if (accesAdministration) return page;
+
+    return (
+      <Navigate
+        to={connecte ? "/accueil" : "/connection"}
+        replace
+      />
+    );
+  };
 
   return (
     <div
       className={`
-         ${estAdministration ? "bg_test" : ""}
-        
-
-        flex
-        h-full
-        w-full
-        flex-col
-        text-white
-        select-none
+        ${estAdministration ? "bg_test" : ""}
+        flex h-full w-full flex-col text-white select-none
       `}
     >
       {afficherHeader && <HeaderLogo />}
 
-
       <Routes>
-
-        {/* ================================================== */}
-        {/* RACINE */}
-        {/* ================================================== */}
-
+        {/* Racine */}
         <Route
           path="/"
           element={
             <Navigate
-              to={
-                connecte
-                  ? "/accueil"
-                  : "/connection"
-              }
+              to={connecte ? "/accueil" : "/connection"}
               replace
             />
           }
         />
 
-
-        {/* ================================================== */}
-        {/* AUTHENTIFICATION */}
-        {/* ================================================== */}
-
+        {/* Authentification */}
         <Route
           path="/connection"
           element={
-            connecte
-              ? (
-                <Navigate
-                  to="/accueil"
-                  replace
-                />
-              )
-              : <SeConnecter />
+            connecte ? (
+              <Navigate to="/accueil" replace />
+            ) : (
+              <SeConnecter />
+            )
           }
         />
-
 
         <Route
           path="/inscription"
           element={
-            connecte
-              ? (
-                <Navigate
-                  to="/accueil"
-                  replace
-                />
-              )
-              : <Inscription />
+            connecte ? (
+              <Navigate to="/accueil" replace />
+            ) : (
+              <Inscription />
+            )
           }
         />
 
-
-        {/* ================================================== */}
-        {/* PAGES PRINCIPALES */}
-        {/* ================================================== */}
-
+        {/* Pages principales */}
         <Route
           path="/accueil"
-          element={
-            connecte
-              ? <Accueil />
-              : (
-                <Navigate
-                  to="/connection"
-                  replace
-                />
-              )
-          }
+          element={protegerPage(<Accueil />)}
         />
-
 
         <Route
           path="/profil"
-          element={
-            connecte
-              ? <Profil />
-              : (
-                <Navigate
-                  to="/connection"
-                  replace
-                />
-              )
-          }
+          element={protegerPage(<Profil />)}
         />
-
 
         <Route
           path="/livraisons"
-          element={
-            connecte
-              ? <Livraisons />
-              : (
-                <Navigate
-                  to="/connection"
-                  replace
-                />
-              )
-          }
+          element={protegerPage(<Livraisons />)}
         />
 
+        <Route
+          path="/clients"
+          element={protegerPage(<Clients />)}
+        />
+        
+        <Route
+          path="/clients/creaLivraisons"
+          element={protegerPage(<CreaLivraisons />)}
+        />
 
         <Route
           path="/contacts"
-          element={
-            connecte
-              ? <Contacts />
-              : (
-                <Navigate
-                  to="/connection"
-                  replace
-                />
-              )
-          }
+          element={protegerPage(<Contacts />)}
         />
-
 
         <Route
           path="/messagerie"
-          element={
-            connecte
-              ? <Messagerie />
-              : (
-                <Navigate
-                  to="/connection"
-                  replace
-                />
-              )
-          }
+          element={protegerPage(<Messagerie />)}
         />
 
-
-        {/* ================================================== */}
-        {/* ADMINISTRATION */}
-        {/* ================================================== */}
-
+        {/* Administration */}
         <Route
           path="/administration"
-          element={
-            accesAdministration
-              ? <Administration />
-              : (
-                <Navigate
-                  to={redirectionAdministration}
-                  replace
-                />
-              )
-          }
+          element={protegerAdmin(<Administration />)}
         />
-
 
         <Route
           path="/administration/livreurs"
-          element={
-            accesAdministration
-              ? <AdminLivreurs />
-              : (
-                <Navigate
-                  to={redirectionAdministration}
-                  replace
-                />
-              )
-          }
+          element={protegerAdmin(<AdminLivreurs />)}
         />
-
 
         <Route
           path="/administration/agences"
-          element={
-            accesAdministration
-              ? <AdminAgences />
-              : (
-                <Navigate
-                  to={redirectionAdministration}
-                  replace
-                />
-              )
-          }
+          element={protegerAdmin(<AdminAgences />)}
         />
-
 
         <Route
           path="/administration/camions"
-          element={
-            accesAdministration
-              ? <AdminCamions />
-              : (
-                <Navigate
-                  to={redirectionAdministration}
-                  replace
-                />
-              )
-          }
+          element={protegerAdmin(<AdminCamions />)}
         />
-
 
         <Route
           path="/administration/secteurs"
-          element={
-            accesAdministration
-              ? <AdminSecteurs />
-              : (
-                <Navigate
-                  to={redirectionAdministration}
-                  replace
-                />
-              )
-          }
+          element={protegerAdmin(<AdminSecteurs />)}
         />
-
 
         <Route
           path="/administration/plannings"
-          element={
-            accesAdministration
-              ? <AdminPlannings />
-              : (
-                <Navigate
-                  to={redirectionAdministration}
-                  replace
-                />
-              )
-          }
+          element={protegerAdmin(<AdminPlannings />)}
         />
-
 
         <Route
           path="/administration/incidents"
-          element={
-            accesAdministration
-              ? <AdminIncidents />
-              : (
-                <Navigate
-                  to={redirectionAdministration}
-                  replace
-                />
-              )
-          }
+          element={protegerAdmin(<AdminIncidents />)}
         />
-
 
         <Route
           path="/administration/statistiques"
-          element={
-            accesAdministration
-              ? <AdminStatistiques />
-              : (
-                <Navigate
-                  to={redirectionAdministration}
-                  replace
-                />
-              )
-          }
+          element={protegerAdmin(<AdminStatistiques />)}
         />
-
 
         <Route
           path="/administration/gestions"
-          element={
-            accesAdministration
-              ? <AdminGestions />
-              : (
-                <Navigate
-                  to={redirectionAdministration}
-                  replace
-                />
-              )
-          }
+          element={protegerAdmin(<AdminGestions />)}
         />
 
-
-        {/* ================================================== */}
-        {/* ROUTE INCONNUE */}
-        {/* ================================================== */}
-
+        {/* Route inconnue */}
         <Route
           path="*"
           element={
             <Navigate
-              to={
-                connecte
-                  ? "/accueil"
-                  : "/connection"
-              }
+              to={connecte ? "/accueil" : "/connection"}
               replace
             />
           }
         />
-
       </Routes>
-
     </div>
   );
 }

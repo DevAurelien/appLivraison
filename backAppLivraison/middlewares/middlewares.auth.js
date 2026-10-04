@@ -137,9 +137,8 @@ export const autoriserPermissionOuRoles = (permissionRequise, ...rolesAutorises)
       if (!req.user?.id) {
         return res.status(401).json({ message: "Utilisateur non authentifié" });
       }
-
-      // Recharge les droits depuis la BDD : le contenu éventuel du token ne fait
-      // jamais autorité pour une action d'administration sensible.
+      // Recharge les droits depuis la BDD 
+      
       const utilisateur = await recupererUtilisateurPourAutorisation(req.user.id);
       if (!utilisateur) {
         return res.status(401).json({ message: "Utilisateur inexistant" });

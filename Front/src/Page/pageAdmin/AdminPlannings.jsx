@@ -5,12 +5,15 @@ import apiFetch from "../../utils/apiFetch.jsx";
 import CardLivraisons from "../pageLivraisons/CardLivraisons.jsx";
 import Pulse from "../../components/Loading.jsx";
 const key = import.meta.env.VITE_GOOGLE_KEY;
+import { useNavigate } from "react-router-dom";
+
 
 export default function AdminPlannings() {
   const livraisons = useContext(LivraisonsContext);
   const [tabLivraison, setTabLivraison] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-
+  const navigate = useNavigate();
+  
   useEffect(() => {
     setIsLoading(true);
     console.log(livraisons)
@@ -36,7 +39,7 @@ export default function AdminPlannings() {
       <div className="flex flex-col size-full px-2">
         <div className="flex flex-col h-[10vh] gap-4">
           <p className="flex justify-end w-full">
-            <button className="flex justify-center items-center p-1 shrink-0 size-10 text-4xl rounded-md aspect-square bg-(--yellow-zesteo) text-black">
+            <button onClick={() => navigate("/clients")} className="flex justify-center items-center p-1 shrink-0 size-10 text-4xl rounded-md aspect-square bg-(--yellow-zesteo) text-black">
               <span className="leading-none -translate-y-1">+</span>
             </button>
           </p>

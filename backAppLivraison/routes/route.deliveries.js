@@ -5,6 +5,7 @@ import {
   controlFinaliserLivraison,
   controlModifierArticleLivraison,
   controlRecupDeliveries,
+  controlCreaDeliveries
 } from "../controllers/control.deliveries.js";
 import { verifierAuthentification } from "../middlewares/middlewares.auth.js";
 import multer from "multer";
@@ -13,6 +14,7 @@ const router = express.Router();
 
 router.get("/livraisonsJour", verifierAuthentification, controlRecupDeliveries);
 router.get("/livraisonsAll", verifierAuthentification, controlRecupDeliveries);
+router.post("/livraisons/creation", verifierAuthentification, controlCreaDeliveries)
 router.patch("/livraisons/:id/modifier", verifierAuthentification, controlRecupDeliveries);
 router.delete("/livraisons/:id/supprimer", verifierAuthentification, controlRecupDeliveries);
 

@@ -9,65 +9,157 @@ const accesOperationnel = `(
 )`;
 
 export const recupererLivraisons = async (userId) => {
-  const lignes = await sql.query(
-    `SELECT l.id, l.reference_commande, l.adresse, l.complement_adresse,
-      l.code_postal, l.ville, l.statut, l.creneau_debut, l.creneau_fin,
-      COALESCE(l.destinataire_nom, client.nom) AS client_nom,
-      COALESCE(l.destinataire_prenom, client.prenom) AS client_prenom,
-      COALESCE(l.destinataire_telephone, client.phone) AS client_telephone,
-      COALESCE(l.donneur_ordre_nom, createur.nom, 'Siege') AS magasin_nom,
-      te.ordre, te.heure_arrivee_estimee,
-      COALESCE(json_agg(json_build_object(
-        'id', o.id, 'nom', o.designation, 'categorie',
-          CASE WHEN UPPER(COALESCE(o.mode_livraison, '')) LIKE '%INSTALL%' THEN 'Installation'
-               WHEN UPPER(COALESCE(o.mode_livraison, '')) LIKE '%PIED%' THEN 'PiedCamion' ELSE 'Depose' END,
-        'reprise', UPPER(COALESCE(o.type_operation, '')) LIKE '%REPRISE%' OR UPPER(COALESCE(o.commentaire, '')) = 'REPRISE',
-        'statut', CASE o.statut_operation WHEN 'REALISEE' THEN 'LIVRE'
-          WHEN 'IMPOSSIBLE' THEN 'DEFECTUEUX' WHEN 'REFUSEE' THEN 'NON_CONFORME'
-          ELSE 'A_LIVRER' END
-      ) ORDER BY o.id) FILTER (WHERE o.id IS NOT NULL), '[]') AS produits
-     FROM livraisons l
-     LEFT JOIN users client ON client.id = l.client_id
-     LEFT JOIN users createur ON createur.id = l.cree_par
-     LEFT JOIN tournee_etapes te ON te.livraison_id = l.id
-     LEFT JOIN tournees t ON t.id = te.tournee_id
-     LEFT JOIN operations_livraison o ON o.livraison_id = l.id
-     WHERE l.client_id = $1 OR ${accesOperationnel}
-     GROUP BY l.id, client.id, createur.id, te.ordre, te.heure_arrivee_estimee, t.date_tournee
-     ORDER BY COALESCE(t.date_tournee, l.date_livraison_prevue), COALESCE(te.ordre, l.id)`,
-    [userId, userId],
-  );
-  return lignes.map((ligne, index) => ({
-    id: ligne.id,
-    numeroDeLivraison: ligne.ordre || index + 1,
-    statut: ligne.statut,
-    client: {
-      nom: ligne.client_nom,
-      prenom: ligne.client_prenom,
-      telephone: ligne.client_telephone,
-    },
-    adresse: {
-      rue: [ligne.adresse, ligne.complement_adresse].filter(Boolean).join(" "),
-      codePostal: ligne.code_postal,
-      ville: ligne.ville,
-    },
-    magasin: { nom: ligne.magasin_nom },
-    estimation: {
-      heure: ligne.heure_arrivee_estimee
-        ? new Date(ligne.heure_arrivee_estimee).toLocaleTimeString("fr-FR", {
-            hour: "2-digit",
-            minute: "2-digit",
-            timeZone: "Europe/Paris",
-          })
-        : null,
-      creneau:
-        ligne.creneau_debut && ligne.creneau_fin
-          ? `${String(ligne.creneau_debut).slice(0, 5)} - ${String(ligne.creneau_fin).slice(0, 5)}`
-          : null,
-    },
-    produits: ligne.produits,
-  }));
+  let lignes;
+  if (userId === 20) {
+    // client
+    lignes = await sql.query(
+      `
+      SELECT *
+      FROM livraisons
+      WHERE id = $1
+    `,
+      [userId],
+    );
+  }
+
+  // lignes = await sql.query(`
+  //     SELECT *
+  //     FROM livraisons
+  //     WHERE
+  //   `,[userId])
+  return lignes.map((item, index) => item);
+
+  // todo a finir ici pour les autres roles
 };
+
+export const creerLivraison = async (
+  userId,
+  clientId,
+  agence_id,
+  reference_commande,
+  adresse,
+  complement_adresse = NULL,
+  code_postal,
+  ville,
+  latitude = NULL,
+  longitude = NULL,
+  etage = 0,
+  ascenseur = NULL,
+  acces_difficile = false,
+  appeler_avant = false,
+  commentaire_logistique = NULL,
+  date_livraison_prevue = NULL,
+) => {
+  const req = await sql.query(
+    `
+      INSERT INTO livraisons (
+  cree_par,
+  client_id,
+  agence_id,
+  reference_commande,
+  adresse,
+  complement_adresse,
+  code_postal,
+  ville,
+  latitude,
+  longitude,
+  etage,
+  ascenseur,
+  acces_difficile,
+  appeler_avant,
+  commentaire_logistique,
+  date_livraison_prevue
+)
+VALUES (
+  $1, $2, $3, $4,
+  $5, $6, $7, $8,
+  $9, $10, $11, $12,
+  $13, $14, $15, $16
+)
+RETURNING *;
+      `,
+    [
+  userId,
+  clientId,
+  agence_id,
+  reference_commande,
+  adresse,
+  complement_adresse,
+  code_postal,
+  ville,
+  latitude,
+  longitude,
+  etage,
+  ascenseur,
+  acces_difficile,
+  appeler_avant,
+  commentaire_logistique,
+  date_livraison_prevue
+],
+  );
+  return req[0];
+};
+
+// export const recupererLivraisons = async (userId) => {
+//   const lignes = await sql.query(
+//     `SELECT l.id, l.reference_commande, l.adresse, l.complement_adresse,
+//       l.code_postal, l.ville, l.statut, l.creneau_debut, l.creneau_fin,
+//       COALESCE(l.destinataire_nom, client.nom) AS client_nom,
+//       COALESCE(l.destinataire_prenom, client.prenom) AS client_prenom,
+//       COALESCE(l.destinataire_telephone, client.phone) AS client_telephone,
+//       COALESCE(l.donneur_ordre_nom, createur.nom, 'Siege') AS magasin_nom,
+//       te.ordre, te.heure_arrivee_estimee,
+//       COALESCE(json_agg(json_build_object(
+//         'id', o.id, 'nom', o.designation, 'categorie',
+//           CASE WHEN UPPER(COALESCE(o.mode_livraison, '')) LIKE '%INSTALL%' THEN 'Installation'
+//                WHEN UPPER(COALESCE(o.mode_livraison, '')) LIKE '%PIED%' THEN 'PiedCamion' ELSE 'Depose' END,
+//         'reprise', UPPER(COALESCE(o.type_operation, '')) LIKE '%REPRISE%' OR UPPER(COALESCE(o.commentaire, '')) = 'REPRISE',
+//         'statut', CASE o.statut_operation WHEN 'REALISEE' THEN 'LIVRE'
+//           WHEN 'IMPOSSIBLE' THEN 'DEFECTUEUX' WHEN 'REFUSEE' THEN 'NON_CONFORME'
+//           ELSE 'A_LIVRER' END
+//       ) ORDER BY o.id) FILTER (WHERE o.id IS NOT NULL), '[]') AS produits
+//      FROM livraisons l
+//      LEFT JOIN users client ON client.id = l.client_id
+//      LEFT JOIN users createur ON createur.id = l.cree_par
+//      LEFT JOIN tournee_etapes te ON te.livraison_id = l.id
+//      LEFT JOIN tournees t ON t.id = te.tournee_id
+//      LEFT JOIN operations_livraison o ON o.livraison_id = l.id
+//      WHERE l.client_id = $1 OR ${accesOperationnel}
+//      GROUP BY l.id, client.id, createur.id, te.ordre, te.heure_arrivee_estimee, t.date_tournee
+//      ORDER BY COALESCE(t.date_tournee, l.date_livraison_prevue), COALESCE(te.ordre, l.id)`,
+//     [userId, userId],
+//   );
+//   return lignes.map((ligne, index) => ({
+//     id: ligne.id,
+//     numeroDeLivraison: ligne.ordre || index + 1,
+//     statut: ligne.statut,
+//     client: {
+//       nom: ligne.client_nom,
+//       prenom: ligne.client_prenom,
+//       telephone: ligne.client_telephone,
+//     },
+//     adresse: {
+//       rue: [ligne.adresse, ligne.complement_adresse].filter(Boolean).join(" "),
+//       codePostal: ligne.code_postal,
+//       ville: ligne.ville,
+//     },
+//     magasin: { nom: ligne.magasin_nom },
+//     estimation: {
+//       heure: ligne.heure_arrivee_estimee
+//         ? new Date(ligne.heure_arrivee_estimee).toLocaleTimeString("fr-FR", {
+//             hour: "2-digit",
+//             minute: "2-digit",
+//             timeZone: "Europe/Paris",
+//           })
+//         : null,
+//       creneau:
+//         ligne.creneau_debut && ligne.creneau_fin
+//           ? `${String(ligne.creneau_debut).slice(0, 5)} - ${String(ligne.creneau_fin).slice(0, 5)}`
+//           : null,
+//     },
+//     produits: ligne.produits,
+//   }));
+// };
 
 export const modifierStatutArticle = async (
   livraisonId,

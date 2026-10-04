@@ -12,10 +12,62 @@ const idValide = (id) => Number.isInteger(Number(id)) && Number(id) > 0;
 
 export const controlRecupDeliveries = async (req, res) => {
   try {
+
     return res.status(200).json(await recupererLivraisons(req.user.id));
   } catch (error) {
     console.error("RÉCUPÉRATION LIVRAISONS :", error);
     return res.status(500).json({ message: "Livraisons indisponibles" });
+  }
+};
+
+export const controlCreaDeliveries = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const {
+      clientId,
+      agence_id,
+      reference_commande,
+      adresse,
+      complement_adresse = null,
+      code_postal,
+      ville,
+      latitude = null,
+      longitude = null,
+      etage = 0,
+      ascenseur = null,
+      acces_difficile = false,
+      appeler_avant = false,
+      commentaire_logistique = null,
+      date_livraison_prevue = null,
+    } = req.body;
+
+    const livraison = await creerLivraison(
+      userId,
+      clientId,
+      agence_id,
+      reference_commande,
+      adresse,
+      complement_adresse,
+      code_postal,
+      ville,
+      latitude,
+      longitude,
+      etage,
+      ascenseur,
+      acces_difficile,
+      appeler_avant,
+      commentaire_logistique,
+      date_livraison_prevue,
+    );
+
+    return res.status(201).json(livraison);
+  } catch (error) {
+    console.error("Erreur de creation de la livraison :", error);
+
+    return res.status(500).json({
+      message: "Impossible de créer la livraison",
+    });
   }
 };
 
