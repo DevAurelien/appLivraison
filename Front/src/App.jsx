@@ -19,7 +19,7 @@ import Inscription from "./Page/Inscription.jsx";
 import Accueil from "./Page/pageAccueil/Accueil.jsx";
 import Profil from "./Page/pageProfil/Profil.jsx";
 import Livraisons from "./Page/pageLivraisons/Livraisons.jsx";
-import Clients from "./Page/PageClients/Clients.jsx"
+import Clients from "./Page/pageClients/Clients.jsx"
 import Contacts from "./Page/pageMessages/Contacts.jsx";
 import Messagerie from "./Page/pageMessages/Messagerie.jsx";
 import CreaLivraisons from "./Page/pageClients/CreaLivraisons.jsx";
