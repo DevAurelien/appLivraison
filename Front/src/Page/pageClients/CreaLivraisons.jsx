@@ -1,6 +1,19 @@
+import { useContext } from "react";
+import { AgencesContext } from "../../contexte/agencesContext";
+import { LivraisonsContext } from "../../contexte/livraisonsContext";
+
 export default function CreaLivraisons() {
+
+  const {listeAgences} = useContext(AgencesContext);
+  const {setLivraisons} = useContext(LivraisonsContext);
+
+  const handleSubmit = (e)=>{
+    e.preventDefault();
+    // setLivraisons((prev)=>([...prev, data]))
+  }
+
   return (
-    <div className="mb-25 flex h-full w-full justify-center overflow-y-auto bg-[#06182c] px-5 pb-5 text-white">
+    <div className="mb-25 flex h-full w-full justify-center overflow-y-auto bg-(--bg-main) px-5 pb-5 text-white">
       <div className="w-full max-w-3xl">
 
         {/* Présentation */}
@@ -9,7 +22,7 @@ export default function CreaLivraisons() {
             NOUVELLE LIVRAISON
           </p>
 
-          <h1 className="text-4xl font-bold">
+          <h1 className="text-3xl font-bold">
             Création livraison
           </h1>
 
@@ -20,7 +33,7 @@ export default function CreaLivraisons() {
 
 
         {/* Formulaire */}
-        <div className="rounded-[28px] border border-[#273b57] bg-[#0c1d34] p-6">
+        <form onSubmit={handleSubmit} className="rounded-[28px] border border-[#273b57] bg-[#0c1d34] p-6">
 
           {/* Commande */}
           <div className="mb-7">
@@ -42,11 +55,11 @@ export default function CreaLivraisons() {
                 defaultValue=""
                 className="rounded-2xl border border-[#2d425e] bg-[#08182b] px-4 py-4 outline-none transition focus:border-[#3f79bd]"
               >
-                <option value="" disabled>
-                  Agence
-                </option>
+                {listeAgences.map((item)=> {return <option key={item.id} value={item.id}>
+                  {item.nom_complet}
+                </option>} )}
+                
 
-                {/* Les agences viendront plus tard de la BDD */}
               </select>
 
             </div>
@@ -62,6 +75,7 @@ export default function CreaLivraisons() {
             <div className="flex flex-col gap-4">
 
               <input
+              required
                 type="text"
                 name="adresse"
                 placeholder="Adresse"
@@ -78,6 +92,7 @@ export default function CreaLivraisons() {
               <div className="grid grid-cols-2 gap-4">
 
                 <input
+                required
                   type="text"
                   name="code_postal"
                   placeholder="Code postal"
@@ -85,6 +100,7 @@ export default function CreaLivraisons() {
                 />
 
                 <input
+                required
                   type="text"
                   name="ville"
                   placeholder="Ville"
@@ -214,7 +230,7 @@ export default function CreaLivraisons() {
             </button>
           </div>
 
-        </div>
+        </form>
       </div>
     </div>
   );
