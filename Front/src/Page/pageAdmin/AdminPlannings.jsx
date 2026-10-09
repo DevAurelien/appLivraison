@@ -39,7 +39,7 @@ export default function AdminPlannings() {
       <div className="flex flex-col size-full px-2">
         <div className="flex flex-col h-[10vh] gap-4">
           <p className="flex justify-end w-full">
-            <button onClick={() => navigate("/clients")} className="flex justify-center items-center p-1 shrink-0 size-10 text-4xl rounded-md aspect-square bg-(--yellow-zesteo) text-black">
+            <button onClick={() => navigate("/produits")} className="flex justify-center items-center p-1 shrink-0 size-10 text-4xl rounded-md aspect-square bg-(--yellow-zesteo) text-black">
               <span className="leading-none -translate-y-1">+</span>
             </button>
           </p>

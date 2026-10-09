@@ -23,6 +23,7 @@ import Clients from "./Page/pageClients/Clients.jsx"
 import Contacts from "./Page/pageMessages/Contacts.jsx";
 import Messagerie from "./Page/pageMessages/Messagerie.jsx";
 import CreaLivraisons from "./Page/pageClients/CreaLivraisons.jsx";
+import Produits from "./Page/pageProduits/Produits.jsx";
 
 // Administration
 import Administration from "./Page/pageAdmin/Administration.jsx";
@@ -147,6 +148,11 @@ export default function App() {
         <Route
           path="/clients"
           element={protegerPage(<Clients />)}
+        />
+
+        <Route
+          path="/produits"
+          element={protegerPage(<Produits />)}
         />
         
         <Route

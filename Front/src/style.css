@@ -1075,3 +1075,367 @@ input[type="number"] {
     animation: none;
   }
 }
+
+
+.zprod {
+  box-sizing: border-box;
+  min-height: 100vh;
+  background: #071120;
+  color: #fff;
+  font-family:
+    Inter,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  padding: 30px 24px 108px;
+}
+.zprod * {
+  box-sizing: border-box;
+}
+.zprod-wrap {
+  max-width: 690px;
+  margin: 0 auto;
+}
+.zprod-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+}
+.zprod-logo {
+  font-size: clamp(32px, 7vw, 48px);
+  font-weight: 950;
+  font-style: italic;
+  letter-spacing: -2px;
+  line-height: 1;
+}
+.zprod-logo em {
+  color: #ffe000;
+  font-style: italic;
+}
+.zprod-bell {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #344967;
+  border-radius: 50%;
+  font-size: 24px;
+}
+.zprod-hero,
+.zprod-panel {
+  border: 1px solid #263d5b;
+  border-radius: 35px;
+  background: #102039;
+}
+.zprod-hero {
+  padding: 34px 35px;
+  margin-bottom: 28px;
+  background: #112039;
+}
+.zprod-hero h1 {
+  font-size: clamp(32px, 7vw, 53px);
+  line-height: 1.1;
+  letter-spacing: -1px;
+  margin: 0 0 13px;
+  font-weight: 800;
+}
+.zprod-hero p {
+  color: #83b4ff;
+  line-height: 1.5;
+  font-size: clamp(16px, 3.5vw, 22px);
+  margin: 0;
+}
+.zprod-panel {
+  padding: 29px 30px;
+  margin-bottom: 24px;
+  background: #0d1e35;
+}
+.zprod-h2 {
+  font-size: 23px;
+  font-weight: 750;
+  margin: 0 0 22px;
+}
+.zprod-muted {
+  color: #96a9c5;
+  font-size: 14px;
+  line-height: 1.55;
+}
+.zprod-input,
+.zprod-select {
+  display: block;
+  width: 100%;
+  height: 64px;
+  border: 1px solid #304965;
+  border-radius: 20px;
+  background: #08182b;
+  color: white;
+  padding: 0 19px;
+  font: inherit;
+  font-size: 17px;
+  outline: 0;
+}
+.zprod-input:focus,
+.zprod-select:focus {
+  border-color: #78acfb;
+  box-shadow: 0 0 0 2px #78acfb20;
+}
+.zprod-input::placeholder {
+  color: #8598ad;
+}
+.zprod-label {
+  display: block;
+  color: #92aaca;
+  margin: 15px 0 9px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.zprod-select:disabled {
+  opacity: 0.45;
+}
+.zprod-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.zprod-category {
+  border: 1px solid #314765;
+  background: #08182b;
+  border-radius: 19px;
+  color: #fff;
+  padding: 16px;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+  min-height: 86px;
+}
+.zprod-category strong,
+.zprod-category small {
+  display: block;
+}
+.zprod-category small {
+  color: #8dbaff;
+  margin-top: 6px;
+}
+.zprod-category.active {
+  border-color: #ffe000;
+  background: #302e12;
+}
+.zprod-category.active strong {
+  color: #ffe000;
+}
+.zprod-options {
+  display: grid;
+  gap: 9px;
+}
+.zprod-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border: 1px solid #304965;
+  border-radius: 17px;
+  background: #08182b;
+  padding: 15px;
+  cursor: pointer;
+}
+.zprod-option input {
+  width: 20px;
+  height: 20px;
+  accent-color: #ffdb00;
+  flex: none;
+}
+.zprod-option-main {
+  flex: 1;
+}
+.zprod-option strong {
+  display: block;
+  font-size: 15px;
+}
+.zprod-option span {
+  font-size: 13px;
+  color: #97b5db;
+}
+.zprod-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 20px;
+}
+.zprod-stat {
+  border: 1px solid #304965;
+  border-radius: 19px;
+  padding: 16px;
+  background: #08182b;
+}
+.zprod-stat small {
+  display: block;
+  color: #97b5db;
+  margin-bottom: 7px;
+}
+.zprod-stat strong {
+  font-size: 22px;
+}
+.zprod-count {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.zprod-count button {
+  width: 47px;
+  height: 47px;
+  border-radius: 14px;
+  border: 1px solid #354c6a;
+  background: #10233e;
+  color: white;
+  font-size: 25px;
+  cursor: pointer;
+}
+.zprod-count output {
+  min-width: 28px;
+  text-align: center;
+  font-size: 22px;
+}
+.zprod-btn {
+  width: 100%;
+  min-height: 60px;
+  border-radius: 20px;
+  border: 1px solid #f5d000;
+  background: #393409;
+  color: #ffe000;
+  font-size: 17px;
+  font-weight: 750;
+  cursor: pointer;
+  margin-top: 22px;
+  padding: 12px;
+}
+.zprod-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.zprod-btn.primary {
+  background: #ffe000;
+  color: #151800;
+}
+.zprod-lines {
+  display: grid;
+  gap: 12px;
+}
+.zprod-line {
+  border: 1px solid #344a67;
+  background: #08182b;
+  border-radius: 18px;
+  padding: 16px;
+}
+.zprod-line-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+}
+.zprod-line strong {
+  font-size: 16px;
+}
+.zprod-line p {
+  margin: 8px 0 0;
+  color: #9eb5d5;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.zprod-remove {
+  color: #ff9a9a;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-size: 20px;
+}
+.zprod-totals {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 19px;
+  font-size: 17px;
+}
+.zprod-error {
+  border: 1px solid #c45c65;
+  background: #451c29;
+  color: #ffd4d7;
+  border-radius: 15px;
+  padding: 16px;
+}
+.zprod-nav {
+  position: fixed;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: min(100%, 690px);
+  z-index: 10;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 3px;
+  background: #101e34;
+  border: 1px solid #1c58b7;
+  border-bottom: 0;
+  border-radius: 36px 36px 0 0;
+  padding: 15px 8px 14px;
+  box-shadow: 0 -8px 30px #0004;
+}
+.zprod-nav-item {
+  display: grid;
+  justify-items: center;
+  gap: 5px;
+  color: white;
+  font-size: 11px;
+  text-decoration: none;
+  min-width: 0;
+}
+.zprod-nav-item svg {
+  width: 26px;
+  height: 26px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.zprod-nav-item.current {
+  color: #ffe000;
+}
+.zprod-back {
+  border: 0;
+  background: transparent;
+  color: #99bfff;
+  cursor: pointer;
+  margin-bottom: 15px;
+  font: inherit;
+}
+@media (max-width: 480px) {
+  .zprod {
+    padding: 22px 15px 95px;
+  }
+  .zprod-hero {
+    padding: 28px 24px;
+    border-radius: 28px;
+  }
+  .zprod-panel {
+    padding: 25px 20px;
+    border-radius: 27px;
+  }
+  .zprod-grid {
+    gap: 9px;
+  }
+  .zprod-category {
+    padding: 12px;
+  }
+  .zprod-h2 {
+    font-size: 21px;
+  }
+}
+.zprod-category-grid {
+  margin-top: 17px;
+}
+.zprod-options-title {
+  margin: 28px 0 14px;
+  font-size: 19px;
+}
